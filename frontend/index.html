@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH26083 — Extreme Heatwave Early Warning & Thermal Stress Index</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="logo-badge">SIH26083</div>
+      <div>
+        <h1>ThermoShield India</h1>
+        <p>MoES / NCMRWF — Human Biometeorological Early Warning & Risk Attribution</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <span class="badge badge-demo">● DEMO MODE ACTIVE</span>
+      <button class="btn-secondary" id="provenanceBtn">Data Provenance & Science</button>
+      <a href="/docs" target="_blank" class="btn-secondary" style="text-decoration: none;">API Docs</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Toolbar: City Selection & Forecast Horizon Tabs -->
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Select Pilot City:</span>
+        <select id="citySelect">
+          <option value="ahmedabad" selected>Ahmedabad (Gujarat) — Primary Pilot</option>
+          <option value="delhi">Delhi (NCT)</option>
+          <option value="nagpur">Nagpur (Maharashtra)</option>
+          <option value="hyderabad">Hyderabad (Telangana)</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group">
+        <span class="toolbar-label">Forecast Horizon:</span>
+        <div class="horizon-tabs">
+          <button class="horizon-tab active" data-day="1">Current (D+0)</button>
+          <button class="horizon-tab" data-day="2">Day 2 (D+1)</button>
+          <button class="horizon-tab" data-day="3">Day 3 (D+2)</button>
+          <button class="horizon-tab" data-day="4">Day 4 (D+3)</button>
+          <button class="horizon-tab" data-day="5">Day 5 (D+4)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top KPI Grid -->
+    <div class="kpi-grid">
+      <!-- Heat Risk Score -->
+      <div class="kpi-card" style="border-left: 4px solid var(--accent-danger);">
+        <div class="kpi-title">Relative Heat-Health Risk</div>
+        <div class="kpi-value" id="kpiRiskValue">--</div>
+        <div class="kpi-sub">
+          <span class="kpi-badge" id="kpiRiskBadge" style="background-color: var(--risk-orange); color: white;">-- ALERT</span>
+        </div>
+      </div>
+
+      <!-- Dry Bulb Temperature -->
+      <div class="kpi-card">
+        <div class="kpi-title">Air Temperature (Ta)</div>
+        <div class="kpi-value" id="kpiTempValue">--°C</div>
+        <div class="kpi-sub" style="color: var(--text-muted);">Standard 2m Dry-Bulb Reading</div>
+      </div>
+
+      <!-- Physiological UTCI -->
+      <div class="kpi-card">
+        <div class="kpi-title">Physiological UTCI</div>
+        <div class="kpi-value" id="kpiUtciValue" style="color: #f97316;">--°C</div>
+        <div class="kpi-sub" style="color: #cbd5e1;">Universal Thermal Climate Index</div>
+      </div>
+
+      <!-- Occupational WBGT -->
+      <div class="kpi-card">
+        <div class="kpi-title">Occupational WBGT</div>
+        <div class="kpi-value" id="kpiWbgtValue" style="color: #38bdf8;">--°C</div>
+        <div class="kpi-sub" style="color: #cbd5e1;">NIOSH Labor-Rest Regimen Standard</div>
+      </div>
+    </div>
+
+    <!-- Action Summary Banner -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase;">Public Health Advisory:</span>
+      <span id="kpiActionSummary" style="font-size: 0.9rem; color: #f8fafc;">Loading early warning guidance...</span>
+    </div>
+
+    <!-- Main Dashboard Split Grid -->
+    <div class="dashboard-grid">
+      <!-- Left: GIS Leaflet Ward Choropleth Map -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Ward-Level Spatial Risk Attribution</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+              Fusing regional meteorological hazard with Census 2011 demographic vulnerability
+            </p>
+          </div>
+        </div>
+        <div id="map"></div>
+        <p style="font-size: 0.72rem; color: #64748b; margin-top: 8px; font-style: italic;">
+          * Note: Represents ward-level risk attribution, not micro-scale ward-resolution meteorology.
+        </p>
+      </div>
+
+      <!-- Right: Trends & Persona Advisories -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- 5-Day Horizon Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">5-Day Multi-Parameter Forecast Horizon</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="forecastChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Actionable Public Health Advisories -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Actionable Targeted Guidance (NCDC / WHO)</h2>
+          </div>
+          
+          <div class="persona-tabs">
+            <button class="persona-tab active" data-persona="general_public">Citizens / Vulnerable</button>
+            <button class="persona-tab" data-persona="outdoor_workers">Outdoor Laborers</button>
+            <button class="persona-tab" data-persona="authorities">Municipal Authorities</button>
+          </div>
+
+          <div id="occupationalRegimenNotice" style="display: none; padding: 8px 12px; background-color: rgba(249, 115, 22, 0.15); border-left: 3px solid #f97316; border-radius: 4px; font-size: 0.85rem; margin-bottom: 12px; color: #fb923c;">
+          </div>
+
+          <ul class="advisory-list" id="advisoryList">
+            <li class="advisory-item">Loading actionable advisories...</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparative Scenario Runner (Why Temperature Alone is Insufficient) -->
+    <div class="scenario-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #38bdf8;">Deterministic Scenario Demo: Same Temperature ≠ Same Human Strain</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            Demonstrating why conventional temperature-only alerts fail to capture real biometeorological physiological stress.
+          </p>
+        </div>
+        <button class="btn-secondary" id="btnRunScenario" style="background-color: #38bdf8; color: #0f172a; font-weight: 700;">
+          Run Comparative Calculation
+        </button>
+      </div>
+
+      <div class="scenario-grid">
+        <!-- Scenario A -->
+        <div class="scenario-card">
+          <h3 style="font-size: 1rem; color: #f59e0b; margin-bottom: 8px;">Scenario A: Hot, Dry & Windy</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Air Temp: <strong>40°C</strong> | RH: <strong>15%</strong> | Wind: <strong>5.0 m/s</strong> | Solar: <strong>150 W/m²</strong>
+          </p>
+          <hr style="border-color: var(--border-color); margin: 10px 0;">
+          <div style="font-size: 0.85rem; line-height: 1.6;">
+            <div>Physiological UTCI: <strong id="scenA_utci" style="color: #f59e0b;">35.2°C</strong> (Moderate/Strong)</div>
+            <div>Occupational WBGT: <strong id="scenA_wbgt">26.8°C</strong> (Continuous Work)</div>
+            <div>Composite Hazard Score: <strong id="scenA_hazard">36.5 / 100</strong></div>
+            <div>Warning Level: <span id="scenA_level" style="color: #f59e0b; font-weight: bold;">YELLOW (Watch)</span></div>
+          </div>
+        </div>
+
+        <!-- Scenario B -->
+        <div class="scenario-card active-contrast">
+          <h3 style="font-size: 1rem; color: #ef4444; margin-bottom: 8px;">Scenario B: Hot, Humid, Stagnant & Sunny</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Air Temp: <strong>40°C</strong> | RH: <strong>70%</strong> | Wind: <strong>0.8 m/s</strong> | Solar: <strong>800 W/m²</strong>
+          </p>
+          <hr style="border-color: var(--border-color); margin: 10px 0;">
+          <div style="font-size: 0.85rem; line-height: 1.6;">
+            <div>Physiological UTCI: <strong id="scenB_utci" style="color: #ef4444;">48.4°C</strong> (Extreme Heat Stress)</div>
+            <div>Occupational WBGT: <strong id="scenB_wbgt" style="color: #ef4444;">34.2°C</strong> (Extreme Danger / Halt Labor)</div>
+            <div>Composite Hazard Score: <strong id="scenB_hazard" style="color: #ef4444;">98.0 / 100</strong></div>
+            <div>Warning Level: <span id="scenB_level" style="color: #ef4444; font-weight: bold;">RED (Emergency Alert)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Provenance Modal -->
+  <div class="modal" id="provenanceModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div id="provenanceContent">
+        <p>Loading provenance and mathematical methodology...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      SIH26083 Prototype — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Tier-1 Open Data (NASA POWER, IMD Guidance, Census of India 2011, UTCI COST 730, NIOSH 2016)
+    </p>
+    <p style="margin-top: 4px; font-size: 0.72rem; color: #64748b;">
+      Prototype relative risk estimate — not a clinical diagnosis or mortality forecast.
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/js/map.js"></script>
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
