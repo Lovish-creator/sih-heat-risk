@@ -1,0 +1,167 @@
+{
+  "type": "FeatureCollection",
+  "name": "Ahmedabad_Wards_Risk_Layer",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_01", "ward_name": "Navrangpura", "zone_name": "West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.550, 23.030], [72.570, 23.030], [72.570, 23.050], [72.550, 23.050], [72.550, 23.030]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_02", "ward_name": "Paldi", "zone_name": "West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.550, 23.005], [72.572, 23.005], [72.572, 23.030], [72.550, 23.030], [72.550, 23.005]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_03", "ward_name": "Sabarmati", "zone_name": "West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.560, 23.070], [72.595, 23.070], [72.595, 23.100], [72.560, 23.100], [72.560, 23.070]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_04", "ward_name": "Jamalpur", "zone_name": "Central Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.575, 23.010], [72.595, 23.010], [72.595, 23.030], [72.575, 23.030], [72.575, 23.010]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_05", "ward_name": "Khadia", "zone_name": "Central Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.585, 23.020], [72.605, 23.020], [72.605, 23.040], [72.585, 23.040], [72.585, 23.020]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_06", "ward_name": "Shahpur", "zone_name": "Central Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.575, 23.035], [72.595, 23.035], [72.595, 23.055], [72.575, 23.055], [72.575, 23.035]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_07", "ward_name": "Maninagar", "zone_name": "South Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.595, 22.990], [72.620, 22.990], [72.620, 23.015], [72.595, 23.015], [72.595, 22.990]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_08", "ward_name": "Vatva", "zone_name": "South Zone (Industrial)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.615, 22.950], [72.655, 22.950], [72.655, 22.990], [72.615, 22.990], [72.615, 22.950]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_09", "ward_name": "Danilimda", "zone_name": "South Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.575, 22.980], [72.600, 22.980], [72.600, 23.010], [72.575, 23.010], [72.575, 22.980]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_10", "ward_name": "Naroda", "zone_name": "East Zone (Industrial)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.635, 23.060], [72.675, 23.060], [72.675, 23.100], [72.635, 23.100], [72.635, 23.060]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_11", "ward_name": "Bapunagar", "zone_name": "East Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.620, 23.030], [72.645, 23.030], [72.645, 23.055], [72.620, 23.055], [72.620, 23.030]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_12", "ward_name": "Gomtipur", "zone_name": "East Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.610, 23.010], [72.635, 23.010], [72.635, 23.035], [72.610, 23.035], [72.610, 23.010]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_13", "ward_name": "Odhav", "zone_name": "East Zone (Industrial)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.645, 23.000], [72.685, 23.000], [72.685, 23.045], [72.645, 23.045], [72.645, 23.000]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_14", "ward_name": "Chandkheda", "zone_name": "North West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.560, 23.100], [72.600, 23.100], [72.600, 23.135], [72.560, 23.135], [72.560, 23.100]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_15", "ward_name": "Ghatlodia", "zone_name": "North West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.525, 23.060], [72.560, 23.060], [72.560, 23.090], [72.525, 23.090], [72.525, 23.060]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_16", "ward_name": "Bodakdev", "zone_name": "New West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.500, 23.030], [72.535, 23.030], [72.535, 23.060], [72.500, 23.060], [72.500, 23.030]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_17", "ward_name": "Thaltej", "zone_name": "New West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.490, 23.055], [72.525, 23.055], [72.525, 23.090], [72.490, 23.090], [72.490, 23.055]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_18", "ward_name": "Jodhpur", "zone_name": "New West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.510, 23.005], [72.540, 23.005], [72.540, 23.035], [72.510, 23.035], [72.510, 23.005]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_19", "ward_name": "Sarkhej", "zone_name": "South West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.485, 22.970], [72.525, 22.970], [72.525, 23.005], [72.485, 23.005], [72.485, 22.970]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "ward_id": "AMD_20", "ward_name": "Vejalpur", "zone_name": "South West Zone" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.515, 22.990], [72.545, 22.990], [72.545, 23.020], [72.515, 23.020], [72.515, 22.990]]]
+      }
+    }
+  ]
+}
