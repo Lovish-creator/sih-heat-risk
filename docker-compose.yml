@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  sih26083-backend:
+    build: .
+    container_name: sih26083-heat-risk
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - DEMO_MODE=true
+      - PORT=8000
+      - HOST=0.0.0.0
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    restart: unless-stopped

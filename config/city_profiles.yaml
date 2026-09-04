@@ -1,0 +1,95 @@
+# City Profiles Configuration for SIH26083 Multi-City Support
+
+cities:
+  ahmedabad:
+    id: "ahmedabad"
+    name: "Ahmedabad"
+    state: "Gujarat"
+    region_type: "plains"
+    center:
+      lat: 23.0225
+      lon: 72.5714
+    bounding_box:
+      min_lat: 22.90
+      max_lat: 23.15
+      min_lon: 72.45
+      max_lon: 72.70
+    climatology:
+      normal_summer_max_temp_c: 41.5
+      historical_record_max_c: 48.0
+    census_metadata:
+      census_year: 2011
+      source: "Census of India 2011 - Primary Census Abstract (PCA)"
+      notes: "Demographic baseline represents Census 2011 ward aggregates."
+    geojson_file: "data/sample/ahmedabad_wards.geojson"
+    census_data_file: "data/sample/ahmedabad_census_wards.json"
+    is_pilot: true
+
+  delhi:
+    id: "delhi"
+    name: "Delhi (NCT)"
+    state: "Delhi"
+    region_type: "plains"
+    center:
+      lat: 28.6139
+      lon: 77.2090
+    bounding_box:
+      min_lat: 28.40
+      max_lat: 28.88
+      min_lon: 76.85
+      max_lon: 77.35
+    climatology:
+      normal_summer_max_temp_c: 40.0
+      historical_record_max_c: 49.2
+    census_metadata:
+      census_year: 2011
+      source: "Census of India 2011"
+    geojson_file: "data/sample/delhi_zones.geojson"
+    census_data_file: "data/sample/delhi_census_zones.json"
+    is_pilot: false
+
+  nagpur:
+    id: "nagpur"
+    name: "Nagpur"
+    state: "Maharashtra"
+    region_type: "plains"
+    center:
+      lat: 21.1458
+      lon: 79.0882
+    bounding_box:
+      min_lat: 21.00
+      max_lat: 21.25
+      min_lon: 78.95
+      max_lon: 79.20
+    climatology:
+      normal_summer_max_temp_c: 42.8
+      historical_record_max_c: 48.6
+    census_metadata:
+      census_year: 2011
+      source: "Census of India 2011"
+    geojson_file: "data/sample/nagpur_zones.geojson"
+    census_data_file: "data/sample/nagpur_census_zones.json"
+    is_pilot: false
+
+  hyderabad:
+    id: "hyderabad"
+    name: "Hyderabad"
+    state: "Telangana"
+    region_type: "plains"
+    center:
+      lat: 17.3850
+      lon: 78.4867
+    bounding_box:
+      min_lat: 17.20
+      max_lat: 17.55
+      min_lon: 78.30
+      max_lon: 78.65
+    climatology:
+      normal_summer_max_temp_c: 40.5
+      historical_record_max_c: 45.5
+    census_metadata:
+      census_year: 2011
+      source: "Census of India 2011"
+    geojson_file: "data/sample/hyderabad_zones.geojson"
+    census_data_file: "data/sample/hyderabad_census_zones.json"
+    is_pilot: false

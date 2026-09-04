@@ -1,0 +1,134 @@
+# Scientific Thresholds and Classification Scales for SIH26083
+
+imd_heatwave:
+  plains:
+    threshold_min_temp_c: 40.0
+    normal_departure_heatwave_c: 4.5
+    normal_departure_severe_c: 6.5
+    absolute_heatwave_c: 45.0
+    absolute_severe_c: 47.0
+  coastal:
+    threshold_min_temp_c: 37.0
+    normal_departure_heatwave_c: 4.5
+    normal_departure_severe_c: 6.5
+  hilly:
+    threshold_min_temp_c: 30.0
+    normal_departure_heatwave_c: 4.5
+    normal_departure_severe_c: 6.5
+
+utci_scale:
+  extreme_heat_stress:
+    min: 46.0
+    max: 100.0
+    label: "Extreme Heat Stress"
+    color: "#7f0000"
+    hazard_score: 100.0
+  very_strong_heat_stress:
+    min: 38.0
+    max: 46.0
+    label: "Very Strong Heat Stress"
+    color: "#d73027"
+    hazard_score: 80.0
+  strong_heat_stress:
+    min: 32.0
+    max: 38.0
+    label: "Strong Heat Stress"
+    color: "#f46d43"
+    hazard_score: 60.0
+  moderate_heat_stress:
+    min: 26.0
+    max: 32.0
+    label: "Moderate Heat Stress"
+    color: "#fdae61"
+    hazard_score: 35.0
+  no_thermal_stress:
+    min: 9.0
+    max: 26.0
+    label: "Thermal Comfort / No Thermal Stress"
+    color: "#1a9850"
+    hazard_score: 0.0
+  slight_cold_stress:
+    min: 0.0
+    max: 9.0
+    label: "Slight Cold Stress"
+    color: "#74add1"
+    hazard_score: 0.0
+  moderate_cold_stress:
+    min: -13.0
+    max: 0.0
+    label: "Moderate Cold Stress"
+    color: "#4575b4"
+    hazard_score: 0.0
+
+wbgt_niosh_scale:
+  low:
+    max: 28.0
+    label: "Low Risk"
+    work_rest_regimen: "Continuous work permissible (45-60 min/hr)"
+    water_intake_l_per_hr: 0.5
+  moderate:
+    min: 28.0
+    max: 30.0
+    label: "Moderate Risk"
+    work_rest_regimen: "75% Work / 25% Rest each hour"
+    water_intake_l_per_hr: 0.75
+  high:
+    min: 30.0
+    max: 32.0
+    label: "High Risk"
+    work_rest_regimen: "50% Work / 50% Rest each hour"
+    water_intake_l_per_hr: 1.0
+  extreme:
+    min: 32.0
+    max: 100.0
+    label: "Extreme Risk"
+    work_rest_regimen: "25% Work / 75% Rest or Cease Strenuous Work"
+    water_intake_l_per_hr: 1.0
+
+heat_index_scale:
+  caution:
+    min: 27.0
+    max: 32.0
+    label: "Caution"
+  extreme_caution:
+    min: 32.0
+    max: 41.0
+    label: "Extreme Caution"
+  danger:
+    min: 41.0
+    max: 54.0
+    label: "Danger"
+  extreme_danger:
+    min: 54.0
+    max: 100.0
+    label: "Extreme Danger"
+
+composite_risk_scale:
+  green:
+    min: 0.0
+    max: 25.0
+    level: "Normal"
+    label: "Low Risk"
+    color: "#28a745"
+    advisory_action: "Maintain routine hydration; normal activities permissible."
+  yellow:
+    min: 25.0
+    max: 50.0
+    level: "Watch"
+    label: "Moderate Risk"
+    color: "#ffc107"
+    advisory_action: "Be updated; vulnerable citizens avoid prolonged direct sun 12:00-15:00."
+  orange:
+    min: 50.0
+    max: 75.0
+    level: "Alert"
+    label: "High Risk"
+    color: "#fd7e14"
+    advisory_action: "Be prepared; mandatory shade breaks for outdoor workers, cooling centers open."
+  red:
+    min: 75.0
+    max: 100.0
+    level: "Warning"
+    label: "Severe Risk"
+    color: "#dc3545"
+    advisory_action: "Take action; emergency heat protocols active, halt heavy outdoor labor 11:00-16:00."

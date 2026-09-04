@@ -1,0 +1,38 @@
+# Risk Weights Configuration for SIH26083 Human Heat-Health Risk Index
+# Note: These weights define the multi-criteria composite risk scoring function:
+# Composite Risk = (w_hazard * HazardScore) + (w_vulnerability * VulnerabilityScore) + (w_duration * DurationMultiplier)
+# Range: [0, 100]
+
+model_version: "1.0.0-prototype"
+description: "Interpretable linear multi-criteria risk model for prototype demonstration"
+
+weights:
+  thermal_hazard:
+    weight: 0.55
+    description: "Dominant direct environmental stressor (UTCI/WBGT hazard score). Grounded in acute thermoregulatory strain."
+    subcomponents:
+      utci: 0.60
+      wbgt: 0.25
+      heat_index: 0.15
+
+  demographic_vulnerability:
+    weight: 0.30
+    description: "Population sensitivity modifier derived from Census 2011 baseline (elderly share, outdoor workers, population density)."
+    subcomponents:
+      elderly_population_ratio: 0.40      # Age >= 60 (impaired cardiovascular & thermoregulatory reserve - WHO 2021)
+      outdoor_worker_ratio: 0.35          # Agricultural, construction, marginal laborers (NIOSH 2016 occupational hazard)
+      population_density_norm: 0.25       # Congestion / urban heat island proxy
+
+  heatwave_duration:
+    weight: 0.15
+    description: "Cumulative exposure penalty for consecutive extreme heat days (physiological depletion & nocturnal non-recovery)."
+    consecutive_days_scaling:
+      day_1: 0.0
+      day_2: 0.33
+      day_3: 0.66
+      day_4_plus: 1.0
+
+validation:
+  ensure_sum_to_one: true
+  min_score: 0.0
+  max_score: 100.0
