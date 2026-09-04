@@ -1,9 +1,11 @@
 /**
  * SIH26083 GIS Leaflet Choropleth Map Controller.
+ * Supports Ward Layers and Real User Location GPS Marker.
  */
 
 let mapInstance = null;
 let geojsonLayer = null;
+let userGpsMarker = null;
 
 function getColorByRisk(riskScore) {
   if (riskScore > 75.0) return "#ef4444"; // Red
@@ -32,13 +34,50 @@ function initMap(centerLat = 23.0225, centerLon = 72.5714, zoomLevel = 12) {
   return mapInstance;
 }
 
-async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1) {
+function setUserLocationMarker(lat, lon, label = "Your Detected Location") {
+  if (!mapInstance) {
+    initMap(lat, lon, 13);
+  }
+
+  if (userGpsMarker) {
+    mapInstance.removeLayer(userGpsMarker);
+  }
+
+  // Create custom pulsing GPS HTML marker
+  const pulseIcon = L.divIcon({
+    className: 'custom-gps-icon',
+    html: `<div class="user-gps-pulse"></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+
+  userGpsMarker = L.marker([lat, lon], { icon: pulseIcon }).addTo(mapInstance);
+  userGpsMarker.bindPopup(`
+    <div style="font-family: 'Inter', sans-serif; font-size: 13px;">
+      <strong style="color: #38bdf8;">📍 ${label}</strong>
+      <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
+        Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}
+      </div>
+    </div>
+  `).openPopup();
+
+  mapInstance.setView([lat, lon], 13);
+}
+
+async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1, customLat = null, customLon = null) {
   if (!mapInstance) {
     initMap();
   }
 
   try {
-    const res = await fetch(`/api/v1/map/risk?city=${cityId}&day=${horizonDay}`);
+    let url = `/api/v1/map/risk?day=${horizonDay}`;
+    if (customLat !== null && customLon !== null) {
+      url += `&lat=${customLat}&lon=${customLon}`;
+    } else {
+      url += `&city=${cityId}`;
+    }
+
+    const res = await fetch(url);
     if (!res.ok) throw new Error("Failed to load GeoJSON");
     const geojsonData = await res.json();
 
@@ -64,7 +103,7 @@ async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1) {
         
         const popupContent = `
           <div style="font-family: 'Inter', sans-serif; font-size: 13px; min-width: 200px;">
-            <h4 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 14px;">${p.ward_name} (${p.zone_name})</h4>
+            <h4 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 14px;">${p.ward_name}</h4>
             <div style="margin-bottom: 6px;">
               <strong>Heat-Health Risk:</strong> <span style="color: ${p.alert_color}; font-weight: bold;">${p.heat_risk_score} / 100 (${p.alert_level})</span>
             </div>
@@ -97,8 +136,9 @@ async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1) {
       }
     }).addTo(mapInstance);
 
-    // Fit map bounds to polygons
-    mapInstance.fitBounds(geojsonLayer.getBounds());
+    if (customLat === null || customLon === null) {
+      mapInstance.fitBounds(geojsonLayer.getBounds());
+    }
 
   } catch (err) {
     console.error("GIS Error:", err);

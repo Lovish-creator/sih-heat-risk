@@ -8,7 +8,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <!-- Google Fonts & Icons -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,30 +24,57 @@
       <div class="logo-badge">SIH26083</div>
       <div>
         <h1>ThermoShield India</h1>
-        <p>MoES / NCMRWF — Human Biometeorological Early Warning & Risk Attribution</p>
+        <p>MoES / NCMRWF — Real-Time Biometeorological Early Warning & Human Heat Risk Platform</p>
       </div>
     </div>
     <div class="header-controls">
-      <span class="badge badge-demo">● DEMO MODE ACTIVE</span>
-      <button class="btn-secondary" id="provenanceBtn">Data Provenance & Science</button>
+      <button class="btn-primary" id="btnDetectLocation">
+        📍 Detect My Location
+      </button>
+      <span class="badge badge-live">● LIVE API CONNECTED</span>
+      <button class="btn-secondary" id="provenanceBtn">Data Sources & Science</button>
       <a href="/docs" target="_blank" class="btn-secondary" style="text-decoration: none;">API Docs</a>
     </div>
   </header>
 
   <!-- Main Content -->
   <main>
-    <!-- Toolbar: City Selection & Forecast Horizon Tabs -->
+    <!-- Detected Location Banner -->
+    <div class="location-banner" id="locationBanner">
+      <div class="location-details">
+        <span id="locationBannerText">
+          <strong>📍 Active Location:</strong> Ahmedabad (Gujarat) <span style="font-size: 12px; color: #94a3b8;">(Lat: 23.0225, Lon: 72.5714)</span>
+        </span>
+      </div>
+      <div style="font-size: 0.8rem; color: #34d399; font-weight: 600;">
+        ⚡ Powered by Open-Meteo & NASA POWER Live Streams
+      </div>
+    </div>
+
+    <!-- Toolbar: Search, City Selection & Forecast Horizon Tabs -->
     <div class="toolbar">
+      <!-- Search Any Location via OpenStreetMap -->
       <div class="toolbar-group">
-        <span class="toolbar-label">Select Pilot City:</span>
+        <span class="toolbar-label">Search Location:</span>
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search any city, town, or address...">
+          <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+        </div>
+      </div>
+
+      <!-- Preset Pilot Cities -->
+      <div class="toolbar-group">
+        <span class="toolbar-label">Or Select Pilot City:</span>
         <select id="citySelect">
-          <option value="ahmedabad" selected>Ahmedabad (Gujarat) — Primary Pilot</option>
+          <option value="ahmedabad" selected>Ahmedabad (Gujarat) — Pilot City</option>
           <option value="delhi">Delhi (NCT)</option>
           <option value="nagpur">Nagpur (Maharashtra)</option>
           <option value="hyderabad">Hyderabad (Telangana)</option>
         </select>
       </div>
 
+      <!-- Forecast Horizon Tabs -->
       <div class="toolbar-group">
         <span class="toolbar-label">Forecast Horizon:</span>
         <div class="horizon-tabs">
@@ -73,9 +100,9 @@
 
       <!-- Dry Bulb Temperature -->
       <div class="kpi-card">
-        <div class="kpi-title">Air Temperature (Ta)</div>
+        <div class="kpi-title">Real-Time Air Temp (Ta)</div>
         <div class="kpi-value" id="kpiTempValue">--°C</div>
-        <div class="kpi-sub" style="color: var(--text-muted);">Standard 2m Dry-Bulb Reading</div>
+        <div class="kpi-sub" style="color: var(--text-muted);">Live 2m Dry-Bulb Observation</div>
       </div>
 
       <!-- Physiological UTCI -->
@@ -95,8 +122,8 @@
 
     <!-- Action Summary Banner -->
     <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-      <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase;">Public Health Advisory:</span>
-      <span id="kpiActionSummary" style="font-size: 0.9rem; color: #f8fafc;">Loading early warning guidance...</span>
+      <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase;">Early Warning Advisory:</span>
+      <span id="kpiActionSummary" style="font-size: 0.9rem; color: #f8fafc;">Loading real-time biometeorological guidance...</span>
     </div>
 
     <!-- Main Dashboard Split Grid -->
@@ -105,15 +132,15 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <h2 class="card-title">Ward-Level Spatial Risk Attribution</h2>
+            <h2 class="card-title">Live Spatial Risk & Location Attribution</h2>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-              Fusing regional meteorological hazard with Census 2011 demographic vulnerability
+              Dynamic Leaflet map centered on your detected GPS coordinates with localized risk polygon
             </p>
           </div>
         </div>
         <div id="map"></div>
         <p style="font-size: 0.72rem; color: #64748b; margin-top: 8px; font-style: italic;">
-          * Note: Represents ward-level risk attribution, not micro-scale ward-resolution meteorology.
+          * Note: Represents ward/zone risk attribution, fusing live meteorological forcing with demographic vulnerability.
         </p>
       </div>
 
@@ -122,7 +149,7 @@
         <!-- 5-Day Horizon Chart -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">5-Day Multi-Parameter Forecast Horizon</h2>
+            <h2 class="card-title">Live 5-Day Multi-Parameter Forecast Horizon</h2>
           </div>
           <div class="chart-container">
             <canvas id="forecastChart"></canvas>
@@ -204,7 +231,7 @@
     <div class="modal-content">
       <button class="modal-close" id="modalClose">&times;</button>
       <div id="provenanceContent">
-        <p>Loading provenance and mathematical methodology...</p>
+        <p>Loading live data source provenance and mathematical methodology...</p>
       </div>
     </div>
   </div>
@@ -212,7 +239,7 @@
   <!-- Footer -->
   <footer>
     <p>
-      SIH26083 Prototype — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Tier-1 Open Data (NASA POWER, IMD Guidance, Census of India 2011, UTCI COST 730, NIOSH 2016)
+      SIH26083 Prototype — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Real Live Open Data (Open-Meteo, OpenStreetMap Nominatim, NASA POWER, UTCI COST 730, NIOSH 2016)
     </p>
     <p style="margin-top: 4px; font-size: 0.72rem; color: #64748b;">
       Prototype relative risk estimate — not a clinical diagnosis or mortality forecast.

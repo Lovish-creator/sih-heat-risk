@@ -1,12 +1,15 @@
 /**
  * SIH26083 Main Dashboard Application Logic.
+ * Supports Real Live Open Data APIs & User Location Detection.
  */
 
 let currentCity = "ahmedabad";
+let customCoordinates = null; // { lat, lon, name }
 let currentHorizonDay = 1;
 let currentPersona = "general_public";
 let cachedForecastData = null;
 let cachedAdvisories = null;
+let isLiveMode = true;
 
 document.addEventListener("DOMContentLoaded", () => {
   initApp();
@@ -20,16 +23,89 @@ async function initApp() {
 }
 
 function setupEventListeners() {
-  // City dropdown change
+  // 1. Detect My Location Button
+  const detectBtn = document.getElementById("btnDetectLocation");
+  if (detectBtn) {
+    detectBtn.addEventListener("click", () => {
+      detectUserLocation();
+    });
+  }
+
+  // 2. City dropdown change
   const citySelect = document.getElementById("citySelect");
   if (citySelect) {
     citySelect.addEventListener("change", (e) => {
+      customCoordinates = null;
       currentCity = e.target.value;
+      const locBanner = document.getElementById("locationBannerText");
+      if (locBanner) locBanner.textContent = `Pilot City: ${e.target.options[e.target.selectedIndex].text}`;
       refreshDashboardData();
     });
   }
 
-  // Horizon Day Tabs
+  // 3. Search Box for Any City/Town
+  const searchInput = document.getElementById("searchInput");
+  const searchDropdown = document.getElementById("searchResultsDropdown");
+  let debounceTimeout = null;
+
+  if (searchInput && searchDropdown) {
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(debounceTimeout);
+      const query = e.target.value.trim();
+      if (query.length < 2) {
+        searchDropdown.style.display = "none";
+        return;
+      }
+
+      debounceTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/v1/geocode/search?q=${encodeURIComponent(query)}&limit=5`);
+          const data = await res.json();
+          const results = data.results || [];
+
+          if (results.length === 0) {
+            searchDropdown.innerHTML = `<div class="search-result-item" style="color: #64748b;">No locations found</div>`;
+          } else {
+            searchDropdown.innerHTML = results.map(r => `
+              <div class="search-result-item" data-lat="${r.latitude}" data-lon="${r.longitude}" data-name="${r.name}" data-city="${r.city}">
+                <strong>${r.city}</strong> <span style="font-size: 11px; color: #94a3b8;">${r.name}</span>
+              </div>
+            `).join("");
+
+            searchDropdown.querySelectorAll(".search-result-item").forEach(item => {
+              item.addEventListener("click", (evt) => {
+                const lat = parseFloat(item.dataset.lat);
+                const lon = parseFloat(item.dataset.lon);
+                const name = item.dataset.name;
+                const city = item.dataset.city;
+
+                customCoordinates = { lat, lon, name, city };
+                searchDropdown.style.display = "none";
+                searchInput.value = city;
+
+                const locBanner = document.getElementById("locationBannerText");
+                if (locBanner) locBanner.innerHTML = `<strong>📍 Selected Location:</strong> ${city} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+
+                setUserLocationMarker(lat, lon, city);
+                refreshDashboardData();
+              });
+            });
+          }
+          searchDropdown.style.display = "block";
+        } catch (err) {
+          console.error("Geocoding search failed:", err);
+        }
+      }, 350);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.style.display = "none";
+      }
+    });
+  }
+
+  // 4. Horizon Day Tabs
   document.querySelectorAll(".horizon-tab").forEach(tab => {
     tab.addEventListener("click", (e) => {
       document.querySelectorAll(".horizon-tab").forEach(t => t.classList.remove("active"));
@@ -39,7 +115,7 @@ function setupEventListeners() {
     });
   });
 
-  // Persona Advisory Tabs
+  // 5. Persona Advisory Tabs
   document.querySelectorAll(".persona-tab").forEach(tab => {
     tab.addEventListener("click", (e) => {
       document.querySelectorAll(".persona-tab").forEach(t => t.classList.remove("active"));
@@ -49,7 +125,7 @@ function setupEventListeners() {
     });
   });
 
-  // Modal Triggers
+  // 6. Modal Triggers
   const provenanceBtn = document.getElementById("provenanceBtn");
   const provenanceModal = document.getElementById("provenanceModal");
   const modalClose = document.getElementById("modalClose");
@@ -65,6 +141,75 @@ function setupEventListeners() {
     modalClose.addEventListener("click", () => {
       provenanceModal.classList.remove("active");
     });
+  }
+}
+
+/**
+ * Detect User Real Location via Browser Geolocation API with IP Geolocation fallback
+ */
+async function detectUserLocation() {
+  const detectBtn = document.getElementById("btnDetectLocation");
+  const locBanner = document.getElementById("locationBannerText");
+  
+  if (detectBtn) detectBtn.textContent = "⌛ Detecting...";
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        await handleDetectedCoordinates(lat, lon, "GPS");
+        if (detectBtn) detectBtn.innerHTML = "📍 Detect My Location";
+      },
+      async (err) => {
+        console.warn("Browser GPS permission denied/unavailable. Falling back to IP Geolocation...", err);
+        await fallbackIpGeolocation();
+        if (detectBtn) detectBtn.innerHTML = "📍 Detect My Location";
+      },
+      { timeout: 7000, enableHighAccuracy: true }
+    );
+  } else {
+    await fallbackIpGeolocation();
+    if (detectBtn) detectBtn.innerHTML = "📍 Detect My Location";
+  }
+}
+
+async function fallbackIpGeolocation() {
+  const locBanner = document.getElementById("locationBannerText");
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    if (!res.ok) throw new Error("IP Geolocation failed");
+    const ipData = await res.json();
+    const lat = parseFloat(ipData.latitude);
+    const lon = parseFloat(ipData.longitude);
+    const city = ipData.city || "Detected City";
+    const region = ipData.region || "";
+    await handleDetectedCoordinates(lat, lon, `IP Location (${city}, ${region})`);
+  } catch (err) {
+    console.error("IP fallback failed:", err);
+    if (locBanner) locBanner.textContent = "Could not detect location. Please select a city or search above.";
+  }
+}
+
+async function handleDetectedCoordinates(lat, lon, sourceLabel) {
+  try {
+    const res = await fetch(`/api/v1/geocode/reverse?lat=${lat}&lon=${lon}`);
+    const geo = await res.json();
+    const city = geo.city || "Your Location";
+    const suburb = geo.suburb_or_ward ? `${geo.suburb_or_ward}, ` : "";
+    const state = geo.state ? `, ${geo.state}` : "";
+
+    customCoordinates = { lat, lon, name: geo.display_name, city: city };
+
+    const locBanner = document.getElementById("locationBannerText");
+    if (locBanner) {
+      locBanner.innerHTML = `<strong>📍 Real Detected Location (${sourceLabel}):</strong> ${suburb}${city}${state} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+    }
+
+    setUserLocationMarker(lat, lon, `${suburb}${city}`);
+    await refreshDashboardData();
+  } catch (err) {
+    console.error("Reverse geocode failed:", err);
   }
 }
 
@@ -85,20 +230,27 @@ async function loadLocations() {
 
 async function refreshDashboardData() {
   try {
-    // 1. Fetch 5-Day Risk Forecast
-    const riskRes = await fetch(`/api/v1/risk/forecast?city=${currentCity}&days=5`);
+    let riskUrl = `/api/v1/risk/forecast?days=5`;
+    let advUrl = `/api/v1/advisory`;
+
+    if (customCoordinates) {
+      riskUrl += `&lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+      advUrl += `&lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+    } else {
+      riskUrl += `&city=${currentCity}`;
+      advUrl += `&city=${currentCity}`;
+    }
+
+    // 1. Fetch Live 5-Day Risk Forecast
+    const riskRes = await fetch(riskUrl);
     const riskData = await riskRes.json();
     cachedForecastData = riskData.horizon;
 
-    // 2. Fetch Thermal Forecast
-    const thermalRes = await fetch(`/api/v1/thermal/forecast?city=${currentCity}&days=5`);
-    const thermalData = await thermalRes.json();
-
-    // 3. Fetch Advisories
-    const advRes = await fetch(`/api/v1/advisory?city=${currentCity}`);
+    // 2. Fetch Live Advisories
+    const advRes = await fetch(advUrl);
     cachedAdvisories = await advRes.json();
 
-    // 4. Update View Components
+    // 3. Update View Components
     updateHorizonView();
     renderForecastChart(cachedForecastData);
     renderPersonaAdvisories();
@@ -132,8 +284,10 @@ function updateHorizonView() {
   if (kpiWbgt) kpiWbgt.textContent = `${currentItem.wbgt_c}°C`;
   if (kpiActionSummary) kpiActionSummary.textContent = currentItem.action_summary;
 
-  // Refresh GIS Map for this Horizon Day
-  loadWardRiskLayer(currentCity, currentHorizonDay);
+  // Refresh GIS Map for this Horizon Day & Coordinates
+  const lat = customCoordinates ? customCoordinates.lat : null;
+  const lon = customCoordinates ? customCoordinates.lon : null;
+  loadWardRiskLayer(currentCity, currentHorizonDay, lat, lon);
 }
 
 function renderPersonaAdvisories() {
@@ -145,7 +299,6 @@ function renderPersonaAdvisories() {
 
   if (!personaData || !listContainer) return;
 
-  // Show NIOSH work-rest cycle if Outdoor Workers persona
   if (regimenNotice) {
     if (currentPersona === "outdoor_workers" && personaData.niosh_work_rest_cycle) {
       regimenNotice.style.display = "block";
@@ -169,12 +322,13 @@ async function loadProvenanceContent() {
     const meth = await res.json();
     
     contentDiv.innerHTML = `
-      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Scientific Methodology & Models</h3>
+      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Real-Time Open Data Sources & Scientific Models</h3>
       <div style="font-size: 13.5px; line-height: 1.6; color: #cbd5e1;">
-        <p><strong>Universal Thermal Climate Index (UTCI):</strong> ${meth.models.utci.formula}. Evaluates physiological energy balance under temperature, humidity, 10m wind, and shortwave solar irradiance.</p>
+        <p><strong>Open-Meteo Weather API:</strong> Live real-time surface meteorology (temperature, relative humidity, 10m wind speed, and shortwave/direct solar radiation flux in W/m²).</p>
+        <p style="margin-top: 8px;"><strong>NASA POWER API:</strong> Global analysis-ready solar irradiance and surface meteorological reanalysis.</p>
+        <p style="margin-top: 8px;"><strong>OpenStreetMap Nominatim:</strong> Global open reverse and forward geocoding with zero proprietary keys.</p>
+        <p style="margin-top: 8px;"><strong>Universal Thermal Climate Index (UTCI):</strong> ${meth.models.utci.formula}. Evaluates physiological energy balance under temperature, humidity, 10m wind, and shortwave solar irradiance.</p>
         <p style="margin-top: 8px;"><strong>Wet Bulb Globe Temperature (WBGT):</strong> ${meth.models.wbgt.formula}. Aligned with NIOSH 2016 occupational criteria.</p>
-        <p style="margin-top: 8px;"><strong>Demographic Vulnerability:</strong> Ingests Census of India 2011 PCA indicators (Elderly 60+, Outdoor Workers, Density).</p>
-        <p style="margin-top: 8px;"><strong>Spatial Attribution:</strong> Joins macro-scale meteorological fields with ward demographic vulnerability. <em>Explicitly does NOT claim micro-scale ward-resolution meteorology.</em></p>
         <div style="margin-top: 15px; padding: 10px; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 4px;">
           <strong>Disclaimer:</strong> ${meth.disclaimer}
         </div>
@@ -191,10 +345,6 @@ function initScenarioRunner() {
   if (!btnRun) return;
 
   btnRun.addEventListener("click", () => {
-    // Scenario A: 40 C, 15% RH, 5 m/s wind, 150 W/m2 (Dry, windy, low sun)
-    // Scenario B: 40 C, 70% RH, 0.8 m/s wind, 800 W/m2 (Humid, stagnant, intense sun)
-    
-    // We can directly present the physics results
     const resA = {
       utci: 35.2,
       wbgt: 26.8,
