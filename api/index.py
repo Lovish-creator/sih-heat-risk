@@ -21,7 +21,7 @@ async def app(scope, receive, send):
     """
     if scope.get("type") in ("http", "websocket"):
         path = scope.get("path", "")
-        for prefix in ("/api/index.py", "/api/index", "/api"):
+        for prefix in ("/api/index.py", "/api/index"):
             if path == prefix:
                 path = "/"
                 break
