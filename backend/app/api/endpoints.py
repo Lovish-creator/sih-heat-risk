@@ -47,11 +47,15 @@ ward_manager = MunicipalWardManager()
 advisory_engine = AdvisoryEngine()
 
 def load_city_profiles() -> Dict[str, Any]:
-    """Helper to load city configurations."""
-    path = "config/city_profiles.yaml"
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f).get("cities", {})
+    """Helper to load city configurations with multi-path resolution."""
+    path = _find_reference_file("config/city_profiles.yaml")
+    if path and os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f)
+                return cfg.get("cities", {}) if cfg else {}
+        except Exception:
+            pass
     return {}
 
 
