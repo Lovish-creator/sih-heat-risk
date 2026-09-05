@@ -1,6 +1,7 @@
 """
 FastAPI REST API Endpoints for SIH26083 Platform.
-Supports Real Live APIs (Open-Meteo, NASA POWER, OpenStreetMap Nominatim) and User Location Auto-Detection.
+Supports Real Live APIs (Open-Meteo, NASA POWER, OpenStreetMap Nominatim),
+Hourly 24-Hour Live Forecaster, and User Location Auto-Detection.
 """
 
 from fastapi import APIRouter, Query, HTTPException
@@ -18,7 +19,8 @@ from ..schemas.schemas import (
     WeatherForecastResponse,
     ThermalForecastResponse,
     RiskForecastResponse,
-    AdvisoryResponse
+    AdvisoryResponse,
+    ThermalCalculateRequest
 )
 from ..thermal.hazard import calculate_thermal_hazard
 from ..vulnerability.demographic import DemographicVulnerabilityEngine
@@ -57,20 +59,28 @@ def get_health():
     return {
         "status": "healthy",
         "app_name": "SIH26083-Heat-Risk-Early-Warning",
-        "version": "1.1.0-live",
+        "version": "1.2.0-realtime",
         "demo_mode": False,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 
 @router.get("/api/v1/data-status", response_model=DataStatusResponse, tags=["Observability"])
-def get_data_status(city: str = Query("ahmedabad", description="City identifier")):
+def get_data_status(
+    city: str = Query("ahmedabad"),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None)
+):
     """Expose cache status, data freshness, and upstream source availability."""
-    cities = load_city_profiles()
-    active_city_name = cities.get(city, {}).get("name", city.title())
+    if lat is not None and lon is not None:
+        geo = geocoder.reverse_geocode(lat, lon)
+        active_name = f"{geo.get('city', 'Detected')} ({lat:.3f}, {lon:.3f})"
+    else:
+        cities = load_city_profiles()
+        active_name = cities.get(city, {}).get("name", city.title())
     
     return {
-        "active_city": active_city_name,
+        "active_city": active_name,
         "demo_mode": False,
         "cache_entries": cache_store.count_entries(),
         "latest_ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
@@ -151,12 +161,38 @@ def get_current_weather(
     }
 
 
+@router.get("/api/v1/weather/hourly", tags=["Meteorology"])
+def get_hourly_weather(
+    city: str = Query("ahmedabad"),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None),
+    hours: int = Query(24, ge=1, le=48)
+):
+    """Get live next 24-48 hour hourly biometeorological forecast (UTCI, WBGT, Heat Index)."""
+    if lat is not None and lon is not None:
+        geo_info = geocoder.reverse_geocode(lat, lon)
+        hourly_series = open_meteo.get_hourly_forecast(lat, lon, "custom", hours)
+        city_name = geo_info.get("city", "Detected Location")
+    else:
+        cities = load_city_profiles()
+        cdata = cities.get(city, cities.get("ahmedabad"))
+        center = cdata["center"]
+        hourly_series = open_meteo.get_hourly_forecast(center["lat"], center["lon"], city, hours)
+        city_name = cdata["name"]
+
+    return {
+        "city_name": city_name,
+        "total_hours": len(hourly_series),
+        "hourly_series": hourly_series
+    }
+
+
 @router.get("/api/v1/weather/forecast", response_model=WeatherForecastResponse, tags=["Meteorology"])
 def get_weather_forecast(
     city: str = Query("ahmedabad"),
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
-    days: int = Query(5, ge=1, le=7)
+    days: int = Query(7, ge=1, le=7)
 ):
     """Get 5-7 day multi-horizon live meteorological forecast from Open-Meteo & NASA POWER."""
     if lat is not None and lon is not None:
@@ -214,12 +250,31 @@ def get_current_thermal(
     }
 
 
+@router.post("/api/v1/thermal/calculate", tags=["Thermal Stress"])
+def calculate_thermal_interactive(req: ThermalCalculateRequest):
+    """
+    On-demand physiological heat stress calculation.
+    Computes 6th-order UTCI polynomial, ISO 7243 WBGT, and NOAA Heat Index for custom input parameters.
+    """
+    hazard = calculate_thermal_hazard(
+        temp_c=req.temp_c,
+        relative_humidity_pct=req.relative_humidity_pct,
+        wind_speed_10m_m_s=req.wind_speed_10m_m_s,
+        solar_radiation_w_m2=req.solar_radiation_w_m2
+    )
+    return {
+        "status": "success",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "hazard_analysis": hazard
+    }
+
+
 @router.get("/api/v1/thermal/forecast", response_model=ThermalForecastResponse, tags=["Thermal Stress"])
 def get_thermal_forecast(
     city: str = Query("ahmedabad"),
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
-    days: int = Query(5, ge=1, le=7)
+    days: int = Query(7, ge=1, le=7)
 ):
     """Get 5-7 day live biometeorological forecast (UTCI, WBGT, Heat Index) for coordinates."""
     if lat is not None and lon is not None:
@@ -292,7 +347,11 @@ def get_current_risk(
         weather = open_meteo.get_current_weather(lat, lon, "custom")
         city_name = geo_info.get("city", "Detected Location")
         city_id = "custom"
-        avg_vuln = 50.0 # Standard regional demographic baseline
+        district_vuln = vuln_engine.get_district_vulnerability(
+            geo_info.get("district") or geo_info.get("city") or "",
+            geo_info.get("state") or ""
+        )
+        avg_vuln = district_vuln["vulnerability_score"]
     else:
         cities = load_city_profiles()
         cdata = cities.get(city, cities.get("ahmedabad"))
@@ -344,7 +403,7 @@ def get_risk_forecast(
     city: str = Query("ahmedabad"),
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
-    days: int = Query(5, ge=1, le=7)
+    days: int = Query(7, ge=1, le=7)
 ):
     """Get 5-7 day live multi-horizon composite risk forecast with duration tracking."""
     if lat is not None and lon is not None:
@@ -352,7 +411,11 @@ def get_risk_forecast(
         weather_series = open_meteo.get_forecast_weather(lat, lon, "custom", days)
         city_name = geo_info.get("city", "Detected Location")
         city_id = "custom"
-        avg_vuln = 50.0
+        district_vuln = vuln_engine.get_district_vulnerability(
+            geo_info.get("district") or geo_info.get("city") or "",
+            geo_info.get("state") or ""
+        )
+        avg_vuln = district_vuln["vulnerability_score"]
     else:
         cities = load_city_profiles()
         cdata = cities.get(city, cities.get("ahmedabad"))
@@ -420,13 +483,13 @@ def get_map_risk(
     day: int = Query(1, ge=1, le=7)
 ):
     """
-    Get GeoJSON FeatureCollection with ward geometries and spatial risk attribution.
-    If custom lat/lon is provided outside pilot cities, constructs a localized dynamic boundary around the user.
+    Get GeoJSON FeatureCollection with spatial risk attribution.
+    Constructs localized multi-ring risk zones around clicked/detected coordinates with Census 2011 demographics.
     """
     if lat is not None and lon is not None:
         weather_series = open_meteo.get_forecast_weather(lat, lon, "custom", 7)
-        selected_idx = min(day - 1, len(weather_series) - 1)
-        target_weather = weather_series[selected_idx]
+        selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
+        target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(lat, lon)
 
         hz = calculate_thermal_hazard(
             temp_c=target_weather["temp_c"],
@@ -435,59 +498,62 @@ def get_map_risk(
             solar_radiation_w_m2=target_weather["solar_radiation_w_m2"]
         )
 
-        # Build dynamic 4-quadrant localized spatial risk ring around user coordinates
-        delta = 0.02
         geo_info = geocoder.reverse_geocode(lat, lon)
         city_name = geo_info.get("city", "Detected Location")
         suburb = geo_info.get("suburb_or_ward") or "Local Zone"
 
+        district_vuln = vuln_engine.get_district_vulnerability(
+            geo_info.get("district") or geo_info.get("city") or "",
+            geo_info.get("state") or ""
+        )
+        demo_data = district_vuln["demographics"]
+        vuln_score = district_vuln["vulnerability_score"]
+
         r_calc = risk_engine.calculate_risk(
             hazard_score=hz["composite_hazard_score"],
-            vulnerability_score=55.0,
+            vulnerability_score=vuln_score,
             consecutive_heat_days=day
         )
 
-        features = [{
-            "type": "Feature",
-            "properties": {
-                "ward_id": "USER_LOC_01",
-                "ward_name": f"{suburb} ({city_name})",
-                "zone_name": geo_info.get("state", "Local District"),
-                "hazard_score": hz["composite_hazard_score"],
-                "vulnerability_score": 55.0,
-                "heat_risk_score": r_calc["risk_score"],
-                "alert_level": r_calc["alert_level"],
-                "alert_label": r_calc["alert_label"],
-                "alert_color": r_calc["alert_color"],
-                "action_summary": r_calc["action_summary"],
-                "utci_val": hz["metrics"]["utci"]["value_c"],
-                "utci_category": hz["metrics"]["utci"]["category"],
-                "wbgt_val": hz["metrics"]["wbgt"]["value_c"],
-                "wbgt_risk": hz["metrics"]["wbgt"]["risk_level"],
-                "heat_index_val": hz["metrics"]["heat_index"]["value_c"],
-                "demographics": {
-                    "tot_pop": 50000,
-                    "pop_elderly_60plus": 5500,
-                    "elderly_percentage": 11.0,
-                    "workers_outdoor": 12000,
-                    "outdoor_worker_percentage": 24.0,
-                    "pop_density_per_sqkm": 15000.0
+        # Dynamic spatial buffer rings around user coordinates (Inner 1.3km)
+        d1 = 0.012  # ~1.3 km
+        
+        features = [
+            {
+                "type": "Feature",
+                "properties": {
+                    "ward_id": f"ZONE_{geo_info.get('district', 'LOC').upper()[:6]}",
+                    "ward_name": f"{suburb} ({district_vuln['district_name']})",
+                    "zone_name": geo_info.get("state", "Local District"),
+                    "hazard_score": hz["composite_hazard_score"],
+                    "vulnerability_score": vuln_score,
+                    "heat_risk_score": r_calc["risk_score"],
+                    "alert_level": r_calc["alert_level"],
+                    "alert_label": r_calc["alert_label"],
+                    "alert_color": r_calc["alert_color"],
+                    "action_summary": r_calc["action_summary"],
+                    "utci_val": hz["metrics"]["utci"]["value_c"],
+                    "utci_category": hz["metrics"]["utci"]["category"],
+                    "wbgt_val": hz["metrics"]["wbgt"]["value_c"],
+                    "wbgt_risk": hz["metrics"]["wbgt"]["risk_level"],
+                    "heat_index_val": hz["metrics"]["heat_index"]["value_c"],
+                    "demographics": demo_data
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[lon - d1, lat - d1], [lon + d1, lat - d1], [lon + d1, lat + d1], [lon - d1, lat + d1], [lon - d1, lat - d1]]]
                 }
-            },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[lon - delta, lat - delta], [lon + delta, lat - delta], [lon + delta, lat + delta], [lon - delta, lat + delta], [lon - delta, lat - delta]]]
             }
-        }]
+        ]
 
         return {
             "type": "FeatureCollection",
             "name": f"Dynamic_Live_Zone_{city_name}",
             "features": features,
             "metadata": {
-                "attribution": "OpenStreetMap Nominatim & Open-Meteo Live API",
+                "attribution": f"OpenStreetMap Nominatim, Open-Meteo Live API & {district_vuln.get('census_source', 'Census 2011 PCA')}",
                 "disclaimer": "Dynamic localized risk attribution for detected coordinates.",
-                "total_wards": 1,
+                "total_wards": len(features),
                 "detected_location": geo_info
             }
         }
@@ -497,8 +563,8 @@ def get_map_risk(
     center = cdata["center"]
     
     weather_series = open_meteo.get_forecast_weather(center["lat"], center["lon"], city, 7)
-    selected_idx = min(day - 1, len(weather_series) - 1)
-    target_weather = weather_series[selected_idx]
+    selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
+    target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(center["lat"], center["lon"])
 
     hz = calculate_thermal_hazard(
         temp_c=target_weather["temp_c"],
@@ -529,7 +595,11 @@ def get_advisories(
     if lat is not None and lon is not None:
         weather = open_meteo.get_current_weather(lat, lon, "custom")
         city_id = "custom"
-        avg_vuln = 50.0
+        district_vuln = vuln_engine.get_district_vulnerability(
+            geocoder.reverse_geocode(lat, lon).get("district") or "",
+            geocoder.reverse_geocode(lat, lon).get("state") or ""
+        )
+        avg_vuln = district_vuln["vulnerability_score"]
     else:
         cities = load_city_profiles()
         cdata = cities.get(city, cities.get("ahmedabad"))

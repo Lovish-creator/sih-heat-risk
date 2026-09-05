@@ -1,18 +1,33 @@
 /**
- * SIH26083 5-Day Horizon Chart.js Controller.
+ * SIH26083 Live Multi-Horizon Chart.js Controller.
+ * Supports Hourly (Next 24 Hours) and Daily (7-Day) Real-Time Forecasts.
  */
 
 let forecastChart = null;
 
-function renderForecastChart(riskHorizonData) {
+function renderForecastChart(chartData, isHourly = false) {
   const ctx = document.getElementById('forecastChart');
   if (!ctx) return;
 
-  const labels = riskHorizonData.map(d => `${d.horizon_label} (${d.date.slice(5)})`);
-  const tempData = riskHorizonData.map(d => d.temp_c);
-  const utciData = riskHorizonData.map(d => d.utci_c);
-  const wbgtData = riskHorizonData.map(d => d.wbgt_c);
-  const riskScoreData = riskHorizonData.map(d => d.heat_risk_score);
+  let labels = [];
+  let tempData = [];
+  let utciData = [];
+  let wbgtData = [];
+  let riskScoreData = [];
+
+  if (isHourly) {
+    labels = chartData.map(d => `${d.hour_label} (${d.date.slice(5)})`);
+    tempData = chartData.map(d => d.temp_c);
+    utciData = chartData.map(d => d.utci_c);
+    wbgtData = chartData.map(d => d.wbgt_c);
+    riskScoreData = chartData.map(d => d.hazard_score);
+  } else {
+    labels = chartData.map(d => `${d.horizon_label} (${d.date.slice(5)})`);
+    tempData = chartData.map(d => d.temp_c);
+    utciData = chartData.map(d => d.utci_c);
+    wbgtData = chartData.map(d => d.wbgt_c);
+    riskScoreData = chartData.map(d => d.heat_risk_score);
+  }
 
   if (forecastChart) {
     forecastChart.destroy();
@@ -53,12 +68,12 @@ function renderForecastChart(riskHorizonData) {
           yAxisID: 'yTemp'
         },
         {
-          label: 'Heat-Health Risk (0-100)',
+          label: isHourly ? 'Hazard Index (0-100)' : 'Heat-Health Risk (0-100)',
           data: riskScoreData,
           borderColor: '#ef4444',
           backgroundColor: 'transparent',
           borderWidth: 3,
-          pointRadius: 6,
+          pointRadius: 4,
           pointBackgroundColor: '#ef4444',
           tension: 0.3,
           yAxisID: 'yRisk'
@@ -104,7 +119,7 @@ function renderForecastChart(riskHorizonData) {
           position: 'right',
           min: 0,
           max: 100,
-          title: { display: true, text: 'Relative Risk Score (0-100)', color: '#ef4444' },
+          title: { display: true, text: 'Relative Index Score (0-100)', color: '#ef4444' },
           ticks: { color: '#ef4444' },
           grid: { drawOnChartArea: false }
         }

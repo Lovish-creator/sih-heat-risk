@@ -111,3 +111,11 @@ class AdvisoryResponse(BaseModel):
     risk_score: float
     personas: Dict[str, Any]
     provenance: Dict[str, Any]
+
+
+class ThermalCalculateRequest(BaseModel):
+    temp_c: float = Field(..., description="Dry-bulb air temperature in Celsius")
+    relative_humidity_pct: float = Field(..., description="Relative humidity percentage (0-100%)")
+    wind_speed_10m_m_s: float = Field(1.5, description="10m wind speed in m/s")
+    solar_radiation_w_m2: float = Field(0.0, description="Shortwave solar radiation flux in W/m²")
+

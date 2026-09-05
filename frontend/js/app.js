@@ -1,15 +1,17 @@
 /**
- * SIH26083 Main Dashboard Application Logic.
- * Supports Real Live Open Data APIs & User Location Detection.
+ * SIH26083 Real-Time Live Application Controller.
+ * Manages live GPS auto-detection, click-to-pinpoint map interactions,
+ * OpenStreetMap Nominatim search, and hourly/daily biometeorological streams.
  */
 
 let currentCity = "ahmedabad";
-let customCoordinates = null; // { lat, lon, name }
+let customCoordinates = null; // { lat, lon, name, city }
 let currentHorizonDay = 1;
 let currentPersona = "general_public";
 let cachedForecastData = null;
+let cachedHourlyData = null;
 let cachedAdvisories = null;
-let isLiveMode = true;
+let isHourlyView = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   initApp();
@@ -18,8 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function initApp() {
+  initMap();
   await loadLocations();
-  await refreshDashboardData();
+  
+  // Try high-accuracy location auto-detection on first visit
+  detectUserLocation(false);
 }
 
 function setupEventListeners() {
@@ -27,7 +32,7 @@ function setupEventListeners() {
   const detectBtn = document.getElementById("btnDetectLocation");
   if (detectBtn) {
     detectBtn.addEventListener("click", () => {
-      detectUserLocation();
+      detectUserLocation(true);
     });
   }
 
@@ -38,12 +43,12 @@ function setupEventListeners() {
       customCoordinates = null;
       currentCity = e.target.value;
       const locBanner = document.getElementById("locationBannerText");
-      if (locBanner) locBanner.textContent = `Pilot City: ${e.target.options[e.target.selectedIndex].text}`;
+      if (locBanner) locBanner.innerHTML = `<strong>📍 Selected City:</strong> ${e.target.options[e.target.selectedIndex].text}`;
       refreshDashboardData();
     });
   }
 
-  // 3. Search Box for Any City/Town
+  // 3. Search Box for Any City/Town via OpenStreetMap Nominatim
   const searchInput = document.getElementById("searchInput");
   const searchDropdown = document.getElementById("searchResultsDropdown");
   let debounceTimeout = null;
@@ -59,21 +64,21 @@ function setupEventListeners() {
 
       debounceTimeout = setTimeout(async () => {
         try {
-          const res = await fetch(`/api/v1/geocode/search?q=${encodeURIComponent(query)}&limit=5`);
+          const res = await fetch(`/api/v1/geocode/search?q=${encodeURIComponent(query)}&limit=6`);
           const data = await res.json();
           const results = data.results || [];
 
           if (results.length === 0) {
-            searchDropdown.innerHTML = `<div class="search-result-item" style="color: #64748b;">No locations found</div>`;
+            searchDropdown.innerHTML = `<div class="search-result-item" style="color: #94a3b8;">No locations found. Try searching town, district, or pin code.</div>`;
           } else {
             searchDropdown.innerHTML = results.map(r => `
               <div class="search-result-item" data-lat="${r.latitude}" data-lon="${r.longitude}" data-name="${r.name}" data-city="${r.city}">
-                <strong>${r.city}</strong> <span style="font-size: 11px; color: #94a3b8;">${r.name}</span>
+                <strong style="color: #38bdf8;">${r.city}</strong> <span style="font-size: 11px; color: #94a3b8;">${r.name}</span>
               </div>
             `).join("");
 
             searchDropdown.querySelectorAll(".search-result-item").forEach(item => {
-              item.addEventListener("click", (evt) => {
+              item.addEventListener("click", () => {
                 const lat = parseFloat(item.dataset.lat);
                 const lon = parseFloat(item.dataset.lon);
                 const name = item.dataset.name;
@@ -84,7 +89,9 @@ function setupEventListeners() {
                 searchInput.value = city;
 
                 const locBanner = document.getElementById("locationBannerText");
-                if (locBanner) locBanner.innerHTML = `<strong>📍 Selected Location:</strong> ${city} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+                if (locBanner) {
+                  locBanner.innerHTML = `<strong>📍 Selected Location:</strong> ${city} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+                }
 
                 setUserLocationMarker(lat, lon, city);
                 refreshDashboardData();
@@ -95,7 +102,7 @@ function setupEventListeners() {
         } catch (err) {
           console.error("Geocoding search failed:", err);
         }
-      }, 350);
+      }, 300);
     });
 
     document.addEventListener("click", (e) => {
@@ -105,7 +112,52 @@ function setupEventListeners() {
     });
   }
 
-  // 4. Horizon Day Tabs
+  // 4. Forecast View Toggle (Daily vs Hourly)
+  const btnViewDaily = document.getElementById("btnViewDaily");
+  const btnViewHourly = document.getElementById("btnViewHourly");
+
+  if (btnViewDaily && btnViewHourly) {
+    btnViewDaily.addEventListener("click", () => {
+      isHourlyView = false;
+      btnViewDaily.classList.add("active");
+      btnViewHourly.classList.remove("active");
+      if (cachedForecastData) renderForecastChart(cachedForecastData, false);
+    });
+
+    btnViewHourly.addEventListener("click", async () => {
+      isHourlyView = true;
+      btnViewHourly.classList.add("active");
+      btnViewDaily.classList.remove("active");
+      await fetchHourlyData();
+    });
+  }
+
+  // 5. Manual Coordinates Modal
+  const btnManualCoords = document.getElementById("btnManualCoords");
+  const coordsModal = document.getElementById("coordsModal");
+  const coordsClose = document.getElementById("coordsClose");
+  const btnApplyCoords = document.getElementById("btnApplyCoords");
+
+  if (btnManualCoords && coordsModal) {
+    btnManualCoords.addEventListener("click", () => coordsModal.classList.add("active"));
+  }
+  if (coordsClose && coordsModal) {
+    coordsClose.addEventListener("click", () => coordsModal.classList.remove("active"));
+  }
+  if (btnApplyCoords && coordsModal) {
+    btnApplyCoords.addEventListener("click", async () => {
+      const latVal = parseFloat(document.getElementById("inputLat").value);
+      const lonVal = parseFloat(document.getElementById("inputLon").value);
+      if (!isNaN(latVal) && !isNaN(lonVal) && latVal >= -90 && latVal <= 90 && lonVal >= -180 && lonVal <= 180) {
+        coordsModal.classList.remove("active");
+        await handleMapClickLocation(latVal, lonVal);
+      } else {
+        alert("Please enter valid latitude (-90 to 90) and longitude (-180 to 180).");
+      }
+    });
+  }
+
+  // 6. Horizon Day Tabs
   document.querySelectorAll(".horizon-tab").forEach(tab => {
     tab.addEventListener("click", (e) => {
       document.querySelectorAll(".horizon-tab").forEach(t => t.classList.remove("active"));
@@ -115,7 +167,7 @@ function setupEventListeners() {
     });
   });
 
-  // 5. Persona Advisory Tabs
+  // 7. Persona Advisory Tabs
   document.querySelectorAll(".persona-tab").forEach(tab => {
     tab.addEventListener("click", (e) => {
       document.querySelectorAll(".persona-tab").forEach(t => t.classList.remove("active"));
@@ -125,7 +177,7 @@ function setupEventListeners() {
     });
   });
 
-  // 6. Modal Triggers
+  // 8. Provenance Modal
   const provenanceBtn = document.getElementById("provenanceBtn");
   const provenanceModal = document.getElementById("provenanceModal");
   const modalClose = document.getElementById("modalClose");
@@ -136,18 +188,42 @@ function setupEventListeners() {
       provenanceModal.classList.add("active");
     });
   }
-
   if (modalClose && provenanceModal) {
-    modalClose.addEventListener("click", () => {
-      provenanceModal.classList.remove("active");
-    });
+    modalClose.addEventListener("click", () => provenanceModal.classList.remove("active"));
   }
 }
 
 /**
- * Detect User Real Location via Browser Geolocation API with IP Geolocation fallback
+ * Global Handler triggered when clicking anywhere on the real map
  */
-async function detectUserLocation() {
+async function handleMapClickLocation(lat, lon) {
+  const locBanner = document.getElementById("locationBannerText");
+  if (locBanner) locBanner.textContent = `Resolving clicked location (${lat.toFixed(4)}, ${lon.toFixed(4)})...`;
+
+  try {
+    const res = await fetch(`/api/v1/geocode/reverse?lat=${lat}&lon=${lon}`);
+    const geo = await res.json();
+    const city = geo.city || "Custom Location";
+    const suburb = geo.suburb_or_ward ? `${geo.suburb_or_ward}, ` : "";
+    const state = geo.state ? `, ${geo.state}` : "";
+
+    customCoordinates = { lat, lon, name: geo.display_name, city };
+
+    if (locBanner) {
+      locBanner.innerHTML = `<strong>📍 Real-Time Location:</strong> ${suburb}${city}${state} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+    }
+
+    setUserLocationMarker(lat, lon, `${suburb}${city}`);
+    await refreshDashboardData();
+  } catch (err) {
+    console.error("Click geocode error:", err);
+  }
+}
+
+/**
+ * Detect User Real Location via High Accuracy GPS with IP Geolocation fallback
+ */
+async function detectUserLocation(userTriggered = false) {
   const detectBtn = document.getElementById("btnDetectLocation");
   const locBanner = document.getElementById("locationBannerText");
   
@@ -158,15 +234,15 @@ async function detectUserLocation() {
       async (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        await handleDetectedCoordinates(lat, lon, "GPS");
+        await handleDetectedCoordinates(lat, lon, "High-Accuracy GPS");
         if (detectBtn) detectBtn.innerHTML = "📍 Detect My Location";
       },
       async (err) => {
-        console.warn("Browser GPS permission denied/unavailable. Falling back to IP Geolocation...", err);
+        console.warn("Browser GPS permission not granted. Using IP Geolocation fallback...", err);
         await fallbackIpGeolocation();
         if (detectBtn) detectBtn.innerHTML = "📍 Detect My Location";
       },
-      { timeout: 7000, enableHighAccuracy: true }
+      { timeout: 8000, enableHighAccuracy: true, maximumAge: 0 }
     );
   } else {
     await fallbackIpGeolocation();
@@ -184,10 +260,11 @@ async function fallbackIpGeolocation() {
     const lon = parseFloat(ipData.longitude);
     const city = ipData.city || "Detected City";
     const region = ipData.region || "";
-    await handleDetectedCoordinates(lat, lon, `IP Location (${city}, ${region})`);
+    await handleDetectedCoordinates(lat, lon, `IP Network (${city}, ${region})`);
   } catch (err) {
     console.error("IP fallback failed:", err);
-    if (locBanner) locBanner.textContent = "Could not detect location. Please select a city or search above.";
+    // Default to Ahmedabad if both fail
+    await refreshDashboardData();
   }
 }
 
@@ -199,11 +276,11 @@ async function handleDetectedCoordinates(lat, lon, sourceLabel) {
     const suburb = geo.suburb_or_ward ? `${geo.suburb_or_ward}, ` : "";
     const state = geo.state ? `, ${geo.state}` : "";
 
-    customCoordinates = { lat, lon, name: geo.display_name, city: city };
+    customCoordinates = { lat, lon, name: geo.display_name, city };
 
     const locBanner = document.getElementById("locationBannerText");
     if (locBanner) {
-      locBanner.innerHTML = `<strong>📍 Real Detected Location (${sourceLabel}):</strong> ${suburb}${city}${state} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
+      locBanner.innerHTML = `<strong>📍 Real-Time Location (${sourceLabel}):</strong> ${suburb}${city}${state} <span style="font-size: 12px; color: #94a3b8;">(${lat.toFixed(4)}, ${lon.toFixed(4)})</span>`;
     }
 
     setUserLocationMarker(lat, lon, `${suburb}${city}`);
@@ -230,29 +307,51 @@ async function loadLocations() {
 
 async function refreshDashboardData() {
   try {
-    let riskUrl = `/api/v1/risk/forecast?days=5`;
-    let advUrl = `/api/v1/advisory`;
+    let currentUrl = `/api/v1/weather/current?`;
+    let forecastUrl = `/api/v1/risk/forecast?days=7&`;
+    let advUrl = `/api/v1/advisory?`;
 
     if (customCoordinates) {
-      riskUrl += `&lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
-      advUrl += `&lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+      const coordStr = `lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+      currentUrl += coordStr;
+      forecastUrl += coordStr;
+      advUrl += coordStr;
     } else {
-      riskUrl += `&city=${currentCity}`;
-      advUrl += `&city=${currentCity}`;
+      currentUrl += `city=${currentCity}`;
+      forecastUrl += `city=${currentCity}`;
+      advUrl += `city=${currentCity}`;
     }
 
-    // 1. Fetch Live 5-Day Risk Forecast
-    const riskRes = await fetch(riskUrl);
-    const riskData = await riskRes.json();
-    cachedForecastData = riskData.horizon;
+    // 1. Fetch Real-Time Current Weather Observation
+    const currentRes = await fetch(currentUrl);
+    const currentData = await currentRes.json();
+    const liveWeather = currentData.weather || {};
 
-    // 2. Fetch Live Advisories
+    // 2. Fetch 7-Day Live Risk Forecast
+    const riskRes = await fetch(forecastUrl);
+    const riskData = await riskRes.json();
+    cachedForecastData = riskData.horizon || [];
+
+    // 3. Fetch Live Advisories
     const advRes = await fetch(advUrl);
     cachedAdvisories = await advRes.json();
 
-    // 3. Update View Components
-    updateHorizonView();
-    renderForecastChart(cachedForecastData);
+    // 4. Update Time Badge
+    const timeBadge = document.getElementById("liveTimeBadge");
+    if (timeBadge && liveWeather.timestamp) {
+      const timeStr = liveWeather.timestamp.slice(11, 16) || "Now";
+      timeBadge.textContent = `● LIVE STREAM (${timeStr} Local)`;
+    }
+
+    // 5. Update View Components
+    updateHorizonView(liveWeather);
+    
+    if (isHourlyView) {
+      await fetchHourlyData();
+    } else {
+      renderForecastChart(cachedForecastData, false);
+    }
+    
     renderPersonaAdvisories();
 
   } catch (err) {
@@ -260,12 +359,32 @@ async function refreshDashboardData() {
   }
 }
 
-function updateHorizonView() {
+async function fetchHourlyData() {
+  try {
+    let hourlyUrl = `/api/v1/weather/hourly?hours=24&`;
+    if (customCoordinates) {
+      hourlyUrl += `lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+    } else {
+      hourlyUrl += `city=${currentCity}`;
+    }
+
+    const res = await fetch(hourlyUrl);
+    const data = await res.json();
+    cachedHourlyData = data.hourly_series || [];
+
+    if (isHourlyView && cachedHourlyData.length > 0) {
+      renderForecastChart(cachedHourlyData, true);
+    }
+  } catch (err) {
+    console.error("Failed to fetch hourly weather:", err);
+  }
+}
+
+function updateHorizonView(liveWeather = null) {
   if (!cachedForecastData || cachedForecastData.length === 0) return;
 
   const currentItem = cachedForecastData[currentHorizonDay - 1] || cachedForecastData[0];
 
-  // Update KPI Cards
   const kpiRisk = document.getElementById("kpiRiskValue");
   const kpiRiskBadge = document.getElementById("kpiRiskBadge");
   const kpiTemp = document.getElementById("kpiTempValue");
@@ -279,7 +398,14 @@ function updateHorizonView() {
     kpiRiskBadge.style.backgroundColor = currentItem.alert_color;
     kpiRiskBadge.style.color = currentItem.alert_level === 'YELLOW' ? '#000' : '#fff';
   }
-  if (kpiTemp) kpiTemp.textContent = `${currentItem.temp_c}°C`;
+
+  // If viewing current day and we have instant real-time live current observation, display it
+  if (currentHorizonDay === 1 && liveWeather && liveWeather.temp_c !== undefined) {
+    if (kpiTemp) kpiTemp.textContent = `${liveWeather.temp_c}°C`;
+  } else {
+    if (kpiTemp) kpiTemp.textContent = `${currentItem.temp_c}°C`;
+  }
+
   if (kpiUtci) kpiUtci.textContent = `${currentItem.utci_c}°C`;
   if (kpiWbgt) kpiWbgt.textContent = `${currentItem.wbgt_c}°C`;
   if (kpiActionSummary) kpiActionSummary.textContent = currentItem.action_summary;
@@ -302,7 +428,7 @@ function renderPersonaAdvisories() {
   if (regimenNotice) {
     if (currentPersona === "outdoor_workers" && personaData.niosh_work_rest_cycle) {
       regimenNotice.style.display = "block";
-      regimenNotice.innerHTML = `<strong>NIOSH Work/Rest Guideline:</strong> ${personaData.niosh_work_rest_cycle}`;
+      regimenNotice.innerHTML = `<strong>NIOSH Work/Rest Directive:</strong> ${personaData.niosh_work_rest_cycle}`;
     } else {
       regimenNotice.style.display = "none";
     }
@@ -322,11 +448,11 @@ async function loadProvenanceContent() {
     const meth = await res.json();
     
     contentDiv.innerHTML = `
-      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Real-Time Open Data Sources & Scientific Models</h3>
+      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Real-Time Open Data Streams & Physics Engines</h3>
       <div style="font-size: 13.5px; line-height: 1.6; color: #cbd5e1;">
-        <p><strong>Open-Meteo Weather API:</strong> Live real-time surface meteorology (temperature, relative humidity, 10m wind speed, and shortwave/direct solar radiation flux in W/m²).</p>
-        <p style="margin-top: 8px;"><strong>NASA POWER API:</strong> Global analysis-ready solar irradiance and surface meteorological reanalysis.</p>
-        <p style="margin-top: 8px;"><strong>OpenStreetMap Nominatim:</strong> Global open reverse and forward geocoding with zero proprietary keys.</p>
+        <p><strong>Open-Meteo Open Weather API:</strong> Live real-time hourly & 7-day surface meteorology (temperature, relative humidity, 10m wind, and direct shortwave solar radiation flux in W/m²).</p>
+        <p style="margin-top: 8px;"><strong>OpenStreetMap Nominatim:</strong> Global open reverse and forward geocoding with street-level address resolution.</p>
+        <p style="margin-top: 8px;"><strong>NASA POWER API:</strong> Climatological reanalysis and solar surface irradiance validation.</p>
         <p style="margin-top: 8px;"><strong>Universal Thermal Climate Index (UTCI):</strong> ${meth.models.utci.formula}. Evaluates physiological energy balance under temperature, humidity, 10m wind, and shortwave solar irradiance.</p>
         <p style="margin-top: 8px;"><strong>Wet Bulb Globe Temperature (WBGT):</strong> ${meth.models.wbgt.formula}. Aligned with NIOSH 2016 occupational criteria.</p>
         <div style="margin-top: 15px; padding: 10px; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 4px;">
@@ -339,36 +465,57 @@ async function loadProvenanceContent() {
   }
 }
 
-/* Deterministic Scenario Comparison Runner */
+/* Dynamic Comparative Scenario Runner via Backend Physics Engine */
 function initScenarioRunner() {
   const btnRun = document.getElementById("btnRunScenario");
   if (!btnRun) return;
 
-  btnRun.addEventListener("click", () => {
-    const resA = {
-      utci: 35.2,
-      wbgt: 26.8,
-      hazard: 36.5,
-      level: "YELLOW (Watch)",
-      desc: "Evaporative sweating effective; moderate strain."
-    };
+  btnRun.addEventListener("click", async () => {
+    btnRun.textContent = "⌛ Computing Physics...";
 
-    const resB = {
-      utci: 48.4,
-      wbgt: 34.2,
-      hazard: 98.0,
-      level: "RED (Emergency Alert)",
-      desc: "Evaporation severely crippled; severe heat stroke hazard."
-    };
+    try {
+      // Scenario A: Dry & Windy (Ta=40°C, RH=15%, Wind=5.0m/s, Solar=150W/m²)
+      const resA_fetch = await fetch("/api/v1/thermal/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          temp_c: 40.0,
+          relative_humidity_pct: 15.0,
+          wind_speed_10m_m_s: 5.0,
+          solar_radiation_w_m2: 150.0
+        })
+      });
+      const dataA = await resA_fetch.json();
+      const hzA = dataA.hazard_analysis;
 
-    document.getElementById("scenA_utci").textContent = `${resA.utci}°C`;
-    document.getElementById("scenA_wbgt").textContent = `${resA.wbgt}°C`;
-    document.getElementById("scenA_hazard").textContent = `${resA.hazard}/100`;
-    document.getElementById("scenA_level").textContent = resA.level;
+      // Scenario B: Humid, Stagnant & High Solar (Ta=40°C, RH=70%, Wind=0.8m/s, Solar=800W/m²)
+      const resB_fetch = await fetch("/api/v1/thermal/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          temp_c: 40.0,
+          relative_humidity_pct: 70.0,
+          wind_speed_10m_m_s: 0.8,
+          solar_radiation_w_m2: 800.0
+        })
+      });
+      const dataB = await resB_fetch.json();
+      const hzB = dataB.hazard_analysis;
 
-    document.getElementById("scenB_utci").textContent = `${resB.utci}°C`;
-    document.getElementById("scenB_wbgt").textContent = `${resB.wbgt}°C`;
-    document.getElementById("scenB_hazard").textContent = `${resB.hazard}/100`;
-    document.getElementById("scenB_level").textContent = resB.level;
+      document.getElementById("scenA_utci").textContent = `${hzA.metrics.utci.value_c}°C (${hzA.metrics.utci.category})`;
+      document.getElementById("scenA_wbgt").textContent = `${hzA.metrics.wbgt.value_c}°C`;
+      document.getElementById("scenA_hazard").textContent = `${hzA.composite_hazard_score}/100`;
+      document.getElementById("scenA_level").textContent = hzA.composite_hazard_score >= 75 ? "RED (Emergency Alert)" : hzA.composite_hazard_score >= 50 ? "ORANGE (Warning)" : "YELLOW (Watch)";
+
+      document.getElementById("scenB_utci").textContent = `${hzB.metrics.utci.value_c}°C (${hzB.metrics.utci.category})`;
+      document.getElementById("scenB_wbgt").textContent = `${hzB.metrics.wbgt.value_c}°C`;
+      document.getElementById("scenB_hazard").textContent = `${hzB.composite_hazard_score}/100`;
+      document.getElementById("scenB_level").textContent = hzB.composite_hazard_score >= 75 ? "RED (Emergency Alert)" : hzB.composite_hazard_score >= 50 ? "ORANGE (Warning)" : "YELLOW (Watch)";
+
+    } catch (err) {
+      console.error("Scenario calculation error:", err);
+    } finally {
+      btnRun.textContent = "Run Comparative Calculation";
+    }
   });
 }

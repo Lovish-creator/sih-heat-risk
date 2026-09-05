@@ -117,3 +117,43 @@ def test_provenance_and_methodology_endpoints():
     res_meth = client.get("/api/v1/methodology")
     assert res_meth.status_code == 200
     assert "models" in res_meth.json()
+
+
+def test_thermal_calculate_post_endpoint():
+    # Test POST /api/v1/thermal/calculate
+    payload = {
+        "temp_c": 42.0,
+        "relative_humidity_pct": 35.0,
+        "wind_speed_10m_m_s": 2.0,
+        "solar_radiation_w_m2": 700.0
+    }
+    res = client.post("/api/v1/thermal/calculate", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    hazard = data["hazard_analysis"]
+    assert "utci" in hazard["metrics"]
+    assert "wbgt" in hazard["metrics"]
+    assert "heat_index" in hazard["metrics"]
+    assert hazard["metrics"]["utci"]["value_c"] > 35.0
+    assert hazard["composite_hazard_score"] > 50.0
+
+
+def test_dynamic_coordinates_risk_and_census():
+    # Test coordinates for Pune (18.5204, 73.8567)
+    res = client.get("/api/v1/risk/current?lat=18.5204&lon=73.8567")
+    assert res.status_code == 200
+    data = res.json()
+    assert "heat_risk_score" in data
+    assert data["city_name"] != ""
+
+    # Test map risk for detected coordinates
+    map_res = client.get("/api/v1/map/risk?lat=18.5204&lon=73.8567&day=1")
+    assert map_res.status_code == 200
+    map_data = map_res.json()
+    assert map_data["type"] == "FeatureCollection"
+    assert len(map_data["features"]) >= 1
+    props = map_data["features"][0]["properties"]
+    assert "demographics" in props
+    assert props["demographics"]["tot_pop"] > 0
+

@@ -40,6 +40,18 @@ def test_open_meteo_forecast():
     assert "temp_c" in forecast[0]
 
 
+def test_open_meteo_hourly_forecast():
+    """Verify 24-hour hourly live forecast from Open-Meteo."""
+    provider = OpenMeteoProvider()
+    hourly = provider.get_hourly_forecast(19.0760, 72.8777, "mumbai", hours=24)
+    assert len(hourly) >= 1
+    first_hour = hourly[0]
+    assert "temp_c" in first_hour
+    assert "utci_c" in first_hour
+    assert "wbgt_c" in first_hour
+    assert "hazard_score" in first_hour
+
+
 def test_nominatim_reverse_geocoder():
     """Verify OpenStreetMap Nominatim reverse geocoder returns human-readable location."""
     geocoder = NominatimGeocoder()
@@ -56,28 +68,34 @@ def test_live_weather_and_risk_endpoints():
     assert res_geo.status_code == 200
     assert "city" in res_geo.json()
 
-    # 2. Live Weather endpoint
+    # 2. Live Current Weather endpoint
     res_w = client.get("/api/v1/weather/current?lat=23.0225&lon=72.5714")
     assert res_w.status_code == 200
     data_w = res_w.json()
     assert "weather" in data_w
     assert "temp_c" in data_w["weather"]
 
-    # 3. Live Thermal endpoint
+    # 3. Live Hourly Weather endpoint
+    res_h = client.get("/api/v1/weather/hourly?lat=23.0225&lon=72.5714&hours=24")
+    assert res_h.status_code == 200
+    data_h = res_h.json()
+    assert "hourly_series" in data_h
+
+    # 4. Live Thermal endpoint
     res_th = client.get("/api/v1/thermal/current?lat=23.0225&lon=72.5714")
     assert res_th.status_code == 200
     data_th = res_th.json()
     assert "thermal_analysis" in data_th
     assert "utci" in data_th["thermal_analysis"]["metrics"]
 
-    # 4. Live Risk endpoint
+    # 5. Live Risk endpoint
     res_r = client.get("/api/v1/risk/current?lat=23.0225&lon=72.5714")
     assert res_r.status_code == 200
     data_r = res_r.json()
     assert "heat_risk_score" in data_r
     assert "alert_level" in data_r
 
-    # 5. Live Map endpoint with custom lat/lon
+    # 6. Live Map endpoint with custom lat/lon
     res_map = client.get("/api/v1/map/risk?lat=19.0760&lon=72.8777&day=1") # Mumbai
     assert res_map.status_code == 200
     data_map = res_map.json()

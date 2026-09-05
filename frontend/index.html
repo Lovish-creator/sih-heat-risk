@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIH26083 — Extreme Heatwave Early Warning & Thermal Stress Index</title>
+  <title>SIH26083 — Real-Time Extreme Heatwave Early Warning & Thermal Stress Index</title>
   
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -24,14 +24,17 @@
       <div class="logo-badge">SIH26083</div>
       <div>
         <h1>ThermoShield India</h1>
-        <p>MoES / NCMRWF — Real-Time Biometeorological Early Warning & Human Heat Risk Platform</p>
+        <p>MoES / NCMRWF — Real-Time Biometeorological Early Warning & Human Thermal Stress Index</p>
       </div>
     </div>
     <div class="header-controls">
-      <button class="btn-primary" id="btnDetectLocation">
+      <button class="btn-primary" id="btnDetectLocation" title="Use High-Accuracy GPS to detect your location">
         📍 Detect My Location
       </button>
-      <span class="badge badge-live">● LIVE API CONNECTED</span>
+      <button class="btn-secondary" id="btnManualCoords" title="Enter manual Lat/Lon coordinates">
+        🌐 Lat/Lon Input
+      </button>
+      <span class="badge badge-live" id="liveTimeBadge">● LIVE API CONNECTED</span>
       <button class="btn-secondary" id="provenanceBtn">Data Sources & Science</button>
       <a href="/docs" target="_blank" class="btn-secondary" style="text-decoration: none;">API Docs</a>
     </div>
@@ -39,33 +42,35 @@
 
   <!-- Main Content -->
   <main>
-    <!-- Detected Location Banner -->
+    <!-- Real-Time Location Banner -->
     <div class="location-banner" id="locationBanner">
       <div class="location-details">
         <span id="locationBannerText">
-          <strong>📍 Active Location:</strong> Ahmedabad (Gujarat) <span style="font-size: 12px; color: #94a3b8;">(Lat: 23.0225, Lon: 72.5714)</span>
+          <strong>📍 Initializing Real-Time Location...</strong>
         </span>
       </div>
-      <div style="font-size: 0.8rem; color: #34d399; font-weight: 600;">
-        ⚡ Powered by Open-Meteo & NASA POWER Live Streams
+      <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+        <span>⚡ Live Stream: Open-Meteo & NASA POWER</span>
+        <span style="color: #94a3b8;">|</span>
+        <span style="color: #38bdf8;">💡 Tip: Click anywhere on the map to analyze that exact spot</span>
       </div>
     </div>
 
     <!-- Toolbar: Search, City Selection & Forecast Horizon Tabs -->
     <div class="toolbar">
-      <!-- Search Any Location via OpenStreetMap -->
-      <div class="toolbar-group">
-        <span class="toolbar-label">Search Location:</span>
-        <div class="search-container">
+      <!-- Search Any Location via OpenStreetMap Nominatim -->
+      <div class="toolbar-group" style="flex: 1; min-width: 280px;">
+        <span class="toolbar-label">Search Any City / Town:</span>
+        <div class="search-container" style="width: 100%;">
           <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search any city, town, or address...">
+          <input type="text" id="searchInput" class="search-input" placeholder="Type city, town, district, or pin code (e.g. Pune, Jaipur, Andheri)...">
           <div id="searchResultsDropdown" class="search-results-dropdown"></div>
         </div>
       </div>
 
       <!-- Preset Pilot Cities -->
       <div class="toolbar-group">
-        <span class="toolbar-label">Or Select Pilot City:</span>
+        <span class="toolbar-label">Pilot Cities:</span>
         <select id="citySelect">
           <option value="ahmedabad" selected>Ahmedabad (Gujarat) — Pilot City</option>
           <option value="delhi">Delhi (NCT)</option>
@@ -78,7 +83,7 @@
       <div class="toolbar-group">
         <span class="toolbar-label">Forecast Horizon:</span>
         <div class="horizon-tabs">
-          <button class="horizon-tab active" data-day="1">Current (D+0)</button>
+          <button class="horizon-tab active" data-day="1">Today (D+0)</button>
           <button class="horizon-tab" data-day="2">Day 2 (D+1)</button>
           <button class="horizon-tab" data-day="3">Day 3 (D+2)</button>
           <button class="horizon-tab" data-day="4">Day 4 (D+3)</button>
@@ -102,7 +107,7 @@
       <div class="kpi-card">
         <div class="kpi-title">Real-Time Air Temp (Ta)</div>
         <div class="kpi-value" id="kpiTempValue">--°C</div>
-        <div class="kpi-sub" style="color: var(--text-muted);">Live 2m Dry-Bulb Observation</div>
+        <div class="kpi-sub" style="color: var(--text-muted);">Live 2m Observation at Location</div>
       </div>
 
       <!-- Physiological UTCI -->
@@ -128,28 +133,37 @@
 
     <!-- Main Dashboard Split Grid -->
     <div class="dashboard-grid">
-      <!-- Left: GIS Leaflet Ward Choropleth Map -->
+      <!-- Left: Real GIS Leaflet Map with Streets & Satellite -->
       <div class="card">
         <div class="card-header">
           <div>
-            <h2 class="card-title">Live Spatial Risk & Location Attribution</h2>
+            <h2 class="card-title">Real-World Map & Click-to-Pinpoint Location</h2>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-              Dynamic Leaflet map centered on your detected GPS coordinates with localized risk polygon
+              Click anywhere on the map or drag the pin to analyze that exact street or neighborhood in real time
             </p>
           </div>
         </div>
         <div id="map"></div>
-        <p style="font-size: 0.72rem; color: #64748b; margin-top: 8px; font-style: italic;">
-          * Note: Represents ward/zone risk attribution, fusing live meteorological forcing with demographic vulnerability.
-        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 0.5rem;">
+          <p style="font-size: 0.72rem; color: #94a3b8;">
+            🗺️ Switch between <strong>Real Street Map</strong> and <strong>Satellite Imagery</strong> using the top-right layer icon.
+          </p>
+          <span style="font-size: 0.72rem; color: #34d399; font-weight: 600;">
+            📍 Click or Drag Pin Anywhere
+          </span>
+        </div>
       </div>
 
-      <!-- Right: Trends & Persona Advisories -->
+      <!-- Right: Live Trends & Persona Advisories -->
       <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-        <!-- 5-Day Horizon Chart -->
+        <!-- Forecast Chart with Hourly / Daily Switcher -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title">Live 5-Day Multi-Parameter Forecast Horizon</h2>
+            <h2 class="card-title">Live Biometeorological Forecast Horizon</h2>
+            <div class="horizon-tabs" style="background-color: var(--bg-secondary);">
+              <button class="horizon-tab active" id="btnViewDaily">7-Day Daily</button>
+              <button class="horizon-tab" id="btnViewHourly">Next 24h Hourly</button>
+            </div>
           </div>
           <div class="chart-container">
             <canvas id="forecastChart"></canvas>
@@ -178,13 +192,13 @@
       </div>
     </div>
 
-    <!-- Comparative Scenario Runner (Why Temperature Alone is Insufficient) -->
+    <!-- Comparative Scenario Demo Section (Educational Sandbox) -->
     <div class="scenario-section">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <h2 style="font-size: 1.15rem; font-weight: 700; color: #38bdf8;">Deterministic Scenario Demo: Same Temperature ≠ Same Human Strain</h2>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #38bdf8;">Deterministic Scenario Sandbox: Same Temperature ≠ Same Human Strain</h2>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-            Demonstrating why conventional temperature-only alerts fail to capture real biometeorological physiological stress.
+            Physics proof demonstrating why temperature-only warnings fail without humidity, wind, and radiation.
           </p>
         </div>
         <button class="btn-secondary" id="btnRunScenario" style="background-color: #38bdf8; color: #0f172a; font-weight: 700;">
@@ -226,6 +240,27 @@
     </div>
   </main>
 
+  <!-- Manual Coordinates Modal -->
+  <div class="modal" id="coordsModal">
+    <div class="modal-content" style="max-width: 480px;">
+      <button class="modal-close" id="coordsClose">&times;</button>
+      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Enter Custom Lat/Lon Coordinates</h3>
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Latitude (-90 to +90):</label>
+          <input type="number" step="0.0001" id="inputLat" class="search-input" placeholder="e.g. 19.0760" style="padding-left: 1rem;">
+        </div>
+        <div>
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Longitude (-180 to +180):</label>
+          <input type="number" step="0.0001" id="inputLon" class="search-input" placeholder="e.g. 72.8777" style="padding-left: 1rem;">
+        </div>
+      </div>
+      <button class="btn-primary" id="btnApplyCoords" style="width: 100%; justify-content: center;">
+        Apply Coordinates & Analyze
+      </button>
+    </div>
+  </div>
+
   <!-- Provenance Modal -->
   <div class="modal" id="provenanceModal">
     <div class="modal-content">
@@ -239,7 +274,7 @@
   <!-- Footer -->
   <footer>
     <p>
-      SIH26083 Prototype — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Real Live Open Data (Open-Meteo, OpenStreetMap Nominatim, NASA POWER, UTCI COST 730, NIOSH 2016)
+      SIH26083 Platform — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Real Live Open Data (Open-Meteo Live API, OpenStreetMap Nominatim, NASA POWER, UTCI COST 730, NIOSH 2016)
     </p>
     <p style="margin-top: 4px; font-size: 0.72rem; color: #64748b;">
       Prototype relative risk estimate — not a clinical diagnosis or mortality forecast.
