@@ -157,3 +157,14 @@ def test_dynamic_coordinates_risk_and_census():
     assert "demographics" in props
     assert props["demographics"]["tot_pop"] > 0
 
+
+def test_calculations_reference_endpoint():
+    res = client.get("/api/v1/calculations/reference")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert "markdown_content" in data
+    assert "Universal Thermal Climate Index" in data["markdown_content"]
+    assert "calculations_verifier.py" in data["verifier_script"]
+
+

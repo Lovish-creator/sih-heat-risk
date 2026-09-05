@@ -580,7 +580,9 @@ def get_map_risk(
         geojson_path=geojson_file,
         census_path=census_file,
         hazard_data=hz,
-        consecutive_heat_days=day
+        consecutive_heat_days=day,
+        city_id=city,
+        city_center=center
     )
 
 
@@ -685,3 +687,19 @@ def get_methodology():
         },
         "disclaimer": "All predictions represent relative epidemiological risk scores; not a clinical prognosis or absolute death count."
     }
+
+
+@router.get("/api/v1/calculations/reference", tags=["Provenance & Science"])
+def get_calculations_reference():
+    """Return full mathematical formulas, derivations, and step-by-step verification references."""
+    path = "MATHEMATICAL_CALCULATIONS_REFERENCE.md"
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {
+            "status": "success",
+            "file_name": "MATHEMATICAL_CALCULATIONS_REFERENCE.md",
+            "markdown_content": content,
+            "verifier_script": "calculations_verifier.py"
+        }
+    return {"status": "error", "message": "Reference file not found."}
