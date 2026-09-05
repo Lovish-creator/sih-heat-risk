@@ -9,7 +9,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse, FileResponse
 
 from .api.endpoints import router as api_router
 
@@ -45,13 +45,34 @@ app.add_middleware(
 app.include_router(api_router)
 
 # Mount Static Files (Frontend)
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
 if os.path.exists(frontend_dir):
-    app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
+    try:
+        app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
+    except Exception:
+        pass
 
-    @app.get("/", include_in_schema=False)
-    async def serve_index():
-        index_path = os.path.join(frontend_dir, "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
-        return {"message": "SIH26083 API Running. Visit /docs for interactive Swagger UI."}
+@app.get("/", include_in_schema=False)
+async def serve_index():
+    index_path = os.path.join(frontend_dir, "index.html")
+    if os.path.exists(index_path):
+        try:
+            with open(index_path, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read())
+        except Exception:
+            pass
+    return HTMLResponse(content="""
+        <!DOCTYPE html>
+        <html>
+            <head><title>SIH26083 Platform Active</title></head>
+            <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; padding: 3rem; text-align: center;">
+                <h1 style="color: #38bdf8;">☀️ ThermoShield India (SIH26083)</h1>
+                <p style="color: #94a3b8; font-size: 1.1rem;">Ministry of Earth Sciences (MoES) / NCMRWF</p>
+                <div style="margin-top: 2rem;">
+                    <a href="/docs" style="background: #0284c7; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        🚀 Open Interactive Swagger API Docs
+                    </a>
+                </div>
+            </body>
+        </html>
+    """)

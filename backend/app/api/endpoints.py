@@ -662,24 +662,39 @@ def get_advisories(
     }
 
 
+def _find_reference_file(filename: str) -> Optional[str]:
+    """Find markdown/json file across multiple relative and absolute project paths."""
+    candidates = [
+        filename,
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", filename)),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", filename)),
+        os.path.abspath(os.path.join(os.getcwd(), filename))
+    ]
+    for c in candidates:
+        if c and os.path.exists(c):
+            return c
+    return None
+
+
 @router.get("/api/v1/sources", tags=["Provenance & Science"])
 @router.get("/api/v1/provenance/sources", tags=["Provenance & Science"])
 def get_sources():
     """Expose complete authoritative data source audit registry and official websites."""
-    master_path = "DATA_SOURCES_AND_PROVENANCE.md"
-    fallback_path = "data/SOURCE_REGISTRY.md"
-    target_path = master_path if os.path.exists(master_path) else fallback_path
+    target_path = _find_reference_file("DATA_SOURCES_AND_PROVENANCE.md") or _find_reference_file("data/SOURCE_REGISTRY.md")
     
-    if os.path.exists(target_path):
-        with open(target_path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return {
-            "status": "success",
-            "file_name": target_path,
-            "registry_markdown": content,
-            "total_registered_sources": 20,
-            "audit_standard": "100% Transparent, Fully Verified, Zero Synthetic/Fake Assumptions"
-        }
+    if target_path and os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return {
+                "status": "success",
+                "file_name": os.path.basename(target_path),
+                "registry_markdown": content,
+                "total_registered_sources": 20,
+                "audit_standard": "100% Transparent, Fully Verified, Zero Synthetic/Fake Assumptions"
+            }
+        except Exception:
+            pass
     return {"status": "error", "registry_markdown": "# Source registry not found", "total_registered_sources": 0}
 
 
@@ -716,29 +731,35 @@ def get_methodology():
 @router.get("/api/v1/calculations/reference", tags=["Provenance & Science"])
 def get_calculations_reference():
     """Return full mathematical formulas, derivations, and step-by-step verification references."""
-    path = "MATHEMATICAL_CALCULATIONS_REFERENCE.md"
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return {
-            "status": "success",
-            "file_name": "MATHEMATICAL_CALCULATIONS_REFERENCE.md",
-            "markdown_content": content,
-            "verifier_script": "calculations_verifier.py"
-        }
+    target_path = _find_reference_file("MATHEMATICAL_CALCULATIONS_REFERENCE.md")
+    if target_path and os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return {
+                "status": "success",
+                "file_name": "MATHEMATICAL_CALCULATIONS_REFERENCE.md",
+                "markdown_content": content,
+                "verifier_script": "calculations_verifier.py"
+            }
+        except Exception:
+            pass
     return {"status": "error", "message": "Reference file not found."}
 
 
 @router.get("/api/v1/downscaling/reference", tags=["Provenance & Science"])
 def get_downscaling_reference():
     """Return complete technical architecture whitepaper explaining ward-level microclimate downscaling."""
-    path = "DOWNSCALING_ARCHITECTURE_REFERENCE.md"
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            content = f.read()
-        return {
-            "status": "success",
-            "file_name": "DOWNSCALING_ARCHITECTURE_REFERENCE.md",
-            "markdown_content": content
-        }
+    target_path = _find_reference_file("DOWNSCALING_ARCHITECTURE_REFERENCE.md")
+    if target_path and os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return {
+                "status": "success",
+                "file_name": "DOWNSCALING_ARCHITECTURE_REFERENCE.md",
+                "markdown_content": content
+            }
+        except Exception:
+            pass
     return {"status": "error", "message": "Downscaling reference file not found."}
