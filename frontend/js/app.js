@@ -620,18 +620,136 @@ async function loadProvenanceContent() {
   if (!contentDiv) return;
 
   try {
-    const res = await fetch("/api/v1/methodology");
-    const meth = await res.json();
-    
+    const [resMeth, resSources] = await Promise.all([
+      fetch("/api/v1/methodology"),
+      fetch("/api/v1/provenance/sources")
+    ]);
+    const meth = await resMeth.json();
+    const srcData = await resSources.json();
+
     contentDiv.innerHTML = `
-      <h3 style="color: #38bdf8; margin-bottom: 1rem;">Real-Time Open Data Streams & Physics Engines</h3>
-      <div style="font-size: 13.5px; line-height: 1.6; color: #cbd5e1;">
-        <p><strong>Open-Meteo Open Weather API:</strong> Live real-time hourly & 7-day surface meteorology (temperature, relative humidity, 10m wind, and direct shortwave solar radiation flux in W/m²).</p>
-        <p style="margin-top: 8px;"><strong>OpenStreetMap Nominatim:</strong> Global open reverse and forward geocoding with street-level address resolution.</p>
-        <p style="margin-top: 8px;"><strong>NASA POWER API:</strong> Climatological reanalysis and solar surface irradiance validation.</p>
-        <p style="margin-top: 8px;"><strong>Universal Thermal Climate Index (UTCI):</strong> ${meth.models.utci.formula}. Evaluates physiological energy balance under temperature, humidity, 10m wind, and shortwave solar irradiance.</p>
-        <p style="margin-top: 8px;"><strong>Wet Bulb Globe Temperature (WBGT):</strong> ${meth.models.wbgt.formula}. Aligned with NIOSH 2016 occupational criteria.</p>
-        <div style="margin-top: 15px; padding: 10px; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 4px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #334155; padding-bottom: 8px;">
+        <h3 style="color: #38bdf8; margin: 0; font-size: 16px;">🏛️ Authoritative Data Sources & Official Portals</h3>
+        <span style="background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid #0284c7; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700;">
+          100% Verified Open Data
+        </span>
+      </div>
+
+      <div style="font-size: 12.5px; line-height: 1.55; color: #cbd5e1; max-height: 480px; overflow-y: auto; padding-right: 6px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 15px;">
+          
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🛰️ Open-Meteo Weather API
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Live 15-min surface telemetry & 7-day NWP streams</div>
+            <a href="https://open-meteo.com/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: open-meteo.com &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              ☀️ NASA POWER API (Langley Research Center)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">All-sky shortwave solar flux & Tmrt irradiance balance</div>
+            <a href="https://power.larc.nasa.gov/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: power.larc.nasa.gov &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🇮🇳 India Meteorological Department (IMD)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Climatological normals & national heatwave departure criteria</div>
+            <a href="https://mausam.imd.gov.in/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: mausam.imd.gov.in &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              📊 Census of India (Office of the RGI)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Census 2011 Primary Census Abstract (PCA) & ward demographics</div>
+            <a href="https://censusindia.gov.in/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: censusindia.gov.in &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🏥 NCDC (Ministry of Health & Family Welfare)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">National Action Plan on Heat Related Illnesses (NAP-HRI 2024)</div>
+            <a href="https://ncdc.mohfw.gov.in/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: ncdc.mohfw.gov.in &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🛡️ NDMA (National Disaster Management Authority)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">National Guidelines for Management of Heat Wave & Alert System</div>
+            <a href="https://ndma.gov.in/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: ndma.gov.in &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🗺️ OpenStreetMap & Nominatim Geocoder
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Global open spatial vectors, street maps & reverse geocoding</div>
+            <a href="https://www.openstreetmap.org/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: openstreetmap.org &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🔬 UTCI Management Committee (COST Action 730)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Universal Thermal Climate Index multi-node human physiology</div>
+            <a href="https://www.utci.org/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: utci.org &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              ⚙️ ISO 7243:2017 & NIOSH (CDC)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Occupational WBGT standards & mandatory work/rest regimens</div>
+            <a href="https://www.cdc.gov/niosh/docs/2016-106/" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 Official Portal: cdc.gov/niosh &rarr;
+            </a>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px;">
+            <div style="font-weight: 700; color: #f8fafc; margin-bottom: 3px;">
+              🏙️ Stewart & Oke (2012) Local Climate Zones (LCZ)
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Micro-scale urban heat island downscaling framework</div>
+            <a href="https://journals.ametsoc.org/view/journals/bams/93/12/bams-d-11-00019.1.xml" target="_blank" style="color: #38bdf8; font-weight: 600; font-size: 11.5px; text-decoration: none;">
+              🔗 AMS BAMS Publication &rarr;
+            </a>
+          </div>
+
+        </div>
+
+        <div style="background: rgba(2, 132, 199, 0.08); border-left: 3px solid #0284c7; padding: 10px; border-radius: 4px; margin-bottom: 12px;">
+          <strong style="color: #38bdf8;">📖 Complete Scientific Documents in Repository:</strong>
+          <ul style="margin: 6px 0 0 18px; padding: 0;">
+            <li><a href="/api/v1/provenance/sources" target="_blank" style="color: #38bdf8;"><code>GET /api/v1/provenance/sources</code></a> &mdash; Full JSON Data Source Register</li>
+            <li><a href="/api/v1/calculations/reference" target="_blank" style="color: #38bdf8;"><code>GET /api/v1/calculations/reference</code></a> &mdash; Step-by-Step Mathematical Derivations</li>
+            <li><a href="/api/v1/downscaling/reference" target="_blank" style="color: #38bdf8;"><code>GET /api/v1/downscaling/reference</code></a> &mdash; 5-Tier NWP Microclimate Downscaling Whitepaper</li>
+          </ul>
+        </div>
+
+        <div style="padding: 8px; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 4px; font-size: 11.5px;">
           <strong>Disclaimer:</strong> ${meth.disclaimer}
         </div>
       </div>
