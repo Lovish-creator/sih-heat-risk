@@ -536,7 +536,7 @@ function renderWardCards(wards) {
           </span>
         </div>
         <div class="ward-card-subtitle">
-          🌡️ <strong>${w.temp_c}°C</strong> Air Temp &bull; Risk: <strong>${w.heat_risk_score}/100</strong>
+          🌡️ <strong>${w.temp_c}°C</strong> <span style="font-size: 10px; color: ${w.uhi_delta_c >= 0 ? '#ef4444' : '#10b981'}; font-weight: 700;">(${w.uhi_delta_c !== undefined ? (w.uhi_delta_c >= 0 ? '+' + w.uhi_delta_c : w.uhi_delta_c) : '+0.0'}°C UHI)</span> &bull; 🏙️ <span style="color: #38bdf8; font-weight: 600;">${w.lcz_class || 'LCZ 3'}</span>
         </div>
         <div class="ward-metrics-row">
           <span class="ward-metric-badge">🔥 UTCI: ${w.utci_c}°C</span>
@@ -544,8 +544,8 @@ function renderWardCards(wards) {
           <span class="ward-metric-badge">📊 Vuln: ${w.vulnerability_score}/100</span>
         </div>
         <div class="ward-demo-summary">
-          <div>🔨 <strong>Outdoor Labor:</strong> ${w.outdoor_worker_pct}%</div>
-          <div>👴 <strong>Elderly (60+):</strong> ${w.elderly_pct}%</div>
+          <div>📐 <strong>Area:</strong> ${w.area_sqkm} km² (${w.area_hectares || Math.round(w.area_sqkm * 100)} ha) &bull; <strong>Density:</strong> ${Math.round(w.pop_density_per_sqkm || 1200).toLocaleString()}/km²</div>
+          <div>👥 <strong>Pop:</strong> ${w.tot_pop ? w.tot_pop.toLocaleString() : 'N/A'} &bull; 🔨 <strong>Labor:</strong> ${w.outdoor_worker_pct}% &bull; 👴 <strong>60+:</strong> ${w.elderly_pct}%</div>
           <div style="margin-top: 4px; color: #38bdf8; font-weight: 600; font-size: 11px;">
             📍 Click to zoom on map &rarr;
           </div>

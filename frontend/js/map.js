@@ -167,17 +167,18 @@ async function loadWardRiskLayer(cityId = "abohar", horizonDay = 1, customLat = 
               </span>
             </div>
             <div style="font-size: 11px; color: #475569; margin-bottom: 6px;">
-              ${p.city_name || ''} &bull; ${p.zone_name || 'Municipal Ward'}
+              ${p.city_name || ''} &bull; ${p.zone_name || 'Municipal Ward'} &bull; <span style="color: #0284c7; font-weight: 600;">${p.lcz_class || 'LCZ 3 Compact Low-Rise'}</span>
             </div>
             <div style="background-color: #f1f5f9; padding: 5px 8px; border-radius: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
               <span style="font-weight: 600; color: #334155;">Relative Heat Risk:</span>
               <span style="color: ${p.alert_color}; font-weight: 800; font-size: 14px;">${p.heat_risk_score} / 100</span>
             </div>
             <div style="font-size: 11.5px; line-height: 1.45; color: #334155;">
-              <div>🌡️ <strong>Air Temp (Ta):</strong> ${lw.temp_c !== undefined ? lw.temp_c : '--'}°C | <strong>RH:</strong> ${lw.relative_humidity_pct !== undefined ? lw.relative_humidity_pct : '--'}%</div>
+              <div>🌡️ <strong>Air Temp (Ta):</strong> ${lw.temp_c !== undefined ? lw.temp_c : '--'}°C <span style="font-size: 10.5px; color: ${p.uhi_delta_c >= 0 ? '#ef4444' : '#059669'}; font-weight: 600;">(${p.uhi_delta_c !== undefined ? (p.uhi_delta_c >= 0 ? '+' + p.uhi_delta_c : p.uhi_delta_c) : '+0.0'}°C UHI)</span> | <strong>RH:</strong> ${lw.relative_humidity_pct !== undefined ? lw.relative_humidity_pct : '--'}%</div>
               <div>🔥 <strong>Physiological UTCI:</strong> ${p.utci_val}°C (${p.utci_category || 'Heat Stress'})</div>
               <div>💦 <strong>Occupational WBGT:</strong> ${p.wbgt_val}°C (${p.wbgt_risk || 'Risk'})</div>
               <hr style="border-color: #cbd5e1; margin: 4px 0;">
+              <div>📐 <strong>Physical Ward Area:</strong> ${d.area_sqkm ? `${d.area_sqkm} km² (${d.area_hectares || Math.round(d.area_sqkm * 100)} ha)` : 'N/A'}</div>
               <div>👥 <strong>Population:</strong> ${d.tot_pop ? d.tot_pop.toLocaleString() : 'N/A'} (Density: ${d.pop_density_per_sqkm ? Math.round(d.pop_density_per_sqkm).toLocaleString() : 'N/A'}/km²)</div>
               <div>👴 <strong>Elderly (60+):</strong> ${d.pop_elderly_60plus ? d.pop_elderly_60plus.toLocaleString() : 'N/A'} (${d.elderly_percentage}%)</div>
               <div>🔨 <strong>Outdoor Laborers:</strong> ${d.workers_outdoor ? d.workers_outdoor.toLocaleString() : 'N/A'} (${d.outdoor_worker_percentage}%)</div>
