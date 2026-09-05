@@ -20,21 +20,29 @@ async def app(scope, receive, send):
     ASGI Proxy Wrapper for Vercel Serverless Functions.
     """
     if scope.get("type") in ("http", "websocket"):
-        headers_dict = {k.decode("latin1").lower(): v.decode("latin1") for k, v in scope.get("headers", [])}
-        path = scope.get("path", "")
-        
-        # Immediate debug probe
-        if "debug-scope" in path or "debug" in headers_dict.get("x-matched-path", ""):
-            body = json.dumps({
+        query_str = scope.get("query_string", b"").decode("latin1")
+        headers_list = scope.get("headers", [])
+        headers_dict = {k.decode("latin1").lower(): v.decode("latin1") for k, v in headers_list}
+
+        # If inspect query is passed, return full diagnostic inspection of scope and environ
+        if "inspect=1" in query_str or headers_dict.get("x-inspect") == "1":
+            diagnostic = {
+                "scope_keys": list(scope.keys()),
                 "scope_path": scope.get("path"),
                 "scope_raw_path": scope.get("raw_path", b"").decode("latin1", errors="ignore"),
-                "headers": headers_dict,
-            }, indent=2).encode("utf-8")
-            
+                "scope_query_string": query_str,
+                "scope_headers": headers_dict,
+                "environ_keys": [k for k in os.environ.keys() if "VERCEL" in k or "PATH" in k or "URL" in k or "ROUTE" in k or "REQUEST" in k],
+                "environ_vercel": {k: os.environ[k] for k in os.environ if k.startswith("VERCEL_")},
+            }
+            body = json.dumps(diagnostic, indent=2).encode("utf-8")
             await send({
                 "type": "http.response.start",
                 "status": 200,
-                "headers": [[b"content-type", b"application/json"]],
+                "headers": [
+                    [b"content-type", b"application/json"],
+                    [b"access-control-allow-origin", b"*"]
+                ],
             })
             await send({
                 "type": "http.response.body",
