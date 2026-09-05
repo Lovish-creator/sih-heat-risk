@@ -4,13 +4,14 @@
  * OpenStreetMap Nominatim search, and hourly/daily biometeorological streams.
  */
 
-let currentCity = "ahmedabad";
+let currentCity = "abohar";
 let customCoordinates = null; // { lat, lon, name, city }
 let currentHorizonDay = 1;
 let currentPersona = "general_public";
 let cachedForecastData = null;
 let cachedHourlyData = null;
 let cachedAdvisories = null;
+let cachedWardsData = [];
 let isHourlyView = false;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function initApp() {
-  initMap();
+  initMap(30.14505, 74.19566, 12);
   await loadLocations();
   
   // Try high-accuracy location auto-detection on first visit
@@ -45,6 +46,25 @@ function setupEventListeners() {
       const locBanner = document.getElementById("locationBannerText");
       if (locBanner) locBanner.innerHTML = `<strong>📍 Selected City:</strong> ${e.target.options[e.target.selectedIndex].text}`;
       refreshDashboardData();
+    });
+  }
+
+  // Ward search / filter input
+  const wardFilter = document.getElementById("wardFilterInput");
+  if (wardFilter) {
+    wardFilter.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!cachedWardsData || cachedWardsData.length === 0) return;
+      if (!q) {
+        renderWardCards(cachedWardsData);
+      } else {
+        const filtered = cachedWardsData.filter(w => 
+          (w.ward_name && w.ward_name.toLowerCase().includes(q)) ||
+          (`ward ${w.ward_number}`.includes(q)) ||
+          (w.alert_level && w.alert_level.toLowerCase().includes(q))
+        );
+        renderWardCards(filtered);
+      }
     });
   }
 
@@ -345,6 +365,7 @@ async function refreshDashboardData() {
 
     // 5. Update View Components
     updateHorizonView(liveWeather);
+    await fetchWardsData();
     
     if (isHourlyView) {
       await fetchHourlyData();
@@ -380,6 +401,88 @@ async function fetchHourlyData() {
   }
 }
 
+async function fetchWardsData() {
+  try {
+    let wardsUrl = `/api/v1/wards/summary?day=${currentHorizonDay}&`;
+    if (customCoordinates) {
+      wardsUrl += `lat=${customCoordinates.lat}&lon=${customCoordinates.lon}`;
+    } else {
+      wardsUrl += `city=${currentCity}`;
+    }
+
+    const res = await fetch(wardsUrl);
+    if (!res.ok) throw new Error("Failed to fetch wards summary");
+    const data = await res.json();
+
+    // Update counters
+    const dist = data.alert_distribution || {};
+    const elRed = document.getElementById("statRed");
+    const elOrange = document.getElementById("statOrange");
+    const elYellow = document.getElementById("statYellow");
+    const elGreen = document.getElementById("statGreen");
+    const elCount = document.getElementById("wardCountBadge");
+    const elAttr = document.getElementById("wardCensusAttribution");
+
+    if (elRed) elRed.textContent = `🔴 ${dist.red_emergency || 0} Red Emergency`;
+    if (elOrange) elOrange.textContent = `🟠 ${dist.orange_warning || 0} Orange Warning`;
+    if (elYellow) elYellow.textContent = `🟡 ${dist.yellow_watch || 0} Yellow Watch`;
+    if (elGreen) elGreen.textContent = `🟢 ${dist.green_normal || 0} Normal`;
+
+    if (elCount) elCount.textContent = `${data.total_wards || 50} OFFICIAL MUNICIPAL WARDS`;
+    if (elAttr) elAttr.textContent = `${data.city_name} (${data.state_name}) — ${data.census_source || 'Census 2011 PCA'}`;
+
+    cachedWardsData = data.all_wards || [];
+    renderWardCards(cachedWardsData);
+  } catch (err) {
+    console.error("Ward summary fetch error:", err);
+  }
+}
+
+function renderWardCards(wards) {
+  const container = document.getElementById("wardGridContainer");
+  if (!container) return;
+
+  if (!wards || wards.length === 0) {
+    container.innerHTML = `<div style="color: #94a3b8; padding: 1rem;">No matching municipal wards found.</div>`;
+    return;
+  }
+
+  container.innerHTML = wards.map(w => {
+    const alertClass = w.alert_level === 'RED' ? 'border-red' :
+                       w.alert_level === 'ORANGE' ? 'border-orange' :
+                       w.alert_level === 'YELLOW' ? 'border-yellow' : 'border-green';
+    
+    const badgeColor = w.alert_color || '#10b981';
+    const textColor = w.alert_level === 'YELLOW' ? '#000' : '#fff';
+
+    return `
+      <div class="ward-card ${alertClass}" onclick="zoomToWard(${w.ward_number})">
+        <div class="ward-card-title">
+          <span>${w.ward_name || `Ward ${w.ward_number}`}</span>
+          <span style="background-color: ${badgeColor}; color: ${textColor}; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">
+            ${w.alert_level} (${w.heat_risk_score})
+          </span>
+        </div>
+        <div class="ward-card-subtitle">
+          🌡️ <strong>${w.temp_c}°C</strong> Air Temp &bull; Risk: <strong>${w.heat_risk_score}/100</strong>
+        </div>
+        <div class="ward-metrics-row">
+          <span class="ward-metric-badge">🔥 UTCI: ${w.utci_c}°C</span>
+          <span class="ward-metric-badge">💦 WBGT: ${w.wbgt_c}°C</span>
+          <span class="ward-metric-badge">📊 Vuln: ${w.vulnerability_score}/100</span>
+        </div>
+        <div class="ward-demo-summary">
+          <div>🔨 <strong>Outdoor Labor:</strong> ${w.outdoor_worker_pct}%</div>
+          <div>👴 <strong>Elderly (60+):</strong> ${w.elderly_pct}%</div>
+          <div style="margin-top: 4px; color: #38bdf8; font-weight: 600; font-size: 11px;">
+            📍 Click to zoom on map &rarr;
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 function updateHorizonView(liveWeather = null) {
   if (!cachedForecastData || cachedForecastData.length === 0) return;
 
@@ -410,10 +513,11 @@ function updateHorizonView(liveWeather = null) {
   if (kpiWbgt) kpiWbgt.textContent = `${currentItem.wbgt_c}°C`;
   if (kpiActionSummary) kpiActionSummary.textContent = currentItem.action_summary;
 
-  // Refresh GIS Map for this Horizon Day & Coordinates
+  // Refresh GIS Map and Wards for this Horizon Day & Coordinates
   const lat = customCoordinates ? customCoordinates.lat : null;
   const lon = customCoordinates ? customCoordinates.lon : null;
   loadWardRiskLayer(currentCity, currentHorizonDay, lat, lon);
+  fetchWardsData();
 }
 
 function renderPersonaAdvisories() {

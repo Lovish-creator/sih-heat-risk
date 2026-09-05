@@ -27,7 +27,7 @@ def test_data_status_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "upstream_sources" in data
-    assert data["active_city"] == "Ahmedabad"
+    assert "Ahmedabad" in data["active_city"]
 
 
 def test_locations_endpoint():
@@ -92,11 +92,36 @@ def test_risk_endpoints():
 
 
 def test_map_risk_endpoint():
-    response = client.get("/api/v1/map/risk?city=ahmedabad&day=1")
+    response = client.get("/api/v1/map/risk?city=abohar&day=1")
     assert response.status_code == 200
     data = response.json()
     assert data["type"] == "FeatureCollection"
-    assert len(data["features"]) == 20
+    assert len(data["features"]) == 50  # Exactly 50 official municipal wards of Abohar
+    assert data["features"][0]["properties"]["ward_number"] == 1
+    assert "heat_risk_score" in data["features"][0]["properties"]
+    assert "demographics" in data["features"][0]["properties"]
+
+    # Test Ahmedabad 48 wards
+    res_ahm = client.get("/api/v1/map/risk?city=ahmedabad&day=1")
+    assert res_ahm.status_code == 200
+    assert len(res_ahm.json()["features"]) == 48
+
+
+def test_wards_summary_endpoint():
+    # Test Abohar 50 wards summary
+    res = client.get("/api/v1/wards/summary?city=abohar&day=1")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_wards"] == 50
+    assert len(data["all_wards"]) == 50
+    assert "alert_distribution" in data
+    assert "highest_risk_ward" in data
+    assert len(data["top_hotspots"]) == 10
+
+    # Ensure ranking is sorted descending by heat risk score
+    rankings = data["all_wards"]
+    for i in range(len(rankings) - 1):
+        assert rankings[i]["heat_risk_score"] >= rankings[i + 1]["heat_risk_score"]
 
 
 def test_advisory_endpoint():

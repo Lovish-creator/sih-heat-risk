@@ -8,6 +8,7 @@ let mapInstance = null;
 let geojsonLayer = null;
 let userGpsMarker = null;
 let layerControl = null;
+let wardLayersMap = {};
 
 function getColorByRisk(riskScore) {
   if (riskScore > 75.0) return "#ef4444"; // Red
@@ -16,7 +17,7 @@ function getColorByRisk(riskScore) {
   return "#10b981"; // Green
 }
 
-function initMap(centerLat = 20.5937, centerLon = 78.9629, zoomLevel = 5) {
+function initMap(centerLat = 30.14505, centerLon = 74.19566, zoomLevel = 12) {
   if (mapInstance) {
     mapInstance.remove();
   }
@@ -110,10 +111,10 @@ function setUserLocationMarker(lat, lon, label = "Selected Location", draggable 
     }
   });
 
-  mapInstance.setView([lat, lon], Math.max(mapInstance.getZoom(), 11));
+  mapInstance.setView([lat, lon], Math.max(mapInstance.getZoom(), 12));
 }
 
-async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1, customLat = null, customLon = null) {
+async function loadWardRiskLayer(cityId = "abohar", horizonDay = 1, customLat = null, customLon = null) {
   if (!mapInstance) {
     initMap();
   }
@@ -134,35 +135,52 @@ async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1, customLat
       mapInstance.removeLayer(geojsonLayer);
     }
 
+    wardLayersMap = {};
+
     geojsonLayer = L.geoJSON(geojsonData, {
       style: function (feature) {
         const risk = feature.properties.heat_risk_score || 0;
         return {
           fillColor: getColorByRisk(risk),
           weight: 2,
-          opacity: 0.9,
+          opacity: 0.95,
           color: '#ffffff',
-          dashArray: '3',
-          fillOpacity: 0.55
+          dashArray: '2',
+          fillOpacity: 0.58
         };
       },
       onEachFeature: function (feature, layer) {
         const p = feature.properties;
         const d = p.demographics || {};
+        const lw = p.local_weather || {};
         
+        if (p.ward_number !== undefined) {
+          wardLayersMap[p.ward_number] = layer;
+        }
+
         const popupContent = `
-          <div style="font-family: 'Inter', sans-serif; font-size: 13px; min-width: 220px;">
-            <h4 style="margin: 0 0 6px 0; color: #0284c7; font-size: 14px;">${p.ward_name}</h4>
-            <div style="margin-bottom: 6px;">
-              <strong>Heat-Health Risk:</strong> <span style="color: ${p.alert_color}; font-weight: bold;">${p.heat_risk_score} / 100 (${p.alert_level})</span>
+          <div style="font-family: 'Inter', sans-serif; font-size: 12.5px; min-width: 250px; color: #0f172a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <h4 style="margin: 0; color: #0284c7; font-size: 13.5px; font-weight: 700;">${p.ward_name || `Ward ${p.ward_number}`}</h4>
+              <span style="background-color: ${p.alert_color}; color: ${p.alert_level === 'YELLOW' ? '#000' : '#fff'}; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">
+                ${p.alert_level}
+              </span>
             </div>
-            <hr style="border-color: #cbd5e1; margin: 4px 0;">
-            <div style="font-size: 11.5px; color: #334155; line-height: 1.4;">
-              <div><strong>UTCI:</strong> ${p.utci_val}°C (${p.utci_category})</div>
-              <div><strong>WBGT:</strong> ${p.wbgt_val}°C (${p.wbgt_risk})</div>
-              <div><strong>Elderly (60+):</strong> ${d.pop_elderly_60plus?.toLocaleString() || 'N/A'} (${d.elderly_percentage}%)</div>
-              <div><strong>Outdoor Workers:</strong> ${d.workers_outdoor?.toLocaleString() || 'N/A'} (${d.outdoor_worker_percentage}%)</div>
-              <div><strong>Pop Density:</strong> ${Math.round(d.pop_density_per_sqkm)?.toLocaleString() || 'N/A'} /km²</div>
+            <div style="font-size: 11px; color: #475569; margin-bottom: 6px;">
+              ${p.city_name || ''} &bull; ${p.zone_name || 'Municipal Ward'}
+            </div>
+            <div style="background-color: #f1f5f9; padding: 5px 8px; border-radius: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 600; color: #334155;">Relative Heat Risk:</span>
+              <span style="color: ${p.alert_color}; font-weight: 800; font-size: 14px;">${p.heat_risk_score} / 100</span>
+            </div>
+            <div style="font-size: 11.5px; line-height: 1.45; color: #334155;">
+              <div>🌡️ <strong>Air Temp (Ta):</strong> ${lw.temp_c !== undefined ? lw.temp_c : '--'}°C | <strong>RH:</strong> ${lw.relative_humidity_pct !== undefined ? lw.relative_humidity_pct : '--'}%</div>
+              <div>🔥 <strong>Physiological UTCI:</strong> ${p.utci_val}°C (${p.utci_category || 'Heat Stress'})</div>
+              <div>💦 <strong>Occupational WBGT:</strong> ${p.wbgt_val}°C (${p.wbgt_risk || 'Risk'})</div>
+              <hr style="border-color: #cbd5e1; margin: 4px 0;">
+              <div>👥 <strong>Population:</strong> ${d.tot_pop ? d.tot_pop.toLocaleString() : 'N/A'} (Density: ${d.pop_density_per_sqkm ? Math.round(d.pop_density_per_sqkm).toLocaleString() : 'N/A'}/km²)</div>
+              <div>👴 <strong>Elderly (60+):</strong> ${d.pop_elderly_60plus ? d.pop_elderly_60plus.toLocaleString() : 'N/A'} (${d.elderly_percentage}%)</div>
+              <div>🔨 <strong>Outdoor Laborers:</strong> ${d.workers_outdoor ? d.workers_outdoor.toLocaleString() : 'N/A'} (${d.outdoor_worker_percentage}%)</div>
             </div>
           </div>
         `;
@@ -172,9 +190,9 @@ async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1, customLat
           mouseover: function (e) {
             const l = e.target;
             l.setStyle({
-              weight: 3,
-              color: '#0284c7',
-              fillOpacity: 0.75
+              weight: 3.5,
+              color: '#38bdf8',
+              fillOpacity: 0.8
             });
             l.bringToFront();
           },
@@ -186,10 +204,27 @@ async function loadWardRiskLayer(cityId = "ahmedabad", horizonDay = 1, customLat
     }).addTo(mapInstance);
 
     if (customLat === null || customLon === null) {
-      mapInstance.fitBounds(geojsonLayer.getBounds());
+      mapInstance.fitBounds(geojsonLayer.getBounds(), { padding: [20, 20] });
     }
 
   } catch (err) {
     console.error("GIS Error:", err);
   }
+}
+
+function zoomToWard(wardNumber) {
+  if (!mapInstance || !wardLayersMap[wardNumber]) return;
+  const layer = wardLayersMap[wardNumber];
+  mapInstance.fitBounds(layer.getBounds(), { padding: [50, 50], maxZoom: 15 });
+  layer.openPopup();
+  layer.setStyle({
+    weight: 4,
+    color: '#38bdf8',
+    fillOpacity: 0.85
+  });
+  setTimeout(() => {
+    if (geojsonLayer && wardLayersMap[wardNumber]) {
+      geojsonLayer.resetStyle(wardLayersMap[wardNumber]);
+    }
+  }, 3500);
 }

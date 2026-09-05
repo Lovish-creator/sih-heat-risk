@@ -72,8 +72,10 @@
       <div class="toolbar-group">
         <span class="toolbar-label">Pilot Cities:</span>
         <select id="citySelect">
-          <option value="ahmedabad" selected>Ahmedabad (Gujarat) — Pilot City</option>
-          <option value="delhi">Delhi (NCT)</option>
+          <option value="abohar" selected>Abohar (Punjab) — 50 Municipal Wards</option>
+          <option value="ahmedabad">Ahmedabad (Gujarat) — 48 Wards</option>
+          <option value="delhi">Delhi (NCT) — 50 Divisions</option>
+          <option value="mumbai">Mumbai (Maharashtra) — 24 Wards</option>
           <option value="nagpur">Nagpur (Maharashtra)</option>
           <option value="hyderabad">Hyderabad (Telangana)</option>
         </select>
@@ -189,6 +191,36 @@
             <li class="advisory-item">Loading actionable advisories...</li>
           </ul>
         </div>
+      </div>
+    </div>
+
+    <!-- Official Municipal Ward-Wise Heat Risk & Hotspots (50 Wards Analysis) -->
+    <div class="ward-section">
+      <div class="ward-header">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🏛️ Municipal Ward-Wise Risk & Hotspot Ranking</span>
+            <span class="badge badge-live" id="wardCountBadge">50 OFFICIAL MUNICIPAL WARDS</span>
+          </h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;" id="wardCensusAttribution">
+            Census of India 2011 PCA & Punjab Municipal Corporation Delimitation (50 Wards)
+          </p>
+        </div>
+        <div class="ward-stats-pills" id="wardStatsPills">
+          <span class="stat-pill pill-red" id="statRed">🔴 -- Red</span>
+          <span class="stat-pill pill-orange" id="statOrange">🟠 -- Orange</span>
+          <span class="stat-pill pill-yellow" id="statYellow">🟡 -- Yellow</span>
+          <span class="stat-pill pill-green" id="statGreen">🟢 -- Green</span>
+        </div>
+      </div>
+
+      <div class="ward-controls">
+        <input type="text" id="wardFilterInput" class="ward-filter-input" placeholder="🔍 Search or filter wards (e.g. Grain Market, Hanumangarh, Ward 8, Red)...">
+        <span style="font-size: 0.78rem; color: #94a3b8;">💡 Click any ward card below to zoom directly to its polygon box on the map.</span>
+      </div>
+
+      <div class="ward-grid" id="wardGridContainer">
+        <div style="color: #94a3b8; font-size: 0.85rem; padding: 1rem;">Loading official municipal wards data...</div>
       </div>
     </div>
 

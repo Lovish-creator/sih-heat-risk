@@ -26,6 +26,7 @@ from ..thermal.hazard import calculate_thermal_hazard
 from ..vulnerability.demographic import DemographicVulnerabilityEngine
 from ..risk.engine import HeatRiskEngine
 from ..gis.engine import GISEngine
+from ..gis.ward_directory import MunicipalWardManager
 from ..advisory.engine import AdvisoryEngine
 from ..data_sources.nasa_power import NASAPowerProvider
 from ..data_sources.open_meteo import OpenMeteoProvider
@@ -42,6 +43,7 @@ geocoder = NominatimGeocoder(cache=cache_store)
 vuln_engine = DemographicVulnerabilityEngine()
 risk_engine = HeatRiskEngine(config_path="config/risk_weights.yaml")
 gis_engine = GISEngine(vulnerability_engine=vuln_engine, risk_engine=risk_engine)
+ward_manager = MunicipalWardManager()
 advisory_engine = AdvisoryEngine()
 
 def load_city_profiles() -> Dict[str, Any]:
@@ -477,113 +479,125 @@ def get_risk_forecast(
 
 @router.get("/api/v1/map/risk", tags=["GIS & Spatial"])
 def get_map_risk(
-    city: str = Query("ahmedabad"),
+    city: str = Query("abohar"),
     lat: Optional[float] = Query(None),
     lon: Optional[float] = Query(None),
     day: int = Query(1, ge=1, le=7)
 ):
     """
-    Get GeoJSON FeatureCollection with spatial risk attribution.
-    Constructs localized multi-ring risk zones around clicked/detected coordinates with Census 2011 demographics.
+    Get GeoJSON FeatureCollection with micro-spatial ward-level risk attribution.
+    Returns official municipal ward divisions (e.g. 50 wards for Abohar, 48 for Ahmedabad, 50 for Delhi, 24 for Mumbai)
+    with Census 2011 PCA demographics and microclimatic UHI spatial attribution.
     """
     if lat is not None and lon is not None:
         weather_series = open_meteo.get_forecast_weather(lat, lon, "custom", 7)
         selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
         target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(lat, lon)
-
-        hz = calculate_thermal_hazard(
-            temp_c=target_weather["temp_c"],
-            relative_humidity_pct=target_weather["relative_humidity_pct"],
-            wind_speed_10m_m_s=target_weather["wind_speed_10m_m_s"],
-            solar_radiation_w_m2=target_weather["solar_radiation_w_m2"]
-        )
-
-        geo_info = geocoder.reverse_geocode(lat, lon)
-        city_name = geo_info.get("city", "Detected Location")
-        suburb = geo_info.get("suburb_or_ward") or "Local Zone"
-
-        district_vuln = vuln_engine.get_district_vulnerability(
-            geo_info.get("district") or geo_info.get("city") or "",
-            geo_info.get("state") or ""
-        )
-        demo_data = district_vuln["demographics"]
-        vuln_score = district_vuln["vulnerability_score"]
-
-        r_calc = risk_engine.calculate_risk(
-            hazard_score=hz["composite_hazard_score"],
-            vulnerability_score=vuln_score,
-            consecutive_heat_days=day
-        )
-
-        # Dynamic spatial buffer rings around user coordinates (Inner 1.3km)
-        d1 = 0.012  # ~1.3 km
         
-        features = [
-            {
-                "type": "Feature",
-                "properties": {
-                    "ward_id": f"ZONE_{geo_info.get('district', 'LOC').upper()[:6]}",
-                    "ward_name": f"{suburb} ({district_vuln['district_name']})",
-                    "zone_name": geo_info.get("state", "Local District"),
-                    "hazard_score": hz["composite_hazard_score"],
-                    "vulnerability_score": vuln_score,
-                    "heat_risk_score": r_calc["risk_score"],
-                    "alert_level": r_calc["alert_level"],
-                    "alert_label": r_calc["alert_label"],
-                    "alert_color": r_calc["alert_color"],
-                    "action_summary": r_calc["action_summary"],
-                    "utci_val": hz["metrics"]["utci"]["value_c"],
-                    "utci_category": hz["metrics"]["utci"]["category"],
-                    "wbgt_val": hz["metrics"]["wbgt"]["value_c"],
-                    "wbgt_risk": hz["metrics"]["wbgt"]["risk_level"],
-                    "heat_index_val": hz["metrics"]["heat_index"]["value_c"],
-                    "demographics": demo_data
-                },
-                "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [[[lon - d1, lat - d1], [lon + d1, lat - d1], [lon + d1, lat + d1], [lon - d1, lat + d1], [lon - d1, lat - d1]]]
-                }
-            }
-        ]
-
-        return {
-            "type": "FeatureCollection",
-            "name": f"Dynamic_Live_Zone_{city_name}",
-            "features": features,
-            "metadata": {
-                "attribution": f"OpenStreetMap Nominatim, Open-Meteo Live API & {district_vuln.get('census_source', 'Census 2011 PCA')}",
-                "disclaimer": "Dynamic localized risk attribution for detected coordinates.",
-                "total_wards": len(features),
-                "detected_location": geo_info
-            }
-        }
+        geo_info = geocoder.reverse_geocode(lat, lon)
+        detected_name = geo_info.get("city") or geo_info.get("district") or geo_info.get("town") or "Custom"
+        
+        return ward_manager.generate_ward_risk_collection(
+            city_name=detected_name,
+            base_weather=target_weather,
+            consecutive_heat_days=day,
+            custom_lat=lat,
+            custom_lon=lon
+        )
 
     cities = load_city_profiles()
-    cdata = cities.get(city, cities.get("ahmedabad"))
+    cdata = cities.get(city, cities.get("abohar", cities.get("ahmedabad")))
     center = cdata["center"]
     
     weather_series = open_meteo.get_forecast_weather(center["lat"], center["lon"], city, 7)
     selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
     target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(center["lat"], center["lon"])
 
-    hz = calculate_thermal_hazard(
-        temp_c=target_weather["temp_c"],
-        relative_humidity_pct=target_weather["relative_humidity_pct"],
-        wind_speed_10m_m_s=target_weather["wind_speed_10m_m_s"],
-        solar_radiation_w_m2=target_weather["solar_radiation_w_m2"]
-    )
-
-    geojson_file = cdata.get("geojson_file", "data/sample/ahmedabad_wards.geojson")
-    census_file = cdata.get("census_data_file", "data/sample/ahmedabad_census_wards.json")
-
-    return gis_engine.generate_ward_risk_geojson(
-        geojson_path=geojson_file,
-        census_path=census_file,
-        hazard_data=hz,
+    return ward_manager.generate_ward_risk_collection(
+        city_name=city,
+        base_weather=target_weather,
         consecutive_heat_days=day,
-        city_id=city,
-        city_center=center
+        custom_lat=center["lat"],
+        custom_lon=center["lon"]
     )
+
+
+@router.get("/api/v1/wards/summary", tags=["GIS & Spatial"])
+def get_wards_summary(
+    city: str = Query("abohar"),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None),
+    day: int = Query(1, ge=1, le=7)
+):
+    """
+    Get complete ward-wise risk rankings, demographic metrics, and top hotspots for any city/town.
+    Returns all N municipal wards (e.g. 50 wards for Abohar) ranked by biometeorological hazard and Census vulnerability.
+    """
+    if lat is not None and lon is not None:
+        weather_series = open_meteo.get_forecast_weather(lat, lon, "custom", 7)
+        selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
+        target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(lat, lon)
+        geo_info = geocoder.reverse_geocode(lat, lon)
+        detected_name = geo_info.get("city") or geo_info.get("district") or geo_info.get("town") or "Custom"
+        
+        collection = ward_manager.generate_ward_risk_collection(
+            city_name=detected_name,
+            base_weather=target_weather,
+            consecutive_heat_days=day,
+            custom_lat=lat,
+            custom_lon=lon
+        )
+    else:
+        cities = load_city_profiles()
+        cdata = cities.get(city, cities.get("abohar", cities.get("ahmedabad")))
+        center = cdata["center"]
+        weather_series = open_meteo.get_forecast_weather(center["lat"], center["lon"], city, 7)
+        selected_idx = min(day - 1, len(weather_series) - 1) if weather_series else 0
+        target_weather = weather_series[selected_idx] if weather_series else open_meteo.get_current_weather(center["lat"], center["lon"])
+
+        collection = ward_manager.generate_ward_risk_collection(
+            city_name=city,
+            base_weather=target_weather,
+            consecutive_heat_days=day,
+            custom_lat=center["lat"],
+            custom_lon=center["lon"]
+        )
+
+    meta = collection.get("metadata", {})
+    rankings = meta.get("ward_rankings", [])
+    
+    # Calculate alert level counts
+    red_count = sum(1 for w in rankings if w.get("alert_level") == "RED")
+    orange_count = sum(1 for w in rankings if w.get("alert_level") == "ORANGE")
+    yellow_count = sum(1 for w in rankings if w.get("alert_level") == "YELLOW")
+    green_count = sum(1 for w in rankings if w.get("alert_level") == "GREEN")
+
+    avg_risk = round(sum(w.get("heat_risk_score", 0) for w in rankings) / max(1, len(rankings)), 1)
+    avg_utci = round(sum(w.get("utci_c", 0) for w in rankings) / max(1, len(rankings)), 1)
+    avg_wbgt = round(sum(w.get("wbgt_c", 0) for w in rankings) / max(1, len(rankings)), 1)
+
+    return {
+        "city_name": meta.get("city_name", city.title()),
+        "state_name": meta.get("state_name", "India"),
+        "district_name": meta.get("district_name", city.title()),
+        "total_wards": meta.get("total_wards", len(rankings)),
+        "census_source": meta.get("census_source", "Census of India 2011 PCA"),
+        "consecutive_days": meta.get("consecutive_days", day),
+        "city_averages": {
+            "avg_heat_risk": avg_risk,
+            "avg_utci_c": avg_utci,
+            "avg_wbgt_c": avg_wbgt
+        },
+        "alert_distribution": {
+            "red_emergency": red_count,
+            "orange_warning": orange_count,
+            "yellow_watch": yellow_count,
+            "green_normal": green_count
+        },
+        "highest_risk_ward": meta.get("highest_risk_ward", {}),
+        "top_hotspots": rankings[:10],
+        "all_wards": rankings
+    }
 
 
 @router.get("/api/v1/advisory", response_model=AdvisoryResponse, tags=["Advisories"])
