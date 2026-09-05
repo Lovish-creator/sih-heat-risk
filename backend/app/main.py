@@ -46,16 +46,53 @@ app.include_router(api_router)
 
 # Mount Static Files (Frontend)
 frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
+
+def _find_frontend_file(subpath: str) -> os.PathLike:
+    candidates = [
+        os.path.join(frontend_dir, subpath),
+        os.path.abspath(os.path.join(os.getcwd(), "frontend", subpath)),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", subpath))
+    ]
+    for c in candidates:
+        if c and os.path.exists(c):
+            return c
+    return None
+
 if os.path.exists(frontend_dir):
     try:
         app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
     except Exception:
         pass
 
+@app.get("/static/css/{filename}", include_in_schema=False)
+@app.get("/css/{filename}", include_in_schema=False)
+async def serve_css(filename: str):
+    p = _find_frontend_file(os.path.join("css", filename))
+    if p:
+        try:
+            with open(p, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read(), media_type="text/css")
+        except Exception:
+            pass
+    return HTMLResponse(status_code=404, content="")
+
+@app.get("/static/js/{filename}", include_in_schema=False)
+@app.get("/js/{filename}", include_in_schema=False)
+async def serve_js(filename: str):
+    p = _find_frontend_file(os.path.join("js", filename))
+    if p:
+        try:
+            with open(p, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read(), media_type="application/javascript")
+        except Exception:
+            pass
+    return HTMLResponse(status_code=404, content="")
+
 @app.get("/", include_in_schema=False)
+@app.get("/index.html", include_in_schema=False)
 async def serve_index():
-    index_path = os.path.join(frontend_dir, "index.html")
-    if os.path.exists(index_path):
+    index_path = _find_frontend_file("index.html")
+    if index_path and os.path.exists(index_path):
         try:
             with open(index_path, "r", encoding="utf-8") as f:
                 return HTMLResponse(content=f.read())

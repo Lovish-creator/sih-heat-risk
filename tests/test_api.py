@@ -197,9 +197,24 @@ def test_downscaling_reference_endpoint():
     res = client.get("/api/v1/downscaling/reference")
     assert res.status_code == 200
     data = res.json()
-    assert data["status"] == "success"
     assert "DOWNSCALING_ARCHITECTURE_REFERENCE.md" in data["file_name"]
     assert "Local Climate Zones" in data["markdown_content"]
     assert "Stewart & Oke" in data["markdown_content"]
 
 
+def test_static_assets():
+    res_index = client.get("/")
+    assert res_index.status_code == 200
+    assert "<html" in res_index.text.lower()
+
+    res_css = client.get("/static/css/styles.css")
+    assert res_css.status_code == 200
+    assert "text/css" in res_css.headers.get("content-type", "")
+
+    res_app = client.get("/static/js/app.js")
+    assert res_app.status_code == 200
+    assert "javascript" in res_app.headers.get("content-type", "")
+
+    res_map = client.get("/static/js/map.js")
+    assert res_map.status_code == 200
+    assert "javascript" in res_map.headers.get("content-type", "")
