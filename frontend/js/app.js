@@ -365,10 +365,12 @@ async function refreshDashboardData() {
 
     // 5. Update View Components
     updateHorizonView(liveWeather);
+    updateMeteorologicalTelemetry(liveWeather);
     await fetchWardsData();
+    await fetchHourlyData();
     
     if (isHourlyView) {
-      await fetchHourlyData();
+      if (cachedHourlyData.length > 0) renderForecastChart(cachedHourlyData, true);
     } else {
       renderForecastChart(cachedForecastData, false);
     }
@@ -378,6 +380,45 @@ async function refreshDashboardData() {
   } catch (err) {
     console.error("Dashboard refresh error:", err);
   }
+}
+
+function updateMeteorologicalTelemetry(w) {
+  if (!w) return;
+
+  const elDew = document.getElementById("meteoDewPoint");
+  const elFeels = document.getElementById("meteoFeelsLike");
+  const elSolar = document.getElementById("meteoSolar");
+  const elDni = document.getElementById("meteoDni");
+  const elUv = document.getElementById("meteoUv");
+  const elUvCat = document.getElementById("meteoUvCategory");
+  const elWind = document.getElementById("meteoWind");
+  const elWindDir = document.getElementById("meteoWindDir");
+  const elGusts = document.getElementById("meteoGusts");
+  const elVapor = document.getElementById("meteoVaporPres");
+  const elRh = document.getElementById("meteoRh");
+  const elPress = document.getElementById("meteoPressure");
+  const elCloud = document.getElementById("meteoCloud");
+
+  if (elDew) elDew.textContent = `${w.dew_point_c !== undefined ? w.dew_point_c : '--'}°C`;
+  if (elFeels) elFeels.textContent = `${w.apparent_temperature_c !== undefined ? w.apparent_temperature_c : (w.temp_c || '--')}°C`;
+  if (elSolar) elSolar.textContent = `${w.solar_radiation_w_m2 !== undefined ? w.solar_radiation_w_m2 : '--'} W/m²`;
+  if (elDni) elDni.textContent = `${w.direct_normal_irradiance_w_m2 !== undefined ? w.direct_normal_irradiance_w_m2 : '--'} W/m²`;
+  
+  if (elUv) elUv.textContent = `${w.uv_index !== undefined ? w.uv_index : '--'}`;
+  if (elUvCat) {
+    const uvVal = w.uv_index || 0;
+    const uvLabel = uvVal >= 11 ? 'Extreme' : uvVal >= 8 ? 'Very High' : uvVal >= 6 ? 'High' : uvVal >= 3 ? 'Moderate' : 'Low';
+    elUvCat.textContent = `UV: ${uvLabel} (${uvVal})`;
+  }
+
+  if (elWind) elWind.textContent = `${w.wind_speed_kmh !== undefined ? w.wind_speed_kmh : '--'} km/h (${w.wind_speed_10m_m_s || '--'} m/s)`;
+  if (elWindDir) elWindDir.textContent = `Dir: ${w.wind_direction_compass || 'N/A'} (${w.wind_direction_deg !== undefined ? w.wind_direction_deg : '--'}°)`;
+  if (elGusts) elGusts.textContent = `${w.wind_gusts_kmh !== undefined ? w.wind_gusts_kmh : '--'} km/h`;
+
+  if (elVapor) elVapor.textContent = `${w.vapor_pressure_hpa !== undefined ? w.vapor_pressure_hpa : '--'} hPa`;
+  if (elRh) elRh.textContent = `${w.relative_humidity_pct !== undefined ? w.relative_humidity_pct : '--'}%`;
+  if (elPress) elPress.textContent = `${w.surface_pressure_hpa !== undefined ? w.surface_pressure_hpa : '--'} hPa`;
+  if (elCloud) elCloud.textContent = `${w.cloud_cover_pct !== undefined ? w.cloud_cover_pct : '--'}%`;
 }
 
 async function fetchHourlyData() {
@@ -393,12 +434,43 @@ async function fetchHourlyData() {
     const data = await res.json();
     cachedHourlyData = data.hourly_series || [];
 
+    renderHourlyTable(cachedHourlyData);
+
     if (isHourlyView && cachedHourlyData.length > 0) {
       renderForecastChart(cachedHourlyData, true);
     }
   } catch (err) {
     console.error("Failed to fetch hourly weather:", err);
   }
+}
+
+function renderHourlyTable(hourly) {
+  const tbody = document.getElementById("hourlyTableBody");
+  if (!tbody) return;
+
+  if (!hourly || hourly.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: #94a3b8; padding: 1rem;">No hourly stream available.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = hourly.map(h => {
+    const hzColor = h.hazard_score >= 75 ? '#ef4444' : h.hazard_score >= 50 ? '#f97316' : h.hazard_score >= 25 ? '#f59e0b' : '#10b981';
+    return `
+      <tr>
+        <td><strong>${h.hour_label}</strong> <span style="font-size: 10px; color: #94a3b8;">(${h.date})</span></td>
+        <td style="font-weight: 700; color: #f8fafc;">${h.temp_c}°C</td>
+        <td style="color: #38bdf8;">${h.dew_point_c !== undefined ? h.dew_point_c : '--'}°C</td>
+        <td>${h.relative_humidity_pct}%</td>
+        <td>${h.wind_speed_kmh || '--'} km/h (${h.wind_speed_10m_m_s} m/s)</td>
+        <td>${h.wind_direction_compass || '--'} (${h.wind_direction_deg || 0}°)</td>
+        <td style="color: #f59e0b;">${h.solar_radiation_w_m2} W/m²</td>
+        <td><span style="font-weight: 700; color: ${h.uv_index >= 8 ? '#ef4444' : h.uv_index >= 6 ? '#f97316' : '#a855f7'};">${h.uv_index}</span></td>
+        <td style="font-weight: 700; color: #fb923c;">${h.utci_c}°C <span style="font-size: 10px;">(${h.utci_category})</span></td>
+        <td style="font-weight: 700; color: #38bdf8;">${h.wbgt_c}°C</td>
+        <td><span style="background-color: ${hzColor}; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">${h.hazard_score}/100</span></td>
+      </tr>
+    `;
+  }).join("");
 }
 
 async function fetchWardsData() {

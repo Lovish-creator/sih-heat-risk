@@ -127,6 +127,87 @@
       </div>
     </div>
 
+    <!-- Live Surface Meteorology Telemetry (Open-Meteo & NASA POWER) -->
+    <div class="meteo-telemetry-grid">
+      <!-- Dew Point & Feels Like -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">Dew Point (Tdp)</span>
+          <span class="meteo-card-icon">💧</span>
+        </div>
+        <div class="meteo-card-val" id="meteoDewPoint">--°C</div>
+        <div class="meteo-card-sub">
+          <span>Feels Like: <strong id="meteoFeelsLike">--°C</strong></span>
+          <span style="color: #38bdf8;">Moisture</span>
+        </div>
+      </div>
+
+      <!-- Solar Irradiance (Global & DNI) -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">Solar Radiation</span>
+          <span class="meteo-card-icon">☀️</span>
+        </div>
+        <div class="meteo-card-val" id="meteoSolar">-- W/m²</div>
+        <div class="meteo-card-sub">
+          <span>DNI Flux: <strong id="meteoDni">-- W/m²</strong></span>
+          <span style="color: #f59e0b;">Radiation</span>
+        </div>
+      </div>
+
+      <!-- UV Index -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">Solar UV Index</span>
+          <span class="meteo-card-icon">🟣</span>
+        </div>
+        <div class="meteo-card-val" id="meteoUv">--</div>
+        <div class="meteo-card-sub">
+          <span id="meteoUvCategory">WHO UV Scale</span>
+          <span style="color: #a855f7;">Solar UV</span>
+        </div>
+      </div>
+
+      <!-- Wind Speed & Direction -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">10m Wind Vector</span>
+          <span class="meteo-card-icon">💨</span>
+        </div>
+        <div class="meteo-card-val" id="meteoWind">-- km/h</div>
+        <div class="meteo-card-sub">
+          <span id="meteoWindDir">Direction: --°</span>
+          <span>Gusts: <strong id="meteoGusts">-- km/h</strong></span>
+        </div>
+      </div>
+
+      <!-- Vapor Pressure & RH -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">Vapor Pressure (e)</span>
+          <span class="meteo-card-icon">🧪</span>
+        </div>
+        <div class="meteo-card-val" id="meteoVaporPres">-- hPa</div>
+        <div class="meteo-card-sub">
+          <span>Rel. Humidity: <strong id="meteoRh">--%</strong></span>
+          <span style="color: #34d399;">Magnus-Tetens</span>
+        </div>
+      </div>
+
+      <!-- Surface Pressure & Cloud Cover -->
+      <div class="meteo-telemetry-card">
+        <div class="meteo-card-header">
+          <span class="meteo-card-title">Surface Pressure</span>
+          <span class="meteo-card-icon">☁️</span>
+        </div>
+        <div class="meteo-card-val" id="meteoPressure">-- hPa</div>
+        <div class="meteo-card-sub">
+          <span>Cloud Cover: <strong id="meteoCloud">--%</strong></span>
+          <span style="color: #94a3b8;">Barometric</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Action Summary Banner -->
     <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
       <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem; text-transform: uppercase;">Early Warning Advisory:</span>
@@ -191,6 +272,44 @@
             <li class="advisory-item">Loading actionable advisories...</li>
           </ul>
         </div>
+      </div>
+    </div>
+
+    <!-- 24-Hour Live Hourly Meteorological Telemetry Breakdown Table -->
+    <div class="hourly-meteo-section" id="hourlyMeteoSection">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2 style="font-size: 1.05rem; font-weight: 700; color: #38bdf8;">📡 24-Hour Hourly Meteorological & Biometeorological Breakdown</h2>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+            High-precision multi-parameter stream: Air Temp ($T_a$), Dew Point ($T_{dp}$), Solar Flux ($S$), Wind ($v_{10}$), UV Index, UTCI, and WBGT.
+          </p>
+        </div>
+        <span class="badge badge-live">● REAL-TIME HIGH-RESOLUTION METEOROLOGY</span>
+      </div>
+
+      <div class="meteo-table-container">
+        <table class="meteo-table">
+          <thead>
+            <tr>
+              <th>Time (Local)</th>
+              <th>Air Temp (Ta)</th>
+              <th>Dew Point (Tdp)</th>
+              <th>Humidity (RH)</th>
+              <th>Wind (10m)</th>
+              <th>Wind Dir</th>
+              <th>Solar Radiation</th>
+              <th>UV Index</th>
+              <th>Physiological UTCI</th>
+              <th>Occupational WBGT</th>
+              <th>Hazard Score</th>
+            </tr>
+          </thead>
+          <tbody id="hourlyTableBody">
+            <tr>
+              <td colspan="11" style="text-align: center; color: #94a3b8; padding: 1rem;">Loading live hourly meteorology stream...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

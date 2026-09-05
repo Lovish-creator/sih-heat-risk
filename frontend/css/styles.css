@@ -692,3 +692,108 @@ footer {
   padding-top: 0.5rem;
   margin-top: 0.25rem;
 }
+
+/* Real-Time Meteorological Telemetry Grid */
+.meteo-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.meteo-telemetry-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.meteo-telemetry-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.meteo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.meteo-card-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meteo-card-icon {
+  font-size: 1.1rem;
+}
+
+.meteo-card-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.meteo-card-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Hourly Meteorological Table */
+.hourly-meteo-section {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.meteo-table-container {
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: auto;
+  margin-top: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.meteo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.meteo-table th {
+  background-color: var(--bg-primary);
+  color: #94a3b8;
+  padding: 0.65rem 0.85rem;
+  position: sticky;
+  top: 0;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.meteo-table td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+.meteo-table tr:hover {
+  background-color: var(--bg-card-hover);
+}
