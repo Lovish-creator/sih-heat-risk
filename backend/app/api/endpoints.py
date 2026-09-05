@@ -717,3 +717,18 @@ def get_calculations_reference():
             "verifier_script": "calculations_verifier.py"
         }
     return {"status": "error", "message": "Reference file not found."}
+
+
+@router.get("/api/v1/downscaling/reference", tags=["Provenance & Science"])
+def get_downscaling_reference():
+    """Return complete technical architecture whitepaper explaining ward-level microclimate downscaling."""
+    path = "DOWNSCALING_ARCHITECTURE_REFERENCE.md"
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {
+            "status": "success",
+            "file_name": "DOWNSCALING_ARCHITECTURE_REFERENCE.md",
+            "markdown_content": content
+        }
+    return {"status": "error", "message": "Downscaling reference file not found."}

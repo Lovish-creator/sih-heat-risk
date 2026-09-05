@@ -193,3 +193,13 @@ def test_calculations_reference_endpoint():
     assert "calculations_verifier.py" in data["verifier_script"]
 
 
+def test_downscaling_reference_endpoint():
+    res = client.get("/api/v1/downscaling/reference")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert "DOWNSCALING_ARCHITECTURE_REFERENCE.md" in data["file_name"]
+    assert "Local Climate Zones" in data["markdown_content"]
+    assert "Stewart & Oke" in data["markdown_content"]
+
+
