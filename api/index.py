@@ -13,34 +13,52 @@ if root_dir not in sys.path:
 from backend.app.main import app as fastapi_app
 
 
+import json
+
 async def app(scope, receive, send):
     """
     ASGI Proxy Wrapper for Vercel Serverless Functions.
-    Extracts the original requested path from Vercel proxy headers
-    (x-matched-path, x-vercel-matched-path, etc.) and restores it in scope['path']
-    so FastAPI routers and static file handlers match the exact requested URI.
     """
     if scope.get("type") in ("http", "websocket"):
-        headers_dict = dict(scope.get("headers", []))
+        headers_dict = {k.decode("latin1").lower(): v.decode("latin1") for k, v in scope.get("headers", [])}
+        path = scope.get("path", "")
+        
+        # Immediate debug probe
+        if "debug-scope" in path or "debug" in headers_dict.get("x-matched-path", ""):
+            body = json.dumps({
+                "scope_path": scope.get("path"),
+                "scope_raw_path": scope.get("raw_path", b"").decode("latin1", errors="ignore"),
+                "headers": headers_dict,
+            }, indent=2).encode("utf-8")
+            
+            await send({
+                "type": "http.response.start",
+                "status": 200,
+                "headers": [[b"content-type", b"application/json"]],
+            })
+            await send({
+                "type": "http.response.body",
+                "body": body,
+            })
+            return
 
         # Check for original path headers set by Vercel proxy
         raw_matched = (
-            headers_dict.get(b"x-matched-path")
-            or headers_dict.get(b"x-vercel-matched-path")
-            or headers_dict.get(b"x-forwarded-uri")
-            or headers_dict.get(b"x-real-path")
-            or headers_dict.get(b"x-original-url")
-            or headers_dict.get(b"x-rewrite-url")
+            headers_dict.get("x-matched-path")
+            or headers_dict.get("x-vercel-matched-path")
+            or headers_dict.get("x-forwarded-uri")
+            or headers_dict.get("x-real-path")
+            or headers_dict.get("x-original-url")
+            or headers_dict.get("x-rewrite-url")
         )
 
         if raw_matched:
-            orig = raw_matched.decode("utf-8", errors="ignore").split("?")[0]
+            orig = raw_matched.split("?")[0]
             if orig in ("/api/index.py", "/api/index", "/api"):
                 scope["path"] = "/"
             elif orig:
                 scope["path"] = orig
         else:
-            path = scope.get("path", "")
             if path.startswith("/api/index.py"):
                 new_path = path[len("/api/index.py"):]
                 if not new_path or not new_path.startswith("/"):
