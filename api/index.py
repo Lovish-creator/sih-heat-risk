@@ -16,14 +16,20 @@ from backend.app.main import app as fastapi_app
 async def app(scope, receive, send):
     """
     ASGI entrypoint for Vercel Python runtime.
+    Strips Vercel serverless function prefix from scope['path']
+    so FastAPI handles the exact requested path.
     """
     if scope.get("type") in ("http", "websocket"):
         path = scope.get("path", "")
-        if path.startswith("/api/index.py"):
-            new_path = path[len("/api/index.py"):]
-            if not new_path or not new_path.startswith("/"):
-                new_path = "/" + new_path
-            scope["path"] = new_path
+        for prefix in ("/api/index.py", "/api/index", "/api"):
+            if path == prefix:
+                path = "/"
+                break
+            elif path.startswith(prefix + "/"):
+                path = path[len(prefix):]
+                break
+        scope["path"] = path if path else "/"
+
     await fastapi_app(scope, receive, send)
 
 
