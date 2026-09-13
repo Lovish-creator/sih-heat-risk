@@ -3,12 +3,9 @@ Alert Generation & Notification Dispatcher.
 Evaluates warning thresholds and dispatches structured JSON payloads to registered webhooks.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from datetime import datetime, timezone
 import logging
-import json
-
-from ..core.constants import AlertLevel
 
 logger = logging.getLogger(__name__)
 

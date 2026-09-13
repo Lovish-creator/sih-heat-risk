@@ -2,7 +2,6 @@
 Unit tests for GIS Engine and GeoJSON Spatial Risk Attribution.
 """
 
-import pytest
 import sys
 import os
 

@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from backend.app.db.session import SessionLocal, init_db
 from backend.app.db.repositories import LocationRepository, WardRepository, DataSourceRepository
-from backend.app.db.models import ModelVersionModel, AdvisoryModel
+from backend.app.db.models import ModelVersionModel
 from backend.app.gis.city_data import MUNICIPAL_WARD_PROFILES
 
 

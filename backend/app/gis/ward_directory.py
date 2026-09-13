@@ -13,7 +13,7 @@ LCZ spatial units ($A_w = Pop_w / Density_w$).
 import math
 import os
 import json
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from ..thermal.hazard import calculate_thermal_hazard
 from ..risk.engine import HeatRiskEngine
 from ..vulnerability.demographic import DemographicVulnerabilityEngine

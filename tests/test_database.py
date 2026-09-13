@@ -6,9 +6,8 @@ import pytest
 from datetime import datetime, timezone
 from backend.app.db.session import SessionLocal, init_db
 from backend.app.db.repositories import (
-    LocationRepository, WardRepository, WeatherRepository, DataSourceRepository
+    LocationRepository, WardRepository, WeatherRepository
 )
-from backend.app.db.models import LocationModel, WardModel
 
 
 @pytest.fixture(scope="module")

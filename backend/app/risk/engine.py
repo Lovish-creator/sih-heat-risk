@@ -11,7 +11,7 @@ for municipal disaster mitigation. It is NOT a clinical diagnosis or mortality p
 
 import os
 import yaml
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional
 from ..core.constants import DURATION_SCALING, AlertLevel
 
 

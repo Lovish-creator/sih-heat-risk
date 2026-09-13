@@ -6,7 +6,6 @@ the NASA Langley Research Center POWER API (Prediction Of Worldwide Energy Resou
 """
 
 import requests
-import time
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta, timezone
 from .base import WeatherProvider

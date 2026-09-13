@@ -2,7 +2,6 @@
 Unit tests for NOAA/NWS Rothfusz Heat Index calculation.
 """
 
-import pytest
 import sys
 import os
 

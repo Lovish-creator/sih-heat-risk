@@ -3,8 +3,7 @@ Centralized Application Configuration.
 Loads environment variables using pydantic-settings with explicit fallback policies.
 """
 
-import os
-from typing import List, Optional
+from typing import List
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from .constants import AppEnv, DataMode

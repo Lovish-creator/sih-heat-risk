@@ -3,12 +3,12 @@ Normalized Relational Data Models for SIH26083 Platform.
 """
 
 from sqlalchemy import (
-    Column, Integer, String, Float, Boolean, DateTime, ForeignKey, 
-    Text, UniqueConstraint, Index, JSON
+    Integer, String, Float, Boolean, DateTime, ForeignKey, 
+    Text, UniqueConstraint, JSON
 )
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional
 from ..base import Base
 
 

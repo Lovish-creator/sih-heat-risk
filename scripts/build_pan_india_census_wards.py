@@ -4,7 +4,6 @@ Compiles official statutory delimitation gazettes, Census of India 2011 Primary 
 demographics, and Local Climate Zones across all Indian states and municipal corporations.
 """
 
-import os
 import sys
 import json
 from pathlib import Path

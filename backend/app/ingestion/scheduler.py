@@ -6,7 +6,7 @@ and duplicate prevention for configured municipal locations.
 
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from ..core.config import settings

@@ -5,7 +5,7 @@ Synthesizes UTCI, WBGT, and Heat Index into a normalized, scientifically grounde
 Thermal Hazard Score on a continuous 0 to 100 scale with strict boundary validation.
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from .utci import calculate_utci, classify_utci, calculate_vapor_pressure, calculate_mrt
 from .wbgt import calculate_wbgt, classify_wbgt
 from .heat_index import calculate_heat_index, classify_heat_index

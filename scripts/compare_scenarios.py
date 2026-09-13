@@ -54,7 +54,7 @@ def main():
     print(f"  * NIOSH Work/Rest Regimen:  {hz_a['metrics']['wbgt']['work_rest_regimen']}")
     print(f"  * Thermal Hazard Score:     {hz_a['composite_hazard_score']} / 100")
     print(f"  * Composite Risk Score:     {risk_a['risk_score']} / 100 -> [{risk_a['alert_level']} Alert]")
-    print(f"  * Human Impact:             Sweat evaporates efficiently; core body temperature stable.")
+    print("  * Human Impact:             Sweat evaporates efficiently; core body temperature stable.")
 
     print("\n" + "-" * 80)
     print("SCENARIO B: Humid, Stagnant & High Sun (70% RH, 0.8 m/s Wind, 800 W/m² Solar)")
@@ -66,14 +66,14 @@ def main():
     print(f"  * NIOSH Work/Rest Regimen:  {hz_b['metrics']['wbgt']['work_rest_regimen']}")
     print(f"  * Thermal Hazard Score:     {hz_b['composite_hazard_score']} / 100")
     print(f"  * Composite Risk Score:     {risk_b['risk_score']} / 100 -> [{risk_b['alert_level']} Alert]")
-    print(f"  * Human Impact:             Sweat evaporation crippled; severe heat stroke & hyperthermia danger!")
+    print("  * Human Impact:             Sweat evaporation crippled; severe heat stroke & hyperthermia danger!")
 
     print("\n" + "=" * 80)
     delta_utci = hz_b['metrics']['utci']['value_c'] - hz_a['metrics']['utci']['value_c']
     delta_wbgt = hz_b['metrics']['wbgt']['value_c'] - hz_a['metrics']['wbgt']['value_c']
     delta_risk = risk_b['risk_score'] - risk_a['risk_score']
-    print(f"CONCLUSION:")
-    print(f"Despite IDENTICAL 40°C temperature, Scenario B produces:")
+    print("CONCLUSION:")
+    print("Despite IDENTICAL 40°C temperature, Scenario B produces:")
     print(f"  + {delta_utci:.1f}°C HIGHER Physiological UTCI")
     print(f"  + {delta_wbgt:.1f}°C HIGHER Occupational WBGT")
     print(f"  + {delta_risk:.1f} Points HIGHER Human Heat-Health Risk Score")

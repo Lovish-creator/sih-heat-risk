@@ -2,10 +2,8 @@
 Unit tests for Municipal Ward Manager, Pan-India Coverage, and Real-Size Ward Geometry Engine.
 """
 
-import pytest
 import sys
 import os
-import math
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 

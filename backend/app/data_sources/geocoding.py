@@ -7,7 +7,6 @@ Zero API keys required (Open Data / OpenStreetMap).
 """
 
 import requests
-import time
 from typing import Dict, Any, List, Optional
 from .cache import DataCache
 

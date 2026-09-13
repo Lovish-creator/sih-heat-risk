@@ -3,7 +3,6 @@ Unit tests for Heat-Health Risk Engine.
 Validates monotonicity, duration escalation, and IMD 4-tier alert assignment.
 """
 
-import pytest
 import sys
 import os
 

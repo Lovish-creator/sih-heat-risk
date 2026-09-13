@@ -5,7 +5,7 @@ Provides programmatic access to official Indian heatwave criteria,
 climatological departures, and 4-tier warning definitions.
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 class IMDGuidanceAdapter:

@@ -6,7 +6,7 @@ using Stull's empirical psychrometric wet-bulb formulation and Liljegren's black
 """
 
 import math
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 def calculate_wet_bulb_stull(temp_c: float, relative_humidity_pct: float) -> float:

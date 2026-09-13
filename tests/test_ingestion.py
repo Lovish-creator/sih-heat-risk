@@ -4,7 +4,6 @@ Unit Tests for Ingestion Scheduler and ML extension scaffolding.
 
 import pytest
 import pandas as pd
-from backend.app.ingestion.scheduler import IngestionScheduler
 from backend.app.risk.engine import HeatRiskEngine
 from ml.datasets import HealthOutcomeDataset
 from ml.model_registry import ModelRegistry

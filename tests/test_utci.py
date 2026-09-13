@@ -3,7 +3,6 @@ Unit tests for UTCI (Universal Thermal Climate Index) Calculation.
 Validates Bröde et al. (2012) polynomial implementation against reference bounds.
 """
 
-import pytest
 import sys
 import os
 

@@ -7,7 +7,7 @@ Generates persona-tailored, evidence-based mitigation actions grounded in:
 3. World Health Organization (WHO) Heat-Health Guidelines
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, Optional
 
 
 class AdvisoryEngine:

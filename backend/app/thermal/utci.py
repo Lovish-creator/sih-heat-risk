@@ -6,7 +6,7 @@ Bröde et al. (2012) and the European COST Action 730 / UTCI Management Committe
 """
 
 import math
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any
 
 
 def calculate_vapor_pressure(temp_c: float, relative_humidity_pct: float) -> float:

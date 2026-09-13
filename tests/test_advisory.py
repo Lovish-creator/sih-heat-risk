@@ -2,7 +2,6 @@
 Unit tests for Public Health & Occupational Advisory Engine.
 """
 
-import pytest
 import sys
 import os
 

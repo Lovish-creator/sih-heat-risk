@@ -4,13 +4,12 @@ Supports Real Live APIs (Open-Meteo, NASA POWER, OpenStreetMap Nominatim),
 Database-backed persistence, Hourly 24-Hour Live Forecaster, and User Location Auto-Detection.
 """
 
-from fastapi import APIRouter, Query, HTTPException, Depends
-from typing import Dict, Any, List, Optional
+from fastapi import APIRouter, Query, HTTPException
+from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 import yaml
 import os
 import json
-import math
 
 from ..core.config import settings
 from ..schemas.schemas import (
@@ -19,11 +18,6 @@ from ..schemas.schemas import (
     DataFreshnessResponse,
     LocationsResponse,
     CityProfileSchema,
-    WeatherForecastResponse,
-    ThermalForecastResponse,
-    RiskForecastResponse,
-    RiskForecastItem,
-    AdvisoryResponse,
     ThermalCalculateRequest,
     AlertTestRequest,
     AlertTestResponse
@@ -41,7 +35,7 @@ from ..data_sources.open_meteo import OpenMeteoProvider
 from ..data_sources.geocoding import NominatimGeocoder
 from ..data_sources.cache import DataCache
 from ..db.session import SessionLocal
-from ..db.repositories import LocationRepository, WardRepository, DataSourceRepository
+from ..db.repositories import LocationRepository
 
 router = APIRouter()
 
@@ -301,8 +295,11 @@ def get_wards_summary(
     city_key = loc["city_name"]
 
     forecast_series = open_meteo.get_forecast_weather(lat=c_lat, lon=c_lon, city_id=city_key, days=5)
-    day_idx = max(0, min(len(forecast_series) - 1, day - 1))
-    target_weather = forecast_series[day_idx]
+    if forecast_series:
+        day_idx = max(0, min(len(forecast_series) - 1, day - 1))
+        target_weather = forecast_series[day_idx]
+    else:
+        target_weather = open_meteo.get_current_weather(lat=c_lat, lon=c_lon, city_id=city_key)
 
     geojson_res = ward_manager.generate_ward_risk_collection(
         city_name=city_key,
@@ -517,75 +514,6 @@ def get_thermal_forecast(
 def get_thermal_by_location_id(location_id: str):
     """Get thermal metrics by location ID path parameter."""
     return get_current_thermal(city=location_id)
-    """Compute current physiological UTCI, occupational WBGT, and Heat Index."""
-    active_id = location_id or city
-    cities = load_city_profiles()
-    if lat is not None and lon is not None:
-        c_lat, c_lon = lat, lon
-        c_name = f"Detected ({lat:.3f}, {lon:.3f})"
-    else:
-        cfg = cities.get(active_id.lower(), cities.get("ahmedabad", {}))
-        c_lat = cfg.get("center", {}).get("lat", 23.0225)
-        c_lon = cfg.get("center", {}).get("lon", 72.5714)
-        c_name = cfg.get("name", active_id.title())
-
-    w = open_meteo.get_current_weather(lat=c_lat, lon=c_lon, city_id=active_id)
-    hazard = calculate_thermal_hazard(
-        temp_c=w["temp_c"],
-        relative_humidity_pct=w["relative_humidity_pct"],
-        wind_speed_10m_m_s=w["wind_speed_10m_m_s"],
-        solar_radiation_w_m2=w["solar_radiation_w_m2"]
-    )
-    return {
-        "city_id": active_id,
-        "city_name": c_name,
-        "thermal_analysis": hazard
-    }
-
-
-@router.get("/api/v1/thermal/forecast", tags=["Biometeorology"])
-def get_thermal_forecast(
-    city: str = Query("ahmedabad"),
-    days: int = Query(5, ge=1, le=7),
-    lat: Optional[float] = Query(None),
-    lon: Optional[float] = Query(None)
-):
-    """Compute multi-day forecast horizon for biometeorological thermal indices."""
-    cities = load_city_profiles()
-    if lat is not None and lon is not None:
-        c_lat, c_lon = lat, lon
-        c_name = f"Detected ({lat:.3f}, {lon:.3f})"
-    else:
-        cfg = cities.get(city.lower(), cities.get("ahmedabad", {}))
-        c_lat = cfg.get("center", {}).get("lat", 23.0225)
-        c_lon = cfg.get("center", {}).get("lon", 72.5714)
-        c_name = cfg.get("name", city.title())
-
-    fc_weather = open_meteo.get_forecast_weather(lat=c_lat, lon=c_lon, city_id=city, days=days)
-    series = []
-    for day in fc_weather:
-        hz = calculate_thermal_hazard(
-            temp_c=day["temp_c"],
-            relative_humidity_pct=day["relative_humidity_pct"],
-            wind_speed_10m_m_s=day["wind_speed_10m_m_s"],
-            solar_radiation_w_m2=day["solar_radiation_w_m2"]
-        )
-        series.append({
-            "horizon_day": day["horizon_day"],
-            "horizon_label": day["horizon_label"],
-            "date": day["date"],
-            "inputs": hz["inputs"],
-            "intermediates": hz["intermediates"],
-            "metrics": hz["metrics"],
-            "composite_hazard_score": hz["composite_hazard_score"]
-        })
-
-    return {
-        "city_id": city,
-        "city_name": c_name,
-        "forecast_days": len(series),
-        "series": series
-    }
 
 
 @router.post("/api/v1/thermal/calculate", tags=["Biometeorology"])
@@ -730,8 +658,11 @@ def get_map_risk(
     city_name = loc["city_name"]
 
     fc_series = open_meteo.get_forecast_weather(lat=c_lat, lon=c_lon, city_id=city_name, days=5)
-    day_idx = max(0, min(len(fc_series) - 1, day - 1))
-    target_weather = fc_series[day_idx]
+    if fc_series:
+        day_idx = max(0, min(len(fc_series) - 1, day - 1))
+        target_weather = fc_series[day_idx]
+    else:
+        target_weather = open_meteo.get_current_weather(lat=c_lat, lon=c_lon, city_id=city_name)
 
     return ward_manager.generate_ward_risk_collection(
         city_name=city_name,

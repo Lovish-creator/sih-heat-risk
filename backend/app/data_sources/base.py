@@ -4,8 +4,7 @@ Defines the standard contract for meteorological and solar irradiance ingestion.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
-from datetime import date, datetime
+from typing import Dict, Any, List
 
 
 class WeatherProvider(ABC):

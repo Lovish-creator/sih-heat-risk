@@ -7,12 +7,14 @@ from the Open-Meteo Weather API (https://open-meteo.com/).
 """
 
 import requests
-import time
+import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone, timedelta
 from .base import WeatherProvider
 from .cache import DataCache
 from ..thermal.hazard import calculate_thermal_hazard
+
+logger = logging.getLogger(__name__)
 
 
 def wind_deg_to_compass(deg: float) -> str:
@@ -126,8 +128,8 @@ class OpenMeteoProvider(WeatherProvider):
                 }
                 self.cache.set("open_meteo_current", cache_key, result, ttl_seconds=600)
                 return result
-        except Exception:
-            pass
+        except Exception as err:
+            logger.warning(f"Open-Meteo current weather API error for ({lat}, {lon}): {err}")
 
         return {
             "temp_c": 30.0,
@@ -153,6 +155,76 @@ class OpenMeteoProvider(WeatherProvider):
             "latitude": lat,
             "longitude": lon
         }
+
+    def _get_fallback_hourly(self, lat: float, lon: float, hours: int = 24) -> List[Dict[str, Any]]:
+        """Generate deterministic fallback hourly series when upstream API is unreachable."""
+        now = datetime.now(timezone.utc)
+        results = []
+        for i in range(hours):
+            h_dt = now + timedelta(hours=i)
+            t_iso = h_dt.strftime("%Y-%m-%dT%H:00")
+            h_lbl = h_dt.strftime("%H:00")
+            t_val = 32.0 + (3.0 if 11 <= h_dt.hour <= 16 else -2.0)
+            rh_val = 50.0
+            ws_ms = 2.0
+            solar_val = 550.0 if 8 <= h_dt.hour <= 17 else 0.0
+            hz = calculate_thermal_hazard(
+                temp_c=t_val,
+                relative_humidity_pct=rh_val,
+                wind_speed_10m_m_s=ws_ms,
+                solar_radiation_w_m2=solar_val
+            )
+            results.append({
+                "hour_index": i + 1,
+                "time_iso": t_iso,
+                "hour_label": h_lbl,
+                "date": t_iso[:10],
+                "temp_c": round(t_val, 1),
+                "relative_humidity_pct": rh_val,
+                "dew_point_c": 19.0,
+                "surface_pressure_hpa": 1010.0,
+                "cloud_cover_pct": 10.0,
+                "wind_speed_10m_m_s": ws_ms,
+                "wind_speed_kmh": 7.2,
+                "wind_gusts_kmh": 10.0,
+                "wind_direction_deg": 225.0,
+                "wind_direction_compass": "SW",
+                "solar_radiation_w_m2": solar_val,
+                "uv_index": 5.0 if solar_val > 0 else 0.0,
+                "utci_c": hz["metrics"]["utci"]["value_c"],
+                "utci_category": hz["metrics"]["utci"]["category"],
+                "wbgt_c": hz["metrics"]["wbgt"]["value_c"],
+                "wbgt_risk": hz["metrics"]["wbgt"]["risk_level"],
+                "heat_index_c": hz["metrics"]["heat_index"]["value_c"],
+                "hazard_score": hz["composite_hazard_score"]
+            })
+        return results
+
+    def _get_fallback_forecast(self, lat: float, lon: float, days: int = 5) -> List[Dict[str, Any]]:
+        """Generate deterministic fallback multi-day forecast series when upstream API is unreachable."""
+        now = datetime.now(timezone.utc)
+        results = []
+        for i in range(days):
+            day_dt = now + timedelta(days=i)
+            date_str = day_dt.strftime("%Y-%m-%d")
+            results.append({
+                "horizon_day": i + 1,
+                "horizon_label": f"D+{i}" if i > 0 else "Today (D+0)",
+                "date": date_str,
+                "temp_c": round(33.0 + (i * 0.4), 1),
+                "temp_min_c": 24.0,
+                "relative_humidity_pct": 50.0,
+                "wind_speed_10m_m_s": 2.2,
+                "wind_speed_kmh": 8.0,
+                "solar_radiation_w_m2": 520.0,
+                "uv_index": 6.0,
+                "precipitation_mm": 0.0,
+                "provider": "Open-Meteo Forecast (Fallback)",
+                "is_demo_data": True,
+                "latitude": lat,
+                "longitude": lon
+            })
+        return results
 
     def get_hourly_forecast(
         self,
@@ -267,11 +339,10 @@ class OpenMeteoProvider(WeatherProvider):
 
                 self.cache.set("open_meteo_hourly", cache_key, results, ttl_seconds=600)
                 return results
-        except Exception:
-            pass
+        except Exception as err:
+            logger.warning(f"Open-Meteo hourly forecast API error for ({lat}, {lon}): {err}")
 
-        # Return structured fallback if network fails
-        return []
+        return self._get_fallback_hourly(lat=lat, lon=lon, hours=hours)
 
     def get_forecast_weather(
         self,
@@ -355,7 +426,7 @@ class OpenMeteoProvider(WeatherProvider):
 
                 self.cache.set("open_meteo_forecast", cache_key, results, ttl_seconds=1800)
                 return results
-        except Exception:
-            pass
+        except Exception as err:
+            logger.warning(f"Open-Meteo forecast API error for ({lat}, {lon}): {err}")
 
-        return []
+        return self._get_fallback_forecast(lat=lat, lon=lon, days=days)

@@ -2,7 +2,6 @@
 Unit tests for Composite Thermal Hazard Engine.
 """
 
-import pytest
 import sys
 import os
 
