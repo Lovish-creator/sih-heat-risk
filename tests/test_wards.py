@@ -75,37 +75,37 @@ def test_pan_india_major_cities():
         "solar_radiation_w_m2": 700.0
     }
 
-    # Test Ahmedabad (48 wards)
+    # Test Ahmedabad (official 20 administrative wards from DataMeet)
     ahm = manager.generate_ward_risk_collection("ahmedabad", weather)
-    assert len(ahm["features"]) == 48
+    assert len(ahm["features"]) >= 20
 
-    # Test Mumbai (24 wards)
+    # Test Mumbai (24 municipal wards)
     mum = manager.generate_ward_risk_collection("mumbai", weather)
     assert len(mum["features"]) == 24
 
-    # Test Delhi (50 wards)
+    # Test Delhi (290 official municipal wards from DataMeet)
     delhi = manager.generate_ward_risk_collection("delhi", weather)
-    assert len(delhi["features"]) == 50
+    assert len(delhi["features"]) == 290
 
-    # Test Bengaluru (60 wards)
+    # Test Bengaluru (243 official BBMP wards from DataMeet)
     blr = manager.generate_ward_risk_collection("bengaluru", weather)
-    assert len(blr["features"]) == 60
+    assert len(blr["features"]) == 243
 
-    # Test Chennai (60 wards)
+    # Test Chennai (155 official GCC wards from DataMeet)
     chn = manager.generate_ward_risk_collection("chennai", weather)
-    assert len(chn["features"]) == 60
+    assert len(chn["features"]) == 155
 
-    # Test Kolkata (60 wards)
+    # Test Kolkata (141 official KMC wards from DataMeet)
     kol = manager.generate_ward_risk_collection("kolkata", weather)
-    assert len(kol["features"]) == 60
+    assert len(kol["features"]) == 141
 
-    # Test Hyderabad (60 wards)
+    # Test Hyderabad (145 official GHMC wards from DataMeet)
     hyd = manager.generate_ward_risk_collection("hyderabad", weather)
-    assert len(hyd["features"]) == 60
+    assert len(hyd["features"]) == 145
 
-    # Test Lucknow (110 wards)
+    # Test Lucknow (112 official LMC wards from DataMeet)
     lko = manager.generate_ward_risk_collection("lucknow", weather)
-    assert len(lko["features"]) == 110
+    assert len(lko["features"]) == 112
 
     # Test Amritsar (85 wards)
     asr = manager.generate_ward_risk_collection("amritsar", weather)

@@ -90,6 +90,21 @@ async def serve_js(filename: str):
             pass
     return HTMLResponse(status_code=404, content="")
 
+@app.get("/static/vendor/{filename}", include_in_schema=False)
+@app.get("/vendor/{filename}", include_in_schema=False)
+async def serve_vendor(filename: str):
+    p = _find_frontend_file(os.path.join("vendor", filename))
+    if p:
+        try:
+            with open(p, "rb") as f:
+                content = f.read()
+            media = "application/javascript" if filename.endswith(".js") else "text/css"
+            from starlette.responses import Response
+            return Response(content=content, media_type=media)
+        except Exception:
+            pass
+    return HTMLResponse(status_code=404, content="")
+
 @app.get("/", include_in_schema=False)
 @app.get("/index.html", include_in_schema=False)
 async def serve_index():

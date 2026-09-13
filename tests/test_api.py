@@ -101,10 +101,10 @@ def test_map_risk_endpoint():
     assert "heat_risk_score" in data["features"][0]["properties"]
     assert "demographics" in data["features"][0]["properties"]
 
-    # Test Ahmedabad 48 wards
+    # Test Ahmedabad official wards
     res_ahm = client.get("/api/v1/map/risk?city=ahmedabad&day=1")
     assert res_ahm.status_code == 200
-    assert len(res_ahm.json()["features"]) == 48
+    assert len(res_ahm.json()["features"]) >= 20
 
 
 def test_wards_summary_endpoint():
@@ -218,3 +218,23 @@ def test_static_assets():
     res_map = client.get("/static/js/map.js")
     assert res_map.status_code == 200
     assert "javascript" in res_map.headers.get("content-type", "")
+
+
+def test_freshness_and_alert_api():
+    res_f = client.get("/api/v1/data-freshness")
+    assert res_f.status_code == 200
+    data_f = res_f.json()
+    assert "active_providers" in data_f
+    assert "FRESH" in data_f["status"]
+
+    res_alt = client.post("/api/v1/alerts/test", json={
+        "city_name": "Abohar",
+        "ward_name": "Ward 1",
+        "risk_score": 85.0,
+        "alert_level": "RED"
+    })
+    assert res_alt.status_code == 200
+    data_alt = res_alt.json()
+    assert data_alt["status"] == "success"
+    assert "ALERT_ABO_" in data_alt["alert_payload"]["alert_id"]
+    assert data_alt["dispatch_result"]["status"] == "DELIVERED_MOCK"

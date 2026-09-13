@@ -1,17 +1,41 @@
 version: '3.8'
 
 services:
-  sih26083-backend:
+  app:
     build: .
     container_name: sih26083-heat-risk
     ports:
       - "8000:8000"
     environment:
-      - APP_ENV=production
-      - DEMO_MODE=true
+      - APP_ENV=development
+      - DATA_MODE=hybrid
+      - ENABLE_FALLBACK_DATA=true
+      - DATABASE_URL=sqlite:///./data/heat_risk.db
       - PORT=8000
       - HOST=0.0.0.0
     volumes:
       - ./data:/app/data
       - ./config:/app/config
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
+
+  # Optional PostgreSQL / PostGIS Service (for production deployment)
+  # db:
+  #   image: postgis/postgis:16-3.4
+  #   container_name: sih26083-db
+  #   environment:
+  #     - POSTGRES_USER=heatrisk
+  #     - POSTGRES_PASSWORD=heatrisk_secret
+  #     - POSTGRES_DB=heat_risk_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:

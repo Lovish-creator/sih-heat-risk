@@ -1,0 +1,132 @@
+{
+  "bangalore": {
+    "city_name": "Bangalore",
+    "file_path": "data/datameet_wards/bangalore_wards.geojson",
+    "total_wards": 243
+  },
+  "bhopal": {
+    "city_name": "Bhopal",
+    "file_path": "data/datameet_wards/bhopal_wards.geojson",
+    "total_wards": 86
+  },
+  "bhubaneswar": {
+    "city_name": "Bhubaneswar",
+    "file_path": "data/datameet_wards/bhubaneswar_wards.geojson",
+    "total_wards": 67
+  },
+  "bodh_gaya": {
+    "city_name": "Bodh_Gaya",
+    "file_path": "data/datameet_wards/bodh_gaya_wards.geojson",
+    "total_wards": 19
+  },
+  "chandigarh": {
+    "city_name": "Chandigarh",
+    "file_path": "data/datameet_wards/chandigarh_wards.geojson",
+    "total_wards": 28
+  },
+  "chennai": {
+    "city_name": "Chennai",
+    "file_path": "data/datameet_wards/chennai_wards.geojson",
+    "total_wards": 155
+  },
+  "coimbatore": {
+    "city_name": "Coimbatore",
+    "file_path": "data/datameet_wards/coimbatore_wards.geojson",
+    "total_wards": 100
+  },
+  "delhi": {
+    "city_name": "Delhi",
+    "file_path": "data/datameet_wards/delhi_wards.geojson",
+    "total_wards": 290
+  },
+  "faridabad": {
+    "city_name": "Faridabad",
+    "file_path": "data/datameet_wards/faridabad_wards.geojson",
+    "total_wards": 40
+  },
+  "hyderabad": {
+    "city_name": "Hyderabad",
+    "file_path": "data/datameet_wards/hyderabad_wards.geojson",
+    "total_wards": 145
+  },
+  "jaipur": {
+    "city_name": "Jaipur",
+    "file_path": "data/datameet_wards/jaipur_wards.geojson",
+    "total_wards": 77
+  },
+  "kanpur": {
+    "city_name": "Kanpur",
+    "file_path": "data/datameet_wards/kanpur_wards.geojson",
+    "total_wards": 7
+  },
+  "katihar": {
+    "city_name": "Katihar",
+    "file_path": "data/datameet_wards/katihar_wards.geojson",
+    "total_wards": 45
+  },
+  "kishangarh": {
+    "city_name": "Kishangarh",
+    "file_path": "data/datameet_wards/kishangarh_wards.geojson",
+    "total_wards": 45
+  },
+  "kolkata": {
+    "city_name": "Kolkata",
+    "file_path": "data/datameet_wards/kolkata_wards.geojson",
+    "total_wards": 141
+  },
+  "lucknow": {
+    "city_name": "Lucknow",
+    "file_path": "data/datameet_wards/lucknow_wards.geojson",
+    "total_wards": 112
+  },
+  "mmr": {
+    "city_name": "MMR",
+    "file_path": "data/datameet_wards/mmr_wards.geojson",
+    "total_wards": 1
+  },
+  "mira_bhayandar": {
+    "city_name": "Mira-Bhayandar",
+    "file_path": "data/datameet_wards/mira_bhayandar_wards.geojson",
+    "total_wards": 1
+  },
+  "mumbai": {
+    "city_name": "Mumbai",
+    "file_path": "data/datameet_wards/mumbai_wards.geojson",
+    "total_wards": 24
+  },
+  "nmmc": {
+    "city_name": "NMMC",
+    "file_path": "data/datameet_wards/nmmc_wards.geojson",
+    "total_wards": 111
+  },
+  "pcmc": {
+    "city_name": "PCMC",
+    "file_path": "data/datameet_wards/pcmc_wards.geojson",
+    "total_wards": 66
+  },
+  "pune": {
+    "city_name": "Pune",
+    "file_path": "data/datameet_wards/pune_wards.geojson",
+    "total_wards": 15
+  },
+  "purnia": {
+    "city_name": "Purnia",
+    "file_path": "data/datameet_wards/purnia_wards.geojson",
+    "total_wards": 43
+  },
+  "vadodara": {
+    "city_name": "Vadodara",
+    "file_path": "data/datameet_wards/vadodara_wards.geojson",
+    "total_wards": 12
+  },
+  "vijayawada": {
+    "city_name": "Vijayawada",
+    "file_path": "data/datameet_wards/vijayawada_wards.geojson",
+    "total_wards": 77
+  },
+  "ahmedabad": {
+    "city_name": "Ahmedabad",
+    "file_path": "data/datameet_wards/ahmedabad_wards.geojson",
+    "total_wards": 48
+  }
+}

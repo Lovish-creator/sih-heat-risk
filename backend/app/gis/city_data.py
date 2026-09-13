@@ -38,6 +38,63 @@ MUNICIPAL_WARD_PROFILES: Dict[str, Dict[str, Any]] = {
             ("Major Harjit Singh Ward", "Central Residential", "LCZ 3 Compact Low-Rise", 1.02, 0.95, 1.1)
         ]
     },
+    "bathinda": {
+        "city_name": "Bathinda",
+        "state_name": "Punjab",
+        "district_name": "Bathinda",
+        "total_wards": 50,
+        "center": {"lat": 30.2110, "lon": 74.9455},
+        "radius_km": 4.8,
+        "tot_population": 285788,
+        "census_source": "Census of India 2011 PCA - Municipal Corporation Bathinda (MCB)",
+        "locality_templates": [
+            ("Thermal Colony / Power House", "Industrial & Residential Complex", "LCZ 10 Heavy Industry", 1.10, 1.45, 1.1),
+            ("Mall Road / Dhobi Bazaar", "Commercial Hub & High Street", "LCZ 2 Compact Mid-Rise", 1.06, 1.10, 1.8),
+            ("Model Town Phase 1-3", "Planned Residential Sector", "LCZ 6 Open Low-Rise", 0.99, 0.75, 0.8),
+            ("Qila Mubarak Heritage Zone", "Historic Dense Core", "LCZ 3 Compact Low-Rise", 1.08, 1.25, 2.2),
+            ("Industrial Area Growth Centre", "Manufacturing & Heavy Processing", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.3),
+            ("Civil Lines / Court Complex", "Institutional & Low Density Green", "LCZ 5 Open Mid-Rise", 0.98, 0.70, 0.7),
+            ("Goniana Road Transit Corridor", "Mixed Commercial Transport", "LCZ 8 Large Low-Rise", 1.04, 1.20, 1.0),
+            ("Paras Ram Nagar", "High Density Residential", "LCZ 3 Compact Low-Rise", 1.07, 1.30, 1.7),
+            ("Bir Talab Outskirts", "Peri-Urban Agricultural Fringe", "LCZ D Low Plants/Agri", 0.96, 1.30, 0.6)
+        ]
+    },
+    "patiala": {
+        "city_name": "Patiala",
+        "state_name": "Punjab",
+        "district_name": "Patiala",
+        "total_wards": 60,
+        "center": {"lat": 30.3398, "lon": 76.3869},
+        "radius_km": 6.0,
+        "tot_population": 406192,
+        "census_source": "Census of India 2011 PCA - Municipal Corporation Patiala (MCP)",
+        "locality_templates": [
+            ("Qila Mubarak / Adalat Bazaar", "Historic Dense Core", "LCZ 3 Compact Low-Rise", 1.08, 1.25, 2.3),
+            ("Leela Bhawan / Mall Road", "Commercial Corridor", "LCZ 2 Compact Mid-Rise", 1.04, 0.90, 1.3),
+            ("Urban Estate Phase 1 & 2", "Planned Residential", "LCZ 6 Open Low-Rise", 0.99, 0.75, 0.8),
+            ("Focal Point Industrial Area", "Manufacturing & Diesel Locomotives", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.2),
+            ("Tripuri Dense Settlement", "High-Density Residential", "LCZ 3 Compact Low-Rise", 1.06, 1.30, 1.8),
+            ("Punjabi University Fringe", "Institutional & Educational", "LCZ 5 Open Mid-Rise", 0.98, 0.70, 0.7)
+        ]
+    },
+    "jalandhar": {
+        "city_name": "Jalandhar",
+        "state_name": "Punjab",
+        "district_name": "Jalandhar",
+        "total_wards": 80,
+        "center": {"lat": 31.3260, "lon": 75.5762},
+        "radius_km": 7.5,
+        "tot_population": 862886,
+        "census_source": "Census of India 2011 PCA - Municipal Corporation Jalandhar (MCJ)",
+        "locality_templates": [
+            ("Rainak Bazaar / Mai Hiran Gate", "Ultra-Dense Commercial Core", "LCZ 3 Compact Low-Rise", 1.09, 1.35, 2.5),
+            ("Model Town", "Affluent Planned Commercial", "LCZ 5 Open Mid-Rise", 1.01, 0.80, 0.9),
+            ("Leather Complex / Kapurthala Rd", "Heavy Leather Tannery & Chemical", "LCZ 10 Heavy Industry", 1.14, 1.70, 1.4),
+            ("Sports Goods Complex / Focal Point", "Sports Goods & Hand Tool Manufacturing", "LCZ 8 Large Low-Rise", 1.11, 1.55, 1.2),
+            ("Rama Mandi Transit Hub", "High Density Residential / Transport", "LCZ 3 Compact Low-Rise", 1.06, 1.25, 1.6),
+            ("Cantonment Green Zone", "Low Density Cantonment Greenery", "LCZ B Scattered Trees", 0.96, 0.65, 0.5)
+        ]
+    },
     "amritsar": {
         "city_name": "Amritsar",
         "state_name": "Punjab",
@@ -410,8 +467,193 @@ MUNICIPAL_WARD_PROFILES: Dict[str, Dict[str, Any]] = {
             ("Noonmati Refinery Area", "Petroleum Refinery & Heavy Processing", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.2),
             ("Dispur / Capital Complex", "Administrative & Institutional", "LCZ 5 Open Mid-Rise", 1.00, 0.75, 0.9),
             ("Ganeshguri / GS Road", "Modern Commercial Corridor", "LCZ 4 Open High-Rise", 1.03, 0.85, 1.1),
-            ("Maligaon / Railway HQ", "Railway & Residential Cluster", "LCZ 5 Open Mid-Rise", 1.01, 1.05, 1.2),
-            ("Jalukbari / University Fringe", "Western Outskirts / Greenery", "LCZ B Scattered Trees", 0.96, 0.70, 0.6)
+        ]
+    },
+    "bhopal": {
+        "city_name": "Bhopal",
+        "state_name": "Madhya Pradesh",
+        "district_name": "Bhopal",
+        "total_wards": 85,
+        "center": {"lat": 23.2599, "lon": 77.4126},
+        "radius_km": 9.0,
+        "tot_population": 1798218,
+        "census_source": "Census of India 2011 PCA - Bhopal Municipal Corporation (BMC)",
+        "locality_templates": [
+            ("Old City / Chowk Bazaar", "Historical Dense Commercial", "LCZ 3 Compact Low-Rise", 1.08, 1.30, 2.4),
+            ("MP Nagar Zone I & II", "Central Business District", "LCZ 2 Compact Mid-Rise", 1.05, 0.90, 1.3),
+            ("Govindpura Industrial Area", "Heavy Electricals & Engineering", "LCZ 10 Heavy Industry", 1.13, 1.65, 1.3),
+            ("Arera Colony", "Planned Green Residential", "LCZ 6 Open Low-Rise", 0.98, 0.70, 0.7),
+            ("Kolar Road Suburbs", "Southern Residential Growth", "LCZ 6 Open Low-Rise", 1.00, 0.85, 0.9)
+        ]
+    },
+    "vadodara": {
+        "city_name": "Vadodara",
+        "state_name": "Gujarat",
+        "district_name": "Vadodara",
+        "total_wards": 19,
+        "center": {"lat": 22.3072, "lon": 73.1812},
+        "radius_km": 8.0,
+        "tot_population": 1670806,
+        "census_source": "Census of India 2011 PCA - Vadodara Municipal Corporation (VMC)",
+        "locality_templates": [
+            ("Mandvi / Old Walled City", "Heritage Dense Core", "LCZ 3 Compact Low-Rise", 1.08, 1.25, 2.4),
+            ("Alkapuri / RC Dutt Road", "Commercial / Institutional", "LCZ 5 Open Mid-Rise", 1.01, 0.75, 0.9),
+            ("Makarpura GIDC", "Heavy Industrial Hub", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.3),
+            ("Gorwa / BIDC", "Chemical & Industrial Area", "LCZ 10 Heavy Industry", 1.11, 1.55, 1.2),
+            ("Manjalpur", "Dense Planned Residential", "LCZ 5 Open Mid-Rise", 1.00, 0.85, 1.0)
+        ]
+    },
+    "kanpur": {
+        "city_name": "Kanpur",
+        "state_name": "Uttar Pradesh",
+        "district_name": "Kanpur Nagar",
+        "total_wards": 110,
+        "center": {"lat": 26.4499, "lon": 80.3319},
+        "radius_km": 10.5,
+        "tot_population": 2765348,
+        "census_source": "Census of India 2011 PCA - Kanpur Municipal Corporation (KMC)",
+        "locality_templates": [
+            ("Collectorganj / Nayaganj", "Dense Commercial Wholesale", "LCZ 3 Compact Low-Rise", 1.09, 1.35, 2.5),
+            ("Panki Industrial Area", "Heavy Industrial & Power Plant", "LCZ 10 Heavy Industry", 1.14, 1.65, 1.3),
+            ("Jajmau Tannery Belt", "Leather Processing & Dense Workers", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.8),
+            ("Civil Lines / Mall Road", "Administrative & Green Corridor", "LCZ 5 Open Mid-Rise", 0.98, 0.70, 0.7),
+            ("Kalyanpur / IIT Area", "Educational & Western Suburbs", "LCZ 6 Open Low-Rise", 0.99, 0.80, 0.8)
+        ]
+    },
+    "coimbatore": {
+        "city_name": "Coimbatore",
+        "state_name": "Tamil Nadu",
+        "district_name": "Coimbatore",
+        "total_wards": 100,
+        "center": {"lat": 11.0168, "lon": 76.9558},
+        "radius_km": 9.0,
+        "tot_population": 1050721,
+        "census_source": "Census of India 2011 PCA - Coimbatore City Municipal Corporation (CCMC)",
+        "locality_templates": [
+            ("Town Hall / Big Bazaar", "Commercial Core", "LCZ 3 Compact Low-Rise", 1.07, 1.25, 2.3),
+            ("Peelamedu / Avinashi Road", "IT Corridor & Educational", "LCZ 4 Open High-Rise", 1.01, 0.80, 0.9),
+            ("SIDCO Industrial Kurichi", "Pumps & Textile Engineering", "LCZ 10 Heavy Industry", 1.12, 1.60, 1.3),
+            ("RS Puram", "Planned Residential", "LCZ 5 Open Mid-Rise", 0.99, 0.75, 0.8),
+            ("Ganapathy", "Dense Mixed Residential", "LCZ 3 Compact Low-Rise", 1.04, 1.05, 1.4)
+        ]
+    },
+    "kochi": {
+        "city_name": "Kochi",
+        "state_name": "Kerala",
+        "district_name": "Ernakulam (Kochi)",
+        "total_wards": 74,
+        "center": {"lat": 9.9312, "lon": 76.2673},
+        "radius_km": 7.5,
+        "tot_population": 602046,
+        "census_source": "Census of India 2011 PCA - Kochi Municipal Corporation (KMC)",
+        "locality_templates": [
+            ("Fort Kochi / Mattancherry", "Heritage Dense Coastal Core", "LCZ 3 Compact Low-Rise", 1.04, 1.15, 2.0),
+            ("MG Road / Ernakulam South", "Central Commercial Hub", "LCZ 2 Compact Mid-Rise", 1.05, 0.95, 1.4),
+            ("Willingdon Island / Port", "Port Logistics & Warehousing", "LCZ 8 Large Low-Rise", 1.06, 1.40, 0.9),
+            ("Kaloor / Palarivattom", "Transit & Residential", "LCZ 5 Open Mid-Rise", 1.01, 0.85, 1.1),
+            ("Kakkanad / InfoPark", "IT SEZ & Suburban High-Rise", "LCZ 4 Open High-Rise", 0.99, 0.75, 0.8)
+        ]
+    },
+    "bhubaneswar": {
+        "city_name": "Bhubaneswar",
+        "state_name": "Odisha",
+        "district_name": "Khurda (Bhubaneswar)",
+        "total_wards": 67,
+        "center": {"lat": 20.2961, "lon": 85.8245},
+        "radius_km": 8.0,
+        "tot_population": 843402,
+        "census_source": "Census of India 2011 PCA - Bhubaneswar Municipal Corporation (BMC)",
+        "locality_templates": [
+            ("Old Town (Temple Area)", "Heritage Dense Core", "LCZ 3 Compact Low-Rise", 1.07, 1.20, 2.2),
+            ("Janpath / Master Canteen", "Commercial Corridor", "LCZ 2 Compact Mid-Rise", 1.05, 0.95, 1.3),
+            ("Mancheswar Industrial", "Rail & Light Manufacturing", "LCZ 8 Large Low-Rise", 1.11, 1.55, 1.2),
+            ("Chandrasekharpur / Infocity", "IT Hub & Planned Sectors", "LCZ 4 Open High-Rise", 1.00, 0.80, 0.85),
+            ("Nayapalli / Jayadev Vihar", "High Density Residential", "LCZ 5 Open Mid-Rise", 1.02, 0.90, 1.1)
+        ]
+    },
+    "vijayawada": {
+        "city_name": "Vijayawada",
+        "state_name": "Andhra Pradesh",
+        "district_name": "Visakhapatnam",
+        "total_wards": 64,
+        "center": {"lat": 16.5062, "lon": 80.6480},
+        "radius_km": 7.5,
+        "tot_population": 1034358,
+        "census_source": "Census of India 2011 PCA - Vijayawada Municipal Corporation (VMC)",
+        "locality_templates": [
+            ("One Town (Old City)", "Ultra-Dense Wholesale Market", "LCZ 3 Compact Low-Rise", 1.09, 1.35, 2.6),
+            ("Besant Road / Governorpet", "High Street Commercial Core", "LCZ 2 Compact Mid-Rise", 1.06, 1.10, 1.6),
+            ("Auto Nagar Industrial", "Auto & Engineering Cluster", "LCZ 10 Heavy Industry", 1.13, 1.65, 1.3),
+            ("Benz Circle / MG Road", "Modern Commercial Corridor", "LCZ 4 Open High-Rise", 1.03, 0.85, 1.0),
+            ("Bhavanipuram", "Mixed Residential Suburb", "LCZ 6 Open Low-Rise", 1.00, 0.90, 0.9)
+        ]
+    },
+    "navi_mumbai": {
+        "city_name": "Navi Mumbai",
+        "state_name": "Maharashtra",
+        "district_name": "Thane",
+        "total_wards": 111,
+        "center": {"lat": 19.0330, "lon": 73.0297},
+        "radius_km": 9.5,
+        "tot_population": 1120547,
+        "census_source": "Census of India 2011 PCA - Navi Mumbai Municipal Corporation (NMMC)",
+        "locality_templates": [
+            ("Vashi Sector 1-30", "Commercial CBD & Rail Node", "LCZ 2 Compact Mid-Rise", 1.04, 0.90, 1.2),
+            ("TTC Industrial Area", "Chemical & Engineering Belt", "LCZ 10 Heavy Industry", 1.13, 1.65, 1.3),
+            ("APMC Wholesale Market", "Grain & Onion Potato Market Hub", "LCZ 8 Large Low-Rise", 1.10, 1.55, 1.6),
+            ("Nerul / Seawoods", "Planned Residential High-Rise", "LCZ 4 Open High-Rise", 0.99, 0.75, 0.8),
+            ("Belapur CBD", "Government Administrative Hub", "LCZ 4 Open High-Rise", 1.00, 0.80, 0.9)
+        ]
+    },
+    "pcmc": {
+        "city_name": "Pimpri-Chinchwad",
+        "state_name": "Maharashtra",
+        "district_name": "Pune",
+        "total_wards": 32,
+        "center": {"lat": 18.6298, "lon": 73.7997},
+        "radius_km": 9.0,
+        "tot_population": 1727692,
+        "census_source": "Census of India 2011 PCA - Pimpri-Chinchwad Municipal Corporation (PCMC)",
+        "locality_templates": [
+            ("Bhosari MIDC", "Auto & Heavy Industrial Cluster", "LCZ 10 Heavy Industry", 1.14, 1.65, 1.4),
+            ("Pimpri Market / Station", "Dense Commercial Transit Hub", "LCZ 2 Compact Mid-Rise", 1.06, 1.15, 1.8),
+            ("Chinchwad Gaon", "Heritage Core Residential", "LCZ 3 Compact Low-Rise", 1.04, 1.00, 1.5),
+            ("Hinjawadi Phase 1-3 Fringe", "IT SEZ & High-Rise Tech", "LCZ 4 Open High-Rise", 0.99, 0.75, 0.8),
+            ("Nigdi / Pradhikaran", "Planned Residential Sectors", "LCZ 6 Open Low-Rise", 0.98, 0.70, 0.7)
+        ]
+    },
+    "faridabad": {
+        "city_name": "Faridabad",
+        "state_name": "Haryana",
+        "district_name": "Faridabad",
+        "total_wards": 40,
+        "center": {"lat": 28.4089, "lon": 77.3178},
+        "radius_km": 8.0,
+        "tot_population": 1414050,
+        "census_source": "Census of India 2011 PCA - Municipal Corporation of Faridabad (MCF)",
+        "locality_templates": [
+            ("Old Faridabad / NIT Market", "Ultra-Dense Commercial Core", "LCZ 3 Compact Low-Rise", 1.08, 1.30, 2.4),
+            ("Sector 24-25 Industrial", "Manufacturing & Heavy Forging", "LCZ 10 Heavy Industry", 1.13, 1.65, 1.4),
+            ("Sector 15 / 16 (Central)", "Planned High-Income Residential", "LCZ 6 Open Low-Rise", 0.98, 0.70, 0.7),
+            ("Ballabgarh Market", "Transit & Industrial Southern Core", "LCZ 3 Compact Low-Rise", 1.07, 1.35, 1.8),
+            ("Greater Faridabad (Neharpar)", "Developing High-Rise Corridor", "LCZ 4 Open High-Rise", 1.00, 0.85, 0.9)
+        ]
+    },
+    "mira_bhayandar": {
+        "city_name": "Mira-Bhayandar",
+        "state_name": "Maharashtra",
+        "district_name": "Thane",
+        "total_wards": 24,
+        "center": {"lat": 19.2812, "lon": 72.8561},
+        "radius_km": 6.0,
+        "tot_population": 809378,
+        "census_source": "Census of India 2011 PCA - Mira-Bhayandar Municipal Corporation (MBMC)",
+        "locality_templates": [
+            ("Bhayandar West / Station Road", "Dense Commercial Transit Node", "LCZ 2 Compact Mid-Rise", 1.06, 1.20, 2.2),
+            ("Mira Road Shanti Nagar", "Ultra-Dense High-Rise Residential", "LCZ 4 Open High-Rise", 1.02, 0.90, 1.8),
+            ("Kashimira / Highway Belt", "Mixed Commercial Transport Hub", "LCZ 8 Large Low-Rise", 1.05, 1.30, 1.1),
+            ("Uttan / Gorai Coastal Fringe", "Fishing Village & Mangrove Fringe", "LCZ D Low Plants/Agri", 0.97, 1.10, 0.6)
         ]
     }
 }
+

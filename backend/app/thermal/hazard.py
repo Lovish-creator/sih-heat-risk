@@ -2,13 +2,30 @@
 Composite Thermal Hazard Quantification Engine.
 
 Synthesizes UTCI, WBGT, and Heat Index into a normalized, scientifically grounded
-Thermal Hazard Score on a continuous 0 to 100 scale.
+Thermal Hazard Score on a continuous 0 to 100 scale with strict boundary validation.
 """
 
 from typing import Dict, Any, Optional
 from .utci import calculate_utci, classify_utci, calculate_vapor_pressure, calculate_mrt
 from .wbgt import calculate_wbgt, classify_wbgt
 from .heat_index import calculate_heat_index, classify_heat_index
+
+
+def validate_thermal_inputs(
+    temp_c: float,
+    relative_humidity_pct: float,
+    wind_speed_10m_m_s: float,
+    solar_radiation_w_m2: float
+):
+    """Validate physical plausibility ranges for meteorological inputs."""
+    if not (-20.0 <= temp_c <= 65.0):
+        raise ValueError(f"Temperature {temp_c}?C is outside plausible meteorological range (-20?C to 65?C).")
+    if not (0.0 <= relative_humidity_pct <= 100.0):
+        raise ValueError(f"Relative humidity {relative_humidity_pct}% is outside valid range (0% to 100%).")
+    if wind_speed_10m_m_s < 0.0 or wind_speed_10m_m_s > 75.0:
+        raise ValueError(f"Wind speed {wind_speed_10m_m_s} m/s is outside valid range (0 to 75 m/s).")
+    if solar_radiation_w_m2 < 0.0 or solar_radiation_w_m2 > 1500.0:
+        raise ValueError(f"Solar radiation {solar_radiation_w_m2} W/m? is outside valid range (0 to 1500 W/m?).")
 
 
 def calculate_thermal_hazard(
@@ -29,8 +46,12 @@ def calculate_thermal_hazard(
         is_outdoor: True for direct sunlight exposure.
         
     Returns:
-        Dictionary containing all raw metrics, classifications, and composite hazard score (0-100).
+        Dictionary containing all raw metrics, classifications, intermediate physical variables,
+        and composite hazard score (0-100).
     """
+    # 0. Validate input ranges
+    validate_thermal_inputs(temp_c, relative_humidity_pct, wind_speed_10m_m_s, solar_radiation_w_m2)
+
     # 1. Calculate UTCI (Broad outdoor human physiological stress)
     utci_val = calculate_utci(
         temp_c=temp_c,
@@ -108,5 +129,10 @@ def calculate_thermal_hazard(
                 "description": hi_info["description"]
             }
         },
-        "composite_hazard_score": composite_hazard_score
+        "composite_hazard_score": composite_hazard_score,
+        "metadata": {
+            "engine": "Universal Thermal Climate & Occupational WBGT Engine",
+            "engine_version": "1.2.0-scientific",
+            "standards": ["COST Action 730 (UTCI)", "ISO 7243 / ACGIH (WBGT)", "NOAA NWS SR 90-23 (Heat Index)"]
+        }
     }

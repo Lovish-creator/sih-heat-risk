@@ -4,6 +4,7 @@ cities:
   abohar:
     id: "abohar"
     name: "Abohar (50 Municipal Wards)"
+    district: "Fazilka"
     state: "Punjab"
     region_type: "plains"
     center:

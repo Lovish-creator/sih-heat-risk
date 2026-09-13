@@ -134,3 +134,17 @@ class AdvisoryEngine:
                 "international_guidance": "WHO Heat-Health Action Plans (2021)"
             }
         }
+
+    def generate_advisory(
+        self,
+        city_id: str = "ahmedabad",
+        alert_level: str = "ORANGE",
+        risk_score: float = 65.0,
+        wbgt_info: Optional[Dict[str, Any]] = None,
+        utci_info: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        wbgt = wbgt_info or {"work_rest_regimen": "45 min work / 15 min rest"}
+        utci = utci_info or {"category": "Strong Heat Stress"}
+        res = self.generate_advisories(alert_level=alert_level, risk_score=risk_score, wbgt_info=wbgt, utci_info=utci)
+        res["city_id"] = city_id
+        return res
