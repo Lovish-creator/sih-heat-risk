@@ -25,7 +25,7 @@
       <div class="brand-logo-badge">SIH26083</div>
       <div>
         <h1 class="brand-title">ThermoShield India</h1>
-        <p class="brand-subtitle">Ministry of Earth Sciences (MoES) / NCMRWF — Tier 1 Heatwave Early Warning & Biometeorology Prototype</p>
+        <p class="brand-subtitle">Extreme Heat Early Warning and Human Thermal Stress Decision-Support System</p>
       </div>
     </div>
     <div class="header-actions">
@@ -38,7 +38,7 @@
       <button type="button" class="btn btn-secondary" id="btnViewCapAlert" title="View ITU/WMO Common Alerting Protocol v1.2 Payload">
         🚨 CAP Alert
       </button>
-      <span class="status-badge status-badge-live" id="liveTimeBadge">● FRESH: REAL-TIME NWP</span>
+      <span class="status-badge status-badge-live" id="liveTimeBadge">● LIVE WEATHER: OPEN-METEO</span>
       <a href="/docs" target="_blank" class="btn btn-secondary" style="text-decoration: none;">API Docs</a>
     </div>
   </header>
@@ -88,7 +88,7 @@
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Jurisdiction:</span>
           <select id="citySelect" class="preset-select-field">
-            <optgroup label="⭐ Official DataMeet Municipal Corporations & Surveyed Boundaries (26 Cities)">
+            <optgroup label="⭐ Available Municipal Boundaries & Delimitation (26 Cities)">
               <option value="delhi">⭐ Delhi (NCT) — 290 Wards (DataMeet MCD / Cantt Delimitation)</option>
               <option value="bengaluru">⭐ Bengaluru (Karnataka) — 243 Wards (BBMP DataMeet)</option>
               <option value="chennai">⭐ Chennai (Tamil Nadu) — 155 Wards (GCC DataMeet)</option>
@@ -146,7 +146,7 @@
         <strong>📍 Initializing Location Intelligence...</strong>
       </div>
       <div style="font-size: 0.78rem; color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-        <span>⚡ Live Telemetry: Open-Meteo High-Resolution NWP Stream</span>
+        <span>⚡ Live Weather: Open-Meteo Public API</span>
         <span style="color: #64748b;">|</span>
         <span>👥 Demographics: Census of India 2011 PCA (46 Districts Compiled)</span>
         <span style="color: #64748b;">|</span>
@@ -362,7 +362,7 @@
       <div class="dashboard-card" style="margin-bottom: 1.25rem;">
         <div class="card-header-flex">
           <h3 class="card-heading">🧪 Primary Meteorological Drivers (Temp, Humidity, Solar Irradiance)</h3>
-          <span class="status-badge status-badge-live">Live NWP Stream</span>
+          <span class="status-badge status-badge-live">Live Weather Feed</span>
         </div>
         <div class="chart-card-wrapper" style="height: 280px;">
           <canvas id="chartWeatherDrivers"></canvas>
@@ -521,7 +521,7 @@
               <tr>
                 <td><strong>Meteorological Telemetry</strong></td>
                 <td><span style="color: #34d399; font-weight: bold;">● 100% REAL LIVE</span></td>
-                <td>Open-Meteo High-Resolution NWP & NASA POWER</td>
+                <td>Open-Meteo Public Forecast & NASA POWER</td>
                 <td>Real-time live ingestion ($T_a, T_{dp}, RH, Solar, Wind, UV, P$) without API keys or synthetic fixtures.</td>
               </tr>
               <tr>
@@ -604,8 +604,7 @@
         <ul style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-left: 1.25rem;">
           <li><strong>Relative Ranking, Not Mortality Forecast:</strong> Scores reflect comparative thermal stress and vulnerable population exposure, not clinical diagnoses or epidemiological mortality predictions.</li>
           <li><strong>Demographic Baseline:</strong> Demographic vulnerability utilizes Census of India 2011 Primary Census Abstract (PCA) tables as official public baseline data.</li>
-          <li><strong>NWP Ingestion:</strong> Meteorological telemetry is ingested in real-time from Open-Meteo and NASA POWER multi-model NWP feeds. Full production deployment envisions direct coupling with IMD / NCMRWF High-Resolution Regional Models.</li>
-          <li><strong>Spatial Units:</strong> Surveyed municipal delimitation boundaries are integrated for verified pilot locations (Abohar, AMC). For other cities, algorithmic LCZ spatial simulation demonstrates Pan-India scalability.</li>
+          <li><strong>Weather Ingestion:</strong> Meteorological data is retrieved in real-time from Open-Meteo and NASA POWER open endpoints. Full production deployment envisions direct coupling with IMD / NCMRWF High-Resolution Regional Models.</li>
         </ul>
       </div>
     </section>
@@ -662,7 +661,7 @@
   <!-- Institutional Footer -->
   <footer class="app-footer">
     <p>
-      <strong>SIH26083 Platform</strong> — Ministry of Earth Sciences (MoES) / NCMRWF | Built with Real-Time Open Data (Open-Meteo Live NWP, NASA POWER, OpenStreetMap, Census 2011 PCA, UTCI COST 730, NIOSH 2016).
+      <strong>SIH26083 Platform</strong> — Ministry of Earth Sciences (MoES) / NCMRWF Problem Statement | Built with Open Data (Open-Meteo Public Weather, NASA POWER, OpenStreetMap, Census 2011 PCA, UTCI COST 730, NIOSH 2016).
     </p>
     <p style="margin-top: 4px; font-size: 0.72rem; color: var(--text-dim);">
       Tier 1 Prototype: Relative heat-health decision-support estimate — not a clinical medical diagnosis or mortality forecast.

@@ -1,70 +1,57 @@
-# System Boundaries & Scientific Limitations — ThermoShield India (SIH26083)
+# Technical Limitations & Boundaries — ThermoShield India (SIH26083)
 
-In accordance with scientific integrity and transparent engineering principles, this document provides an honest, comprehensive evaluation of the system's operational scope, data resolution limits, and scientific boundaries.
-
----
-
-## 1. Meteorological Spatial Downscaling vs. Sensor Reality
-
-### The Physical Reality
-* True microclimate variation at $\le 200\text{m}$ resolution (e.g. narrow street canyons, localized tree canopy shading, vehicular heat exhaust) cannot be observed by physical AWS stations alone, because no municipal corporation in India operates automated weather stations at $200\text{m}$ grid intervals.
-* Regional Numerical Weather Prediction (NWP) models (such as NCMRWF NCUM and IMD GFS) provide operational forcing at $4\text{km}$ to $12\text{km}$ horizontal resolution.
-
-### ThermoShield's Downscaling Approach & Boundary
-* ThermoShield computes **Local Climate Zone (LCZ)** biophysical offsets based on Stewart & Oke (2012) classifications, impervious surface fractions, and surface albedo.
-* **Limitation:** While these microclimate adjustments account for urban morphology and building density differentials, they represent **parameterized microclimate estimates**, not direct physical sensor measurements. Real-time IoT sensor networks (such as citizen micro-stations or municipal LoRaWAN sensors) can be linked as future data adapters.
+**STATUS: TRANSPARENT TECHNICAL BOUNDARIES (TIER 1)**
 
 ---
 
-## 2. Demographic Baseline: Census 2011 vs. Present Dynamics
+## 1. Ethical & Scientific Boundaries
 
-### The Data Landscape
-* The latest official statutory census released by the Office of the Registrar General and Census Commissioner of India (RGI) is **Census 2011 Primary Census Abstract (PCA)**.
-* Ward-level elderly counts ($60+$), child populations ($0-5$), and main/marginal informal labor breakdowns are anchored to this decennial statutory baseline.
+1. **Not a Clinical Mortality or Morbidity Predictor:**
+   The Relative Heat-Health Risk Score ($0–100$) represents relative environmental and demographic exposure to prioritize municipal emergency interventions. It does **not** estimate absolute numbers of deaths, heatstroke admissions, or individual medical risk.
 
-### System Handling & Boundaries
-* Where recent municipal population projections are available, density adjustments are applied.
-* **Limitation:** Intra-city migrant worker movement, post-2020 urban expansion, and local construction worker concentrations may differ from decennial enumeration. The vulnerability engine is structured with standardized ingestion hooks for immediate integration of future Census 2026 releases or state-level NFHS-5 surveys.
+2. **No Patient-Level or Hospital Telemetry:**
+   The system does not ingest private electronic health records (EHR), emergency department registers, or syndromic surveillance feeds. All demographic inputs are aggregated public statistics.
 
----
-
-## 3. Ward Geometry Provenance: Surveyed vs. Density-Proportional Delimitations
-
-### The Data Landscape
-* Official surveyed GIS shapefiles (sub-meter cadastral polygons) are publicly released for certain metropolitan corporations (e.g., Delhi MCD, Ahmedabad AMC, Mumbai BMC), but are restricted or published solely as text gazettes for smaller statutory towns (e.g., Abohar Municipal Corporation 50-ward gazette).
-
-### Provenance Guardrail
-* ThermoShield **never misrepresents generated geometries as official surveyor shapefiles**.
-* Every ward feature in the database and API output includes:
-  ```json
-  "is_official_geometry": false,
-  "is_generated_geometry": true,
-  "geometry_source": "census_density_proportional_v1"
-  ```
-* For towns without open GIS shapefiles, boundaries are computed using density-proportional spatial tessellation ($A_w = \text{Pop}_w / \text{Density}_w$) anchored to official ward centroids and municipal delimitation gazettes.
+3. **No Unvalidated Machine Learning Claims:**
+   The repository does not train machine-learning models on synthetic data. ML components are structured as future research scaffolding awaiting verified historical health outcome datasets.
 
 ---
 
-## 4. Upstream Telemetry: Public Open Data vs. Restricted IMD / NCMRWF Feeds
+## 2. Meteorological & Physical Boundaries
 
-### Current Implementation
-* ThermoShield utilizes authenticated, high-reliability open data streams:
-  - **Open-Meteo Weather API** (15-min surface telemetry & 7-day multi-horizon forecast)
-  - **NASA POWER API** (All-sky solar downward irradiance & climatological flux)
-  - **IMD Climatological Gazettes** (Official heatwave threshold criteria: $+4.5^\circ\text{C}, +6.4^\circ\text{C}$)
+1. **Resolution of Meteorological Inputs:**
+   Weather inputs are retrieved from Open-Meteo and NASA POWER public endpoints (global numerical model outputs and satellite reanalysis at $4\text{km} - 11\text{km}$ grid resolution). The system does not possess dedicated physical automated weather stations in every municipal ward.
 
-### Roadmap & Integration Hooks
-* Production deployment with the Ministry of Earth Sciences (MoES) will ingest direct NCUM $4\text{km}$ GRIB2 model feeds and IMD AWS high-frequency telemetry via dedicated server-side pipeline adapters (`backend/app/ingestion/`).
+2. **Microclimate Downscaling Approximations:**
+   Sub-grid spatial variation across municipal wards is modeled using Stewart & Oke (2012) Local Climate Zone (LCZ) urban density adjustments ($A_w = \text{Pop}_w / \text{Density}_w$). While physically grounded in urban climatology literature, this remains an algorithmic approximation pending high-resolution urban canopy sensors.
+
+3. **Polynomial Operational Ranges:**
+   - The UTCI 6th-order polynomial approximation is valid within $-50^\circ\text{C} \le T_a \le +60^\circ\text{C}$ and $v_{10m} \le 30.3\text{ m/s}$.
+   - Stull psychrometric wet-bulb formulation is valid within $-20^\circ\text{C} \le T_a \le +50^\circ\text{C}$ and $5\% \le RH \le 99\%$.
+   - Input values outside these physical bounds are clamped defensively with warning logs.
 
 ---
 
-## 5. Health Data Readiness & Anti-Hallucination Policy
+## 3. Demographic & Geospatial Boundaries
 
-### Absolute Rule: Zero Fabricated Clinical Labels
-* ThermoShield explicitly **rejects the generation of fake hospital admissions, heat stroke casualties, or synthetic mortality numbers**.
-* Fabricating health outcome data violates medical ethics, epidemiological validity, and legal compliance.
+1. **Census of India 2011 Baseline:**
+   Demographic vulnerability indicators (Elderly 60+, Outdoor labor fraction, Population density) are compiled from the Census of India 2011 Primary Census Abstract (PCA). While this represents the most comprehensive official public baseline available, contemporary demographic growth and migration patterns over the past decade are not dynamically captured.
 
-### Relative Risk vs. Clinical Outcome
-* The composite Heat-Health Risk Index ($R \in [0, 100]$) is a **relative spatial prioritization metric** combining environmental hazard, demographic sensitivity, and heatwave duration.
-* It alerts municipal authorities to *which wards require prioritized intervention*, rather than claiming to predict exact clinical mortality counts.
-* Full integration requirements for authentic State IDSP / DISHA feeds via Distributed Lag Non-Linear Models (DLNM) are detailed in [`docs/HEALTH_DATA_READINESS.md`](HEALTH_DATA_READINESS.md).
+2. **Municipal Boundary Availability:**
+   Official digital GIS vector boundaries are bundled for 26 Indian municipal corporations where open civic GIS data (DataMeet) or state delimitation notifications exist. For other statutory towns, algorithmic LCZ spatial units demonstrate Pan-India coverage.
+
+3. **Fallback Proxy Notice:**
+   For towns without compiled district Census tables, the system uses a transparent state or national baseline proxy clearly labeled as a fallback.
+
+---
+
+## 4. Operational & Institutional Boundaries
+
+1. **Institutional Upstream Connections:**
+   Direct binary GRIB/NetCDF feeds from NCMRWF supercomputers and internal IMD push APIs require formal institutional access agreements (modeled as Tier-2 interfaces).
+
+2. **Automated Alert Dissemination:**
+   The platform generates standardized Common Alerting Protocol (CAP v1.2) XML/JSON payloads and SMS broadcast text. Direct automated dispatch to telecom cellular towers or NDMA SACHET requires institutional gateway integration in Tier 2.
+
+3. **Production Deployment Requirements:**
+   Full operational commissioning requires deployment on dedicated government cloud infrastructure (MeghRaj / NIC), empirical calibration against local hospital records, and statutory nodal ministry approvals.

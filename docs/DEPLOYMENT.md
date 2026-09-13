@@ -1,6 +1,8 @@
 # Deployment & Operations Guide — ThermoShield India (SIH26083)
 
-This guide details instructions for launching, configuring, containerizing, and deploying ThermoShield India across local environments, Docker, and production cloud infrastructure.
+**STATUS: DEPLOYMENT CONFIGURATION REFERENCE**
+
+*The hosted demonstration is already deployed. This document details instructions for launching, configuring, containerizing, and running ThermoShield India locally or on cloud infrastructure.*
 
 ---
 

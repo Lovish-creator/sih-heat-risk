@@ -527,7 +527,7 @@ function renderOverviewView(state) {
         descEl.textContent = "Comfortable to mild conditions. Thermal indices remain within safe baseline thresholds.";
       }
     } else {
-      descEl.textContent = "Awaiting synchronized live meteorological telemetry from NWP provider...";
+      descEl.textContent = "Awaiting meteorological data from public weather provider...";
     }
   }
 
@@ -539,7 +539,7 @@ function renderOverviewView(state) {
 
   // Supporting Thermal Stress Sub-Metrics
   const utciVal = metrics.utci?.value_c !== undefined ? metrics.utci.value_c : null;
-  const utciCat = metrics.utci?.category || "Calculated from NWP";
+  const utciCat = metrics.utci?.category || "Calculated from Weather Data";
   const wbgtVal = metrics.wbgt?.value_c !== undefined ? metrics.wbgt.value_c : null;
   const wbgtCat = metrics.wbgt?.risk_category || "NIOSH / ISO 7243";
   const hiVal = metrics.heat_index?.value_c !== undefined ? metrics.heat_index.value_c : null;

@@ -1,6 +1,8 @@
-# Vercel Deployment Guide - ThermoShield India (SIH26083)
+# Deployment Configuration Reference — ThermoShield India (SIH26083)
 
-This guide provides step-by-step instructions for deploying the **ThermoShield India** FastAPI + Leaflet web application to **Vercel** serverless cloud infrastructure.
+**STATUS: DEPLOYMENT CONFIGURATION REFERENCE**
+
+*The hosted demonstration is already deployed. This document serves as a technical reference for Vercel serverless configuration and reproducibility.*
 
 ---
 

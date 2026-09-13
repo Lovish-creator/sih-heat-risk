@@ -25,7 +25,7 @@
 | **Phase 11** | GIS Integration & Leaflet Delivery | Real-size density-proportional GeoJSON geometries, Leaflet choropleth endpoints | ✅ Complete |
 | **Phase 12** | Alert Interface & CAP Webhooks | `backend/app/alerts/engine.py`, ITU/WMO Common Alerting Protocol JSON generator, mock dispatch logger | ✅ Complete |
 | **Phase 13** | Docker & Deployment Readiness | `Dockerfile`, `docker-compose.yml` with SQLite/Postgres multi-profile, health checks | ✅ Complete |
-| **Phase 14** | Automated Test Suite | `tests/` (14 test modules, **50 / 50 unit and integration tests passing**) | ✅ Complete |
+| **Phase 14** | Automated Test Suite | `tests/` (14 test modules, **51 / 51 unit and integration tests passing**) | ✅ Complete |
 | **Phase 15** | Documentation & Local Execution Deliverables | `README.md`, `run_local.py`, `scripts/run_local.bat`, `scripts/run_local.ps1`, full `docs/` technical suite | ✅ Complete |
 
 ---
@@ -39,24 +39,9 @@ rootdir: C:\Users\Ni\.gemini\antigravity\scratch\sih26083-heat-risk
 configfile: pytest.ini
 testpaths: tests
 plugins: anyio-4.15.0
-collected 50 items
+collected 51 items
 
-tests\test_advisory.py .                                                 [  2%]
-tests\test_alerts.py ..                                                  [  6%]
-tests\test_api.py .................                                      [ 40%]
-tests\test_database.py ...                                               [ 46%]
-tests\test_gis.py .                                                      [ 48%]
-tests\test_hazard.py ..                                                  [ 52%]
-tests\test_heat_index.py ..                                              [ 56%]
-tests\test_ingestion.py ...                                              [ 62%]
-tests\test_live_sources.py .....                                         [ 72%]
-tests\test_risk_engine.py ..                                             [ 76%]
-tests\test_utci.py ....                                                  [ 84%]
-tests\test_vulnerability.py ..                                           [ 88%]
-tests\test_wards.py ...                                                  [ 94%]
-tests\test_wbgt.py ...                                                   [100%]
-
-======================= 50 passed, 2 warnings in 3.66s ========================
+51 passed, 2 warnings in 4.19s
 ```
 
 ---

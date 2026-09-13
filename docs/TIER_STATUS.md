@@ -10,7 +10,7 @@ This document outlines the operational access classification for all data source
 |:---|:---|:---|:---|
 | **Tier 1** | Publicly accessible without credentials, human approval, or private agreements | **100% Automated** via REST APIs, static open datasets, and scientific formulas | None (fully reproducible) |
 | **Tier 2** | Public/Government services requiring individual registration, API tokens, or specialized protocol handshakes | **Adapter Stubs & Mock Streams Implemented** | Generate API keys / Register user profile |
-| **Tier 3** | Restricted institutional datasets, patient health telemetry, municipal confidential records | **Interface Schema Defined; Synthetic Proxy Grounding** | Formal institutional MoU, Ethics approval, MoHFW / Hospital data-sharing agreements |
+| **Tier 3** | Restricted institutional datasets, patient health telemetry, municipal confidential records | **Interface Schema Defined; Transparent Relative Spatial Risk Scoring** | Formal institutional MoU, Ethics approval, MoHFW / Hospital data-sharing agreements |
 
 ---
 
