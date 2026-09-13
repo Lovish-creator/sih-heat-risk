@@ -10,6 +10,13 @@ htmlcov/
 *.log
 data/cache/*
 !data/cache/.gitkeep
+data/*.db
+*.db
+
+# Vercel & Deployment
+.vercel/
+dist/
+build/
 
 # Environment and secrets
 .env
