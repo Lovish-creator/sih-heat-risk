@@ -1,79 +1,146 @@
-# SIH26083 Deployment & Operations Guide
+# Deployment & Operations Guide — ThermoShield India (SIH26083)
 
-This guide details instructions for setting up, running, testing, and containerizing the SIH26083 Human Thermal Stress and Early Warning prototype on any clean machine.
-
----
-
-## 1. System Requirements
-- **Python**: 3.10, 3.11, 3.12, 3.13, or 3.14
-- **Operating System**: Linux / macOS / Windows 10/11
-- **Optional**: Docker 24.0+ & Docker Compose v2+
+This guide details instructions for launching, configuring, containerizing, and deploying ThermoShield India across local environments, Docker, and production cloud infrastructure.
 
 ---
 
-## 2. Local Setup (Standard Python Environment)
+## 1. Quick Start: Local Zero-Configuration Launch
 
-### Step 1: Clone the Repository
+ThermoShield India includes an automated SQLite bootstrap requiring zero database setup.
+
+### 1.1 Prerequisites
+* Python 3.10+ (tested on Python 3.10, 3.11, 3.12, 3.13, 3.14)
+* pip / virtualenv
+
+### 1.2 Windows Launch
+Double-click `scripts/run_local.bat` or run via PowerShell:
+```powershell
+.\scripts\run_local.ps1
+```
+Or directly using Python:
 ```bash
-git clone https://github.com/your-username/sih26083-heat-risk.git
-cd sih26083-heat-risk
+python run_local.py
 ```
 
-### Step 2: Create and Activate a Virtual Environment
+### 1.3 Linux / macOS Launch
 ```bash
-# On Windows (PowerShell)
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-
-# On Linux / macOS (Bash)
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### Step 3: Install Dependencies
-```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+python run_local.py
 ```
 
-### Step 4: Configure Environment Variables
-```bash
-# Copy example configuration
-cp .env.example .env
-```
+### 1.4 Access URLs
+* **Interactive Web Dashboard:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+* **Swagger UI / Interactive API Docs:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* **ReDoc API Documentation:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+* **System Health Check:** [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
-### Step 5: Seed Demo Data & GIS Boundaries
-```bash
-python scripts/seed_demo.py
-```
+---
 
-### Step 6: Start the FastAPI Backend Server
-```bash
-uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
+## 2. Environment Configuration (`.env`)
+
+Copy `.env.example` to `.env` to customize settings:
+
+```ini
+# Core Application Settings
+APP_ENV=development                    # development | staging | production
+DEBUG=false
+DATA_MODE=hybrid                       # live | static | hybrid
+ENABLE_FALLBACK_DATA=true              # Set false in production for strict live failover
+
+# Database Connection
+# Zero-config SQLite (default):
+DATABASE_URL=sqlite:///./data/heat_risk.db
+# Or Production PostgreSQL with PostGIS:
+# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/heat_risk
+
+# Server Binding
+HOST=127.0.0.1
+PORT=8000
+WORKERS=1
+
+# Ingestion Scheduling
+INGESTION_INTERVAL_MINUTES=15
 ```
-- Open Web Dashboard: `http://localhost:8000/`
-- Interactive OpenAPI Docs (Swagger UI): `http://localhost:8000/docs`
 
 ---
 
 ## 3. Containerized Deployment (Docker & Docker Compose)
 
-### Single Command Docker Startup
+ThermoShield includes production-ready multi-stage Docker configurations.
+
+### 3.1 Launch with Docker Compose (SQLite Standalone)
 ```bash
-docker-compose up --build -d
+docker-compose up --build
 ```
-Verify container status:
+
+### 3.2 Launch with PostgreSQL + PostGIS Backend
+Update `docker-compose.yml` to uncomment the postgres service, then run:
 ```bash
-docker ps
+docker-compose --profile postgres up --build
 ```
-Access dashboard at `http://localhost:8000/`.
+
+### 3.3 Container Health Check
+The Docker container automatically verifies service availability via:
+```bash
+curl -f http://localhost:8000/health || exit 1
+```
 
 ---
 
-## 4. Running the Verification & Test Suite
-```bash
-# Run complete pytest test suite
-pytest -v tests/
+## 4. Production Cloud Deployment
 
-# Run comparative biometeorological scenario demo script
-python scripts/compare_scenarios.py
+### 4.1 Production Server Setup (Ubuntu / Debian Linux)
+```bash
+# 1. System packages
+sudo apt update && sudo apt install -y python3-pip python3-venv git nginx
+
+# 2. Clone repository
+git clone https://github.com/Lovish-creator/sih-heat-risk.git /opt/thermoshield
+cd /opt/thermoshield
+
+# 3. Virtualenv & Dependencies
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Initialize Database
+python scripts/seed_db.py
+
+# 5. Systemd Service Setup (/etc/systemd/system/thermoshield.service)
+sudo cp deployment/thermoshield.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now thermoshield
+```
+
+### 4.2 Nginx Reverse Proxy Configuration
+```nginx
+server {
+    listen 80;
+    server_name thermoshield.example.gov.in;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+---
+
+## 5. Automated Verification & Testing
+
+Before deploying updates to staging or production, run the test suite:
+
+```bash
+# Run all 50 automated tests
+python -m pytest
+
+# Run with verbose output and duration analysis
+python -m pytest -v --durations=10
 ```

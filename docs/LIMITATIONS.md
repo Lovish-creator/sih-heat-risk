@@ -1,46 +1,70 @@
-# Honest Technical & Scientific Limitations
+# System Boundaries & Scientific Limitations — ThermoShield India (SIH26083)
 
-This document provides a transparent accounting of the scientific boundaries, data constraints, and assumptions embedded within the SIH26083 Tier-1 prototype.
+In accordance with scientific integrity and transparent engineering principles, this document provides an honest, comprehensive evaluation of the system's operational scope, data resolution limits, and scientific boundaries.
 
 ---
 
-## 1. Spatial Resolution vs Meteorological Grid
+## 1. Meteorological Spatial Downscaling vs. Sensor Reality
 
 ### The Physical Reality
-- **NASA POWER Meteorological Data**: Provided at a nominal spatial resolution of $0.5^\circ \times 0.625^\circ$ ($\approx 50\text{ km} \times 60\text{ km}$), with solar radiation at $1.0^\circ \times 1.0^\circ$.
-- **Municipal Wards**: Typically span $1\text{ to } 10\text{ km}^2$.
+* True microclimate variation at $\le 200\text{m}$ resolution (e.g. narrow street canyons, localized tree canopy shading, vehicular heat exhaust) cannot be observed by physical AWS stations alone, because no municipal corporation in India operates automated weather stations at $200\text{m}$ grid intervals.
+* Regional Numerical Weather Prediction (NWP) models (such as NCMRWF NCUM and IMD GFS) provide operational forcing at $4\text{km}$ to $12\text{km}$ horizontal resolution.
 
-### Our Honest Distinction
-- **What We Do**: We perform **Ward-Level Risk Attribution**. We take the regional environmental forcing field (temperature, humidity, wind, solar radiation) and join it with localized, ward-specific demographic vulnerability (elderly ratio, outdoor worker ratio, population density).
-- **What We Do NOT Claim**: We **never** claim that NASA POWER or regional reanalysis models provide micro-scale ward-resolution meteorological forecasts. Microclimatic variations (e.g., street canyon wind channeling, localized asphalt heat traps) require micro-scale Computational Fluid Dynamics (CFD) or dense hyper-local IoT weather station meshes.
-
----
-
-## 2. Demographic Baseline: Census 2011
-
-### The Data Constraint
-- The latest published decennial Census in India with ward-level Primary Census Abstract (PCA) indicators is the **Census of India 2011**.
-
-### Mitigation & Prototype Handling
-- In the prototype, Census 2011 data serves as a **normalized relative vulnerability baseline**.
-- The pipeline computes normalized demographic sensitivity indices ($0\text{--}100$) based on relative distributions across wards rather than raw population projections.
-- In production, when the upcoming Census or updated municipal voter/electoral registries become available, the demographic ingestion adapter seamlessly ingests the updated tables without altering the underlying risk engine.
+### ThermoShield's Downscaling Approach & Boundary
+* ThermoShield computes **Local Climate Zone (LCZ)** biophysical offsets based on Stewart & Oke (2012) classifications, impervious surface fractions, and surface albedo.
+* **Limitation:** While these microclimate adjustments account for urban morphology and building density differentials, they represent **parameterized microclimate estimates**, not direct physical sensor measurements. Real-time IoT sensor networks (such as citizen micro-stations or municipal LoRaWAN sensors) can be linked as future data adapters.
 
 ---
 
-## 3. Mortality & Health Impact: Relative Risk vs Absolute Death Counts
+## 2. Demographic Baseline: Census 2011 vs. Present Dynamics
 
-### The Scientific Boundary
-- Predicting absolute mortality counts ("$N$ people will die tomorrow") without validated daily ward-level all-cause mortality registries, clinical hospital admission records, and fitted Distributed Lag Non-linear Models (DLNM) is scientifically indefensible and ungrounded.
+### The Data Landscape
+* The latest official statutory census released by the Office of the Registrar General and Census Commissioner of India (RGI) is **Census 2011 Primary Census Abstract (PCA)**.
+* Ward-level elderly counts ($60+$), child populations ($0-5$), and main/marginal informal labor breakdowns are anchored to this decennial statutory baseline.
 
-### Our Solution
-- Health impact is quantified as an interpretable **Relative Heat-Health Risk Score (0–100)** and categorized into IMD-aligned action levels (Green, Yellow, Orange, Red).
-- The metric indicates elevated physiological vulnerability and population sensitivity, providing municipal authorities with an operational decision-support tool.
+### System Handling & Boundaries
+* Where recent municipal population projections are available, density adjustments are applied.
+* **Limitation:** Intra-city migrant worker movement, post-2020 urban expansion, and local construction worker concentrations may differ from decennial enumeration. The vulnerability engine is structured with standardized ingestion hooks for immediate integration of future Census 2026 releases or state-level NFHS-5 surveys.
 
 ---
 
-## 4. Operational Numerical Weather Prediction (NWP)
+## 3. Ward Geometry Provenance: Surveyed vs. Density-Proportional Delimitations
 
-### Scope in Tier-1 Prototype
-- NASA POWER analysis-ready data is used for automated ingestion and daily meteorological trend analysis.
-- An explicit **NCMRWF Integration Adapter** (`backend/app/data_sources/ncmrwf_stub.py`) is architected with complete schemas, defining the exact transformation required to ingest NCMRWF NCUM GRIB2/NetCDF binary forecast fields once institutional credentials (Tier-2) are configured.
+### The Data Landscape
+* Official surveyed GIS shapefiles (sub-meter cadastral polygons) are publicly released for certain metropolitan corporations (e.g., Delhi MCD, Ahmedabad AMC, Mumbai BMC), but are restricted or published solely as text gazettes for smaller statutory towns (e.g., Abohar Municipal Corporation 50-ward gazette).
+
+### Provenance Guardrail
+* ThermoShield **never misrepresents generated geometries as official surveyor shapefiles**.
+* Every ward feature in the database and API output includes:
+  ```json
+  "is_official_geometry": false,
+  "is_generated_geometry": true,
+  "geometry_source": "census_density_proportional_v1"
+  ```
+* For towns without open GIS shapefiles, boundaries are computed using density-proportional spatial tessellation ($A_w = \text{Pop}_w / \text{Density}_w$) anchored to official ward centroids and municipal delimitation gazettes.
+
+---
+
+## 4. Upstream Telemetry: Public Open Data vs. Restricted IMD / NCMRWF Feeds
+
+### Current Implementation
+* ThermoShield utilizes authenticated, high-reliability open data streams:
+  - **Open-Meteo Weather API** (15-min surface telemetry & 7-day multi-horizon forecast)
+  - **NASA POWER API** (All-sky solar downward irradiance & climatological flux)
+  - **IMD Climatological Gazettes** (Official heatwave threshold criteria: $+4.5^\circ\text{C}, +6.4^\circ\text{C}$)
+
+### Roadmap & Integration Hooks
+* Production deployment with the Ministry of Earth Sciences (MoES) will ingest direct NCUM $4\text{km}$ GRIB2 model feeds and IMD AWS high-frequency telemetry via dedicated server-side pipeline adapters (`backend/app/ingestion/`).
+
+---
+
+## 5. Health Data Readiness & Anti-Hallucination Policy
+
+### Absolute Rule: Zero Fabricated Clinical Labels
+* ThermoShield explicitly **rejects the generation of fake hospital admissions, heat stroke casualties, or synthetic mortality numbers**.
+* Fabricating health outcome data violates medical ethics, epidemiological validity, and legal compliance.
+
+### Relative Risk vs. Clinical Outcome
+* The composite Heat-Health Risk Index ($R \in [0, 100]$) is a **relative spatial prioritization metric** combining environmental hazard, demographic sensitivity, and heatwave duration.
+* It alerts municipal authorities to *which wards require prioritized intervention*, rather than claiming to predict exact clinical mortality counts.
+* Full integration requirements for authentic State IDSP / DISHA feeds via Distributed Lag Non-Linear Models (DLNM) are detailed in [`docs/HEALTH_DATA_READINESS.md`](HEALTH_DATA_READINESS.md).
