@@ -45,11 +45,21 @@ app.add_middleware(
 app.include_router(api_router)
 
 # Mount Static Files (Frontend)
-frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
+frontend_candidates = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend")),
+    os.path.abspath(os.path.join(os.getcwd(), "frontend")),
+    os.path.join("/var/task", "frontend"),
+    os.path.join("/vercel/path0", "frontend"),
+]
+frontend_dir = None
+for c in frontend_candidates:
+    if c and os.path.isdir(c):
+        frontend_dir = c
+        break
 
 def _find_frontend_file(subpath: str) -> os.PathLike:
     candidates = [
-        os.path.join(frontend_dir, subpath),
+        os.path.join(frontend_dir, subpath) if frontend_dir else None,
         os.path.abspath(os.path.join(os.getcwd(), "frontend", subpath)),
         os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", subpath)),
         os.path.join("/var/task", "frontend", subpath),
@@ -60,7 +70,7 @@ def _find_frontend_file(subpath: str) -> os.PathLike:
             return c
     return None
 
-if os.path.exists(frontend_dir):
+if frontend_dir and os.path.exists(frontend_dir):
     try:
         app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
     except Exception:
