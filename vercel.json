@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/*.py": {
+      "includeFiles": "{backend/**,frontend/**,data/**,config/**}"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
