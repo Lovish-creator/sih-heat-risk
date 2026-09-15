@@ -23,7 +23,13 @@ async def vercel_prefix_middleware(request: Request, call_next):
     Vercel internal rewrites may set scope['path'] to the rewritten destination
     (/api/index.py) while preserving the original user-requested path in headers
     such as 'x-matched-path' or 'x-invoke-path'.
-    """
+    if request.query_params.get("debug") == "1":
+        return JSONResponse({
+            "scope_path": request.scope.get("path"),
+            "headers": dict(request.headers),
+            "url": str(request.url),
+            "query_params": dict(request.query_params)
+        })
     raw_path = request.scope.get("path", "")
     
     # Check if Vercel provided the original pre-rewrite path via headers
