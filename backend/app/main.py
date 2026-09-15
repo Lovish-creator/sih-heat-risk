@@ -123,13 +123,21 @@ async def serve_vendor(filename: str):
             pass
     return HTMLResponse(status_code=404, content="")
 
+@app.get("/api", tags=["System"])
+@app.get("/api/", tags=["System"])
+def api_info():
+    return {
+        "title": "Taapamigo API",
+        "description": "Extreme Heat Early Warning and Human Thermal Stress Decision-Support System",
+        "version": "1.0.0",
+        "status": "online",
+        "docs_url": "/docs",
+        "health_url": "/api/v1/health"
+    }
+
 @app.get("/", include_in_schema=False)
 @app.get("", include_in_schema=False)
 @app.get("/index.html", include_in_schema=False)
-@app.get("/api", include_in_schema=False)
-@app.get("/api/", include_in_schema=False)
-@app.get("/api/index", include_in_schema=False)
-@app.get("/api/index.py", include_in_schema=False)
 async def serve_index():
     index_path = _find_frontend_file("index.html")
     if index_path and os.path.exists(index_path):

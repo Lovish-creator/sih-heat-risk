@@ -2,19 +2,23 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/api/$1"
+    },
+    {
+      "source": "/api",
+      "destination": "/api/index.py?__path__=/api"
     },
     {
       "source": "/docs",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/docs"
     },
     {
       "source": "/redoc",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/redoc"
     },
     {
       "source": "/openapi.json",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/openapi.json"
     }
   ]
 }

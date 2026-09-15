@@ -3,6 +3,7 @@ Vercel Serverless Entrypoint for SIH26083 FastAPI Application.
 """
 import sys
 import os
+import urllib.parse
 
 # Resolve repository root directory and register candidate paths
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -20,28 +21,43 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 async def vercel_prefix_middleware(request: Request, call_next):
     """
     Normalizes Vercel serverless function request paths.
-    Vercel internal rewrites may set scope['path'] to the rewritten destination
-    (/api/index.py) while preserving the original user-requested path in headers
-    such as 'x-matched-path' or 'x-invoke-path'.
+    1. If __path__ query parameter is present (passed from vercel.json rewrites),
+       extract it as the true application route and strip __path__ from query_string.
+    2. Otherwise, check request headers (x-matched-path, x-invoke-path) if provided.
+    3. Normalize any leftover /api/index.py/ or /api/index/ prefixes.
+    4. Ensure /api or /api/index.py alone routes to /api or /api/v1/health.
     """
     raw_path = request.scope.get("path", "")
-    
-    # Check if Vercel provided the original pre-rewrite path via headers
-    matched_path = request.headers.get("x-matched-path") or request.headers.get("x-invoke-path")
-    if matched_path and not matched_path.startswith("/api/index.py"):
-        path = matched_path.split("?")[0]
+    query_bytes = request.scope.get("query_string", b"")
+    qs = query_bytes.decode("utf-8", errors="ignore")
+
+    custom_path = None
+    if "__path__" in qs:
+        params = urllib.parse.parse_qs(qs, keep_blank_values=True)
+        if "__path__" in params:
+            custom_path = params.pop("__path__")[0]
+            clean_qs = urllib.parse.urlencode([(k, v) for k, vs in params.items() for v in vs])
+            request.scope["query_string"] = clean_qs.encode("utf-8")
+
+    if custom_path:
+        path = custom_path
     else:
-        path = raw_path
+        matched_path = request.headers.get("x-matched-path") or request.headers.get("x-invoke-path")
+        if matched_path and not matched_path.startswith("/api/index.py"):
+            path = matched_path.split("?")[0]
+        else:
+            path = raw_path
 
     # Normalize serverless file prefixes
-    if not path or path.strip() in ("", "/"):
-        path = "/"
-    elif path in ("/api", "/api/", "/api/index", "/api/index/", "/api/index.py", "/api/index.py/"):
-        path = "/"
-    elif path.startswith("/api/index.py/"):
+    if path.startswith("/api/index.py/"):
         path = path[len("/api/index.py"):]
     elif path.startswith("/api/index/"):
         path = path[len("/api/index"):]
+    elif path in ("/api/index.py", "/api/index"):
+        path = "/api/v1/health"
+
+    if path.startswith("/v1/"):
+        path = "/api" + path
 
     request.scope["path"] = path
     return await call_next(request)
