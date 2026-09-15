@@ -22,15 +22,15 @@ async def vercel_prefix_middleware(request: Request, call_next):
     so FastAPI routes match regardless of rewrite format.
     """
     path = request.scope.get("path", "")
-    for prefix in ("/api/index.py", "/api/index"):
-        if path == prefix:
-            request.scope["path"] = "/"
-            break
-        elif path.startswith(prefix + "/"):
-            request.scope["path"] = path[len(prefix):]
-            break
-    if not request.scope.get("path"):
+    if not path or path.strip() in ("", "/"):
         request.scope["path"] = "/"
+    elif path in ("/api", "/api/", "/api/index", "/api/index/", "/api/index.py", "/api/index.py/"):
+        request.scope["path"] = "/"
+    elif path.startswith("/api/index.py/"):
+        request.scope["path"] = path[len("/api/index.py"):]
+    elif path.startswith("/api/index/"):
+        request.scope["path"] = path[len("/api/index"):]
+
     return await call_next(request)
 
 @app.exception_handler(404)
