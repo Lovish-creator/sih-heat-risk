@@ -49,6 +49,7 @@ frontend_candidates = [
     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend")),
     os.path.abspath(os.path.join(os.getcwd(), "frontend")),
     os.path.join("/var/task", "frontend"),
+    os.path.join("/vercel/path0", "frontend"),
 ]
 frontend_dir = None
 for c in frontend_candidates:
@@ -62,6 +63,7 @@ def _find_frontend_file(subpath: str) -> os.PathLike:
         os.path.abspath(os.path.join(os.getcwd(), "frontend", subpath)),
         os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", subpath)),
         os.path.join("/var/task", "frontend", subpath),
+        os.path.join("/vercel/path0", "frontend", subpath),
     ]
     for c in candidates:
         if c and os.path.exists(c):
