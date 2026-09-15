@@ -1,12 +1,23 @@
 """
 Centralized Application Configuration.
 Loads environment variables using pydantic-settings with explicit fallback policies.
+Robust against empty string environment variables commonly injected by cloud dashboards.
 """
 
-from typing import List
-from pydantic import Field
+import os
+from typing import List, Any
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from .constants import AppEnv, DataMode
+
+# Pre-sanitize environment variables if they are set to empty strings in cloud environments
+for _k in [
+    "APP_ENV", "DATA_MODE", "DEBUG", "LOG_LEVEL",
+    "ENABLE_FALLBACK_DATA", "ENABLE_EXTERNAL_INGESTION",
+    "INGESTION_INTERVAL_MINUTES", "DATABASE_URL", "DB_ECHO"
+]:
+    if _k in os.environ and os.environ[_k].strip() == "":
+        del os.environ[_k]
 
 
 class Settings(BaseSettings):
@@ -46,6 +57,39 @@ class Settings(BaseSettings):
     RISK_WEIGHTS_FILE: str = "config/risk_weights.yaml"
     CITY_PROFILES_FILE: str = "config/city_profiles.yaml"
     THRESHOLDS_FILE: str = "config/thresholds.yaml"
+
+    @field_validator("APP_ENV", mode="before")
+    @classmethod
+    def validate_app_env(cls, v: Any) -> AppEnv:
+        if not v or (isinstance(v, str) and not v.strip()):
+            return AppEnv.DEMO
+        if isinstance(v, str):
+            v_clean = v.strip().lower()
+            for env in AppEnv:
+                if env.value.lower() == v_clean:
+                    return env
+        return v
+
+    @field_validator("DEBUG", "DB_ECHO", "ENABLE_FALLBACK_DATA", "ENABLE_EXTERNAL_INGESTION", mode="before")
+    @classmethod
+    def validate_bool(cls, v: Any) -> bool:
+        if v is None or v == "" or (isinstance(v, str) and not v.strip()):
+            return False
+        if isinstance(v, str):
+            return v.strip().lower() in ("true", "1", "yes", "on")
+        return bool(v)
+
+    @field_validator("DATA_MODE", mode="before")
+    @classmethod
+    def validate_data_mode(cls, v: Any) -> DataMode:
+        if not v or (isinstance(v, str) and not v.strip()):
+            return DataMode.HYBRID
+        if isinstance(v, str):
+            v_clean = v.strip().lower()
+            for mode in DataMode:
+                if mode.value.lower() == v_clean:
+                    return mode
+        return v
 
     @property
     def is_production(self) -> bool:
