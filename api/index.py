@@ -18,19 +18,31 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 @app.middleware("http")
 async def vercel_prefix_middleware(request: Request, call_next):
     """
-    Strips Vercel serverless function prefix from scope['path']
-    so FastAPI routes match regardless of rewrite format.
+    Normalizes Vercel serverless function request paths.
+    Vercel internal rewrites may set scope['path'] to the rewritten destination
+    (/api/index.py) while preserving the original user-requested path in headers
+    such as 'x-matched-path' or 'x-invoke-path'.
     """
-    path = request.scope.get("path", "")
-    if not path or path.strip() in ("", "/"):
-        request.scope["path"] = "/"
-    elif path in ("/api", "/api/", "/api/index", "/api/index/", "/api/index.py", "/api/index.py/"):
-        request.scope["path"] = "/"
-    elif path.startswith("/api/index.py/"):
-        request.scope["path"] = path[len("/api/index.py"):]
-    elif path.startswith("/api/index/"):
-        request.scope["path"] = path[len("/api/index"):]
+    raw_path = request.scope.get("path", "")
+    
+    # Check if Vercel provided the original pre-rewrite path via headers
+    matched_path = request.headers.get("x-matched-path") or request.headers.get("x-invoke-path")
+    if matched_path and not matched_path.startswith("/api/index.py"):
+        path = matched_path.split("?")[0]
+    else:
+        path = raw_path
 
+    # Normalize serverless file prefixes
+    if not path or path.strip() in ("", "/"):
+        path = "/"
+    elif path in ("/api", "/api/", "/api/index", "/api/index/", "/api/index.py", "/api/index.py/"):
+        path = "/"
+    elif path.startswith("/api/index.py/"):
+        path = path[len("/api/index.py"):]
+    elif path.startswith("/api/index/"):
+        path = path[len("/api/index"):]
+
+    request.scope["path"] = path
     return await call_next(request)
 
 @app.exception_handler(404)
