@@ -1,4 +1,4 @@
-# Roadmap — ThermoShield India (SIH26083)
+# Roadmap — Taapamigo (SIH26083)
 
 **STATUS: STRATEGIC ROADMAP (TIER 1 BASELINE → TIER 2 PILOT → TIER 3 PRODUCTION)**
 
@@ -6,7 +6,7 @@
 
 ## 1. Development Strategy Overview
 
-The ThermoShield India platform follows a deliberate, disciplined three-tier development strategy:
+The Taapamigo platform follows a deliberate, disciplined three-tier development strategy:
 
 ```
 ┌────────────────────────────────────────┐

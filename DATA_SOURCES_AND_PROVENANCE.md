@@ -2,7 +2,7 @@
 
 **Problem Statement:** SIH26083 — Extreme Heatwave Early Warning and Human Thermal Stress Index  
 **Organization:** Ministry of Earth Sciences (MoES) / National Centre for Medium Range Weather Forecasting (NCMRWF)  
-**Deliverable Repository:** `sih26083-heat-risk` (ThermoShield India)  
+**Deliverable Repository:** `sih26083-heat-risk` (Taapamigo)  
 **Audit Standard:** 100% Transparent, Fully Verified, Zero Synthetic/Fake Assumptions
 
 ---
@@ -36,7 +36,7 @@
 
 ## 2. Peer-Reviewed Scientific Formulations & Standards
 
-| Method / Standard | Official Body / Reference | Primary Publication / DOI | Mathematical Formulation | Role in ThermoShield Pipeline |
+| Method / Standard | Official Body / Reference | Primary Publication / DOI | Mathematical Formulation | Role in Taapamigo Pipeline |
 |:---|:---|:---|:---|:---|
 | **Universal Thermal Climate Index (UTCI)** | International Society of Biometeorology (ISB) / European COST Action 730 | Bröde et al. (2012), *Int. J. Biometeorology*, [doi:10.1007/s00484-011-0454-1](https://doi.org/10.1007/s00484-011-0454-1); Jendritzky et al. (2012) | 6th-order polynomial with 200+ multi-node heat exchange terms: $	ext{UTCI} = f(T_a, T_{mrt} - T_a, v_{10}, e)$ | Physiological thermal strain assessment accounting for evaporative, convective, and radiant heat exchange. |
 | **Wet-Bulb Globe Temperature (WBGT)** | International Organization for Standardization (ISO) | ISO 7243:2017 (*Ergonomics of the thermal environment*), [ISO Standard 67188](https://www.iso.org/standard/67188.html) | $	ext{WBGT}_{	ext{outdoor}} = 0.7\,T_{	ext{nw}} + 0.2\,T_{	ext{g}} + 0.1\,T_{	ext{a}}$ | Occupational heat exposure assessment and mandatory work/rest cycle directives for outdoor laborers. |

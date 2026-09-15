@@ -1,12 +1,12 @@
-# Risk Methodology & Scientific Formulation — ThermoShield India (SIH26083)
+# Risk Methodology & Scientific Formulation — Taapamigo (SIH26083)
 
-This document provides the complete mathematical and biometeorological specification for thermal hazard quantification, demographic vulnerability weighting, heatwave persistence modeling, and relative heat-health risk classification in ThermoShield India.
+This document provides the complete mathematical and biometeorological specification for thermal hazard quantification, demographic vulnerability weighting, heatwave persistence modeling, and relative heat-health risk classification in Taapamigo.
 
 ---
 
 ## 1. The Tri-Factor Risk Conceptual Framework
 
-ThermoShield India operationalizes the disaster risk framework established by the **Intergovernmental Panel on Climate Change (IPCC SREX / AR6)**:
+Taapamigo operationalizes the disaster risk framework established by the **Intergovernmental Panel on Climate Change (IPCC SREX / AR6)**:
 
 $$\text{Risk} = f(\text{Hazard}, \text{Vulnerability}, \text{Exposure / Persistence})$$
 

@@ -18,7 +18,7 @@ class NominatimGeocoder:
 
     REVERSE_URL = "https://nominatim.openstreetmap.org/reverse"
     SEARCH_URL = "https://nominatim.openstreetmap.org/search"
-    USER_AGENT = "SIH26083-ThermoShield-Heat-Risk-Early-Warning/1.0"
+    USER_AGENT = "SIH26083-Taapamigo-Heat-Risk-Early-Warning/1.0"
 
     def __init__(self, cache: Optional[DataCache] = None, timeout_seconds: int = 8):
         self.cache = cache or DataCache(default_ttl_seconds=86400) # 24h cache for geocoding

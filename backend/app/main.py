@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse
 from .api.endpoints import router as api_router
 
 app = FastAPI(
-    title="SIH26083 — Extreme Heatwave Early Warning & Human Thermal Stress Index",
+    title="SIH26083 — Taapamigo: Extreme Heatwave Early Warning & Human Thermal Stress Index",
     description="""
     **MoES / NCMRWF — Software / Disaster Management Prototype**
     
@@ -143,7 +143,7 @@ async def serve_index():
         <html>
             <head><title>SIH26083 Platform Active</title></head>
             <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; padding: 3rem; text-align: center;">
-                <h1 style="color: #38bdf8;">☀️ ThermoShield India (SIH26083)</h1>
+                <h1 style="color: #38bdf8;">☀️ Taapamigo (SIH26083)</h1>
                 <p style="color: #94a3b8; font-size: 1.1rem;">Ministry of Earth Sciences (MoES) / NCMRWF</p>
                 <div style="margin-top: 2rem;">
                     <a href="/docs" style="background: #0284c7; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">

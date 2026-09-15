@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary & Ethical Directive
 
-A fundamental tenet of scientific honesty in the **ThermoShield India** platform is:
+A fundamental tenet of scientific honesty in the **Taapamigo** platform is:
 > **Never fabricate health data, and never train machine learning models using synthetic risk scores as fake health labels.**
 
 While meteorological and satellite irradiance data are openly accessible in real-time (via Open-Meteo, NASA POWER, and IMD), empirical health outcome data (hospital admissions, heatstroke morbidity, emergency room visits, and all-cause excess mortality) are tightly governed under statutory privacy frameworks and health surveillance systems in India.

@@ -1,14 +1,14 @@
-# Deployment & Operations Guide — ThermoShield India (SIH26083)
+# Deployment & Operations Guide — Taapamigo (SIH26083)
 
 **STATUS: DEPLOYMENT CONFIGURATION REFERENCE**
 
-*The hosted demonstration is already deployed. This document details instructions for launching, configuring, containerizing, and running ThermoShield India locally or on cloud infrastructure.*
+*The hosted demonstration is already deployed. This document details instructions for launching, configuring, containerizing, and running Taapamigo locally or on cloud infrastructure.*
 
 ---
 
 ## 1. Quick Start: Local Zero-Configuration Launch
 
-ThermoShield India includes an automated SQLite bootstrap requiring zero database setup.
+Taapamigo includes an automated SQLite bootstrap requiring zero database setup.
 
 ### 1.1 Prerequisites
 * Python 3.10+ (tested on Python 3.10, 3.11, 3.12, 3.13, 3.14)
@@ -70,7 +70,7 @@ INGESTION_INTERVAL_MINUTES=15
 
 ## 3. Containerized Deployment (Docker & Docker Compose)
 
-ThermoShield includes production-ready multi-stage Docker configurations.
+Taapamigo includes production-ready multi-stage Docker configurations.
 
 ### 3.1 Launch with Docker Compose (SQLite Standalone)
 ```bash
@@ -99,8 +99,8 @@ curl -f http://localhost:8000/health || exit 1
 sudo apt update && sudo apt install -y python3-pip python3-venv git nginx
 
 # 2. Clone repository
-git clone https://github.com/Lovish-creator/sih-heat-risk.git /opt/thermoshield
-cd /opt/thermoshield
+git clone https://github.com/Lovish-creator/sih-heat-risk.git /opt/taapamigo
+cd /opt/taapamigo
 
 # 3. Virtualenv & Dependencies
 python3 -m venv venv
@@ -111,17 +111,17 @@ pip install -r requirements.txt
 # 4. Initialize Database
 python scripts/seed_db.py
 
-# 5. Systemd Service Setup (/etc/systemd/system/thermoshield.service)
-sudo cp deployment/thermoshield.service /etc/systemd/system/
+# 5. Systemd Service Setup (/etc/systemd/system/taapamigo.service)
+sudo cp deployment/taapamigo.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now thermoshield
+sudo systemctl enable --now taapamigo
 ```
 
 ### 4.2 Nginx Reverse Proxy Configuration
 ```nginx
 server {
     listen 80;
-    server_name thermoshield.example.gov.in;
+    server_name taapamigo.example.gov.in;
 
     location / {
         proxy_pass http://127.0.0.1:8000;

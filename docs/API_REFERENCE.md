@@ -1,4 +1,4 @@
-# REST API Reference — ThermoShield India (SIH26083)
+# REST API Reference — Taapamigo (SIH26083)
 
 **STATUS: REST API SPECIFICATION (TIER 1)**
 
@@ -8,7 +8,7 @@ ReDoc Reference: `http://localhost:8000/redoc`
 
 ---
 
-## 1. System Health & Telemetry Observability
+## 1. System & Operational Observability
 
 ### `GET /api/v1/health`
 Returns application health status, version, and database connectivity.
@@ -16,7 +16,7 @@ Returns application health status, version, and database connectivity.
   ```json
   {
     "status": "healthy",
-    "app_name": "SIH26083-ThermoShield-India",
+    "app_name": "SIH26083-Taapamigo-India",
     "version": "2.0.0-modular",
     "demo_mode": true,
     "timestamp": "2026-09-13T10:56:36Z",

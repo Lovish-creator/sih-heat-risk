@@ -1,6 +1,6 @@
-# Contributing to ThermoShield India (SIH26083)
+# Contributing to Taapamigo (SIH26083)
 
-Thank you for contributing to ThermoShield India! This project is engineered as an open, scientifically rigorous, and reproducible early warning system for extreme heatwaves and human thermal stress across Indian municipal corporations.
+Thank you for contributing to Taapamigo! This project is engineered as an open, scientifically rigorous, and reproducible early warning system for extreme heatwaves and human thermal stress across Indian municipal corporations.
 
 ---
 

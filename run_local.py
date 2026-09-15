@@ -1,5 +1,5 @@
 """
-Local development and evaluation server runner for ThermoShield India (SIH26083).
+Local development and evaluation server runner for Taapamigo (SIH26083).
 Initializes the database, checks environment, and starts Uvicorn ASGI server.
 """
 
@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT_DIR))
 
 def main():
     print("=" * 70)
-    print("  ThermoShield India — SIH 2026 PS26083 Local Server Runner")
+    print("  Taapamigo — SIH 2026 PS26083 Local Server Runner")
     print("  Extreme Heatwave Early Warning & Thermal Stress Assessment")
     print("=" * 70)
 

@@ -84,7 +84,7 @@ PAN_INDIA_CENSUS_DISTRICTS = [
 
 def main():
     print("=" * 70)
-    print("  ThermoShield India — Pan-India Government Census & Ward Dataset Builder")
+    print("  Taapamigo — Pan-India Government Census & Ward Dataset Builder")
     print("=" * 70)
 
     # 1. Write india_census_districts.json

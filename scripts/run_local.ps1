@@ -1,9 +1,9 @@
 # ==============================================================================
-# ThermoShield India — SIH26083 Local Launch Script (PowerShell)
+# Taapamigo — SIH26083 Local Launch Script (PowerShell)
 # ==============================================================================
 
 Write-Host "==============================================================================" -ForegroundColor Cyan
-Write-Host " ThermoShield India — SIH 2026 PS26083 Local Server Runner (PowerShell)" -ForegroundColor Green
+Write-Host " Taapamigo — SIH 2026 PS26083 Local Server Runner (PowerShell)" -ForegroundColor Green
 Write-Host "==============================================================================" -ForegroundColor Cyan
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path

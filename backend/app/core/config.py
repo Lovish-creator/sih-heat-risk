@@ -27,7 +27,7 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
-    APP_NAME: str = "SIH26083-ThermoShield-India"
+    APP_NAME: str = "SIH26083-Taapamigo-India"
     APP_VERSION: str = "2.0.0-modular"
     APP_ENV: AppEnv = AppEnv.DEMO
     DATA_MODE: DataMode = DataMode.HYBRID
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     OPEN_METEO_BASE_URL: str = "https://api.open-meteo.com/v1/forecast"
     NASA_POWER_BASE_URL: str = "https://power.larc.nasa.gov/api/temporal/hourly/point"
     NOMINATIM_BASE_URL: str = "https://nominatim.openstreetmap.org"
-    NOMINATIM_USER_AGENT: str = "SIH26083-ThermoShield-India/2.0 (moes-ncmrwf-prototype)"
+    NOMINATIM_USER_AGENT: str = "SIH26083-Taapamigo-India/2.0 (moes-ncmrwf-prototype)"
 
     CONFIG_DIR: str = Field(default="config")
     DATA_DIR: str = Field(default="data")

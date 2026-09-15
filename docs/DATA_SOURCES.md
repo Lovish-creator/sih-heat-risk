@@ -1,4 +1,4 @@
-# Data Sources & Provenance Registry — ThermoShield India (SIH26083)
+# Data Sources & Provenance Registry — Taapamigo (SIH26083)
 
 **STATUS: ACCURATE DATA SOURCE REGISTRY**
 

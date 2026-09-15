@@ -1,4 +1,4 @@
-# Model Card — ThermoShield India (SIH26083)
+# Model Card — Taapamigo (SIH26083)
 
 Following the AI/ML and Biometeorological Model Reporting Standards (Mitchell et al., 2019).
 
@@ -6,7 +6,7 @@ Following the AI/ML and Biometeorological Model Reporting Standards (Mitchell et
 
 ## 1. Model Details
 
-* **Model Name:** ThermoShield India Biometeorological & Heat-Health Risk Engine
+* **Model Name:** Taapamigo Biometeorological & Heat-Health Risk Engine
 * **Version:** `1.2.0-scientific`
 * **Model Type:** Deterministic Biometeorological Physics Engine + Multi-Criteria Demographic Vulnerability Assessment + Optional Statistical/ML Microclimate Downscaler
 * **Developers:** SIH 2026 Team (PS26083: Extreme Heatwave Early Warning and Human Thermal Stress Index)

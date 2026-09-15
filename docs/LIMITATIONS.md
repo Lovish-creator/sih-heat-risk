@@ -1,4 +1,4 @@
-# Technical Limitations & Boundaries — ThermoShield India (SIH26083)
+# Technical Limitations & Boundaries — Taapamigo (SIH26083)
 
 **STATUS: TRANSPARENT TECHNICAL BOUNDARIES (TIER 1)**
 

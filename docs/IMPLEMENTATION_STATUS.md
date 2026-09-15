@@ -1,4 +1,4 @@
-# Implementation Status — ThermoShield India (SIH26083)
+# Implementation Status — Taapamigo (SIH26083)
 
 **STATUS: TIER 1 IMPLEMENTATION**
 

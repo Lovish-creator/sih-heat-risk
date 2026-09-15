@@ -1,4 +1,4 @@
-# REST API Specification — ThermoShield India (SIH26083)
+# REST API Specification — Taapamigo (SIH26083)
 
 **Base URL:** `http://127.0.0.1:8000`  
 **API Version:** `v1` (`/api/v1/`)  
@@ -17,7 +17,7 @@ Returns the operational health, database connectivity, and environment status.
 ```json
 {
   "status": "healthy",
-  "app_name": "ThermoShield India - Extreme Heat Early Warning",
+  "app_name": "Taapamigo - Extreme Heat Early Warning",
   "version": "1.2.0-modular",
   "environment": "development",
   "data_mode": "hybrid",
@@ -295,8 +295,8 @@ Dispatches a simulated Common Alerting Protocol (CAP) payload.
   "status": "mock_logged",
   "channel": "cap_json",
   "payload": {
-    "identifier": "THERMOSHIELD-ABOHAR-20260912-001",
-    "sender": "thermoshield-alert-engine@sih26083.gov.in",
+    "identifier": "TAAPAMIGO-ABOHAR-20260912-001",
+    "sender": "taapamigo-alert-engine@sih26083.gov.in",
     "status": "Actual",
     "msgType": "Alert",
     "scope": "Public",

@@ -1,4 +1,4 @@
-# System Architecture — ThermoShield India (SIH26083)
+# System Architecture — Taapamigo (SIH26083)
 
 **STATUS: SYSTEM ARCHITECTURE SPECIFICATION**
 

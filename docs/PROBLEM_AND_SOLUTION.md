@@ -1,4 +1,4 @@
-# Problem & Solution — ThermoShield India (SIH26083)
+# Problem & Solution — Taapamigo (SIH26083)
 
 **STATUS: TIER 1 IMPLEMENTATION OVERVIEW**
 
@@ -22,9 +22,9 @@ Extreme heatwaves pose a severe, escalating threat to public health, urban infra
 
 ---
 
-## 2. Our Solution: ThermoShield India
+## 2. Our Solution: Taapamigo
 
-**ThermoShield India** is an early warning and human thermal stress decision-support system built to bridge the gap between atmospheric science and municipal public health action.
+**Taapamigo** is an early warning and human thermal stress decision-support system built to bridge the gap between atmospheric science and municipal public health action.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐

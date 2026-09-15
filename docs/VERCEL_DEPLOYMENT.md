@@ -1,4 +1,4 @@
-# Deployment Configuration Reference — ThermoShield India (SIH26083)
+# Deployment Configuration Reference — Taapamigo (SIH26083)
 
 **STATUS: DEPLOYMENT CONFIGURATION REFERENCE**
 
@@ -15,11 +15,11 @@
 
 ## 2. Serverless Architecture Overview
 
-ThermoShield India uses a hybrid serverless deployment architecture on Vercel:
+Taapamigo uses a hybrid serverless deployment architecture on Vercel:
 
 * **Entrypoint (`api/index.py`):** ASGI bridge exposing the FastAPI application (`backend.app.main:app`) as a serverless microservice.
-* **Routing (`vercel.json`):** Rewrites all incoming web requests (`/(.*)`) to the ASGI handler (`/api/index.py`).
-* **Static Assets:** The HTML, CSS, JavaScript, and GIS GeoJSON files in `frontend/` and `data/` are dynamically bundled into the serverless function runtime.
+* **Routing (`vercel.json`):** Static assets in `public/` are served via Edge CDN, while dynamic API calls (`/api/(.*)`) route to the ASGI handler (`/api/index.py`).
+* **Static Assets:** The HTML, CSS, JavaScript, and GIS GeoJSON files are served cleanly with optimal caching headers.
 
 ---
 
@@ -29,14 +29,14 @@ ThermoShield India uses a hybrid serverless deployment architecture on Vercel:
 2. Click **"Add New..."** -> **"Project"**.
 3. Under **"Import Git Repository"**, select `sih-heat-risk` (or `Lovish-creator/sih-heat-risk`).
 4. In the configuration modal:
-   - **Project Name:** `thermoshield-india` (or your preferred name)
+   - **Project Name:** `taapamigo` (or your preferred name)
    - **Framework Preset:** `Other` (Vercel will automatically detect Python via `vercel.json`)
    - **Root Directory:** `./`
    - **Build Command:** *(Leave blank)*
    - **Output Directory:** *(Leave blank)*
 5. Click **"Deploy"**.
 
-Vercel will install dependencies from `requirements.txt`, package `api/index.py`, and provision a globally distributed HTTPS domain (e.g., `https://thermoshield-india.vercel.app`).
+Vercel will install dependencies from `requirements.txt`, package `api/index.py`, and provision a globally distributed HTTPS domain (e.g., `https://taapamigo.vercel.app`).
 
 ---
 

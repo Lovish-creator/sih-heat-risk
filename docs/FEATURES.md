@@ -1,4 +1,4 @@
-# Features — ThermoShield India (SIH26083)
+# Features — Taapamigo (SIH26083)
 
 **STATUS: TIER 1 CONFIRMED DEMONSTRABLE FEATURES**
 

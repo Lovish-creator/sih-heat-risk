@@ -1,4 +1,4 @@
-# Scientific Methodology & Calculation Reference — ThermoShield India (SIH26083)
+# Scientific Methodology & Calculation Reference — Taapamigo (SIH26083)
 
 **STATUS: SCIENTIFIC METHODOLOGY & FORMULATION REFERENCE**
 
@@ -6,7 +6,7 @@
 
 ## 1. End-to-End Methodological Pipeline
 
-The ThermoShield India platform executes an interpretable, physically grounded biometeorological risk pipeline:
+The Taapamigo platform executes an interpretable, physically grounded biometeorological risk pipeline:
 
 ```
 [Meteorological Inputs: Ta, Tdp, RH, WS, Solar]
