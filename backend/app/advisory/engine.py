@@ -56,6 +56,12 @@ class AdvisoryEngine:
                 "Operate 24/7 dedicated air-cooled cooling centers in community halls and religious institutions.",
                 "Ensure municipal hospitals and primary health centres (PHCs) have reserved heat stroke stabilization beds with ice packs, intravenous fluids, and trained triage staff."
             ]
+            health_advisories = [
+                "Activate Hospital Heat Surge Protocol; designate dedicated air-conditioned heat stroke stabilization beds with ice packs and immersion units.",
+                "Ensure 100% buffer stock of intravenous fluids (Normal Saline, Ringer's Lactate) and ORS packets at all PHCs and District Hospitals.",
+                "Mandate daily sentinel surveillance reporting of Heat-Related Illnesses (HRI) and suspected heat fatalities on the NCDC IHIP portal.",
+                "Deploy 108/102 emergency ambulances equipped with cooling packs along high-density labor and transit corridors."
+            ]
 
         elif lvl == "ORANGE":
             citizen_advisories = [
@@ -76,6 +82,12 @@ class AdvisoryEngine:
                 "Keep public parks and air-conditioned libraries open for extended hours as public cooling respites.",
                 "Review daily emergency medical service (EMS) call volumes for heat exhaustion spikes."
             ]
+            health_advisories = [
+                "Alert Casualty & Emergency Departments to maintain high clinical index of suspicion for heat exhaustion and exertional heat stroke.",
+                "Verify cold-chain functionality for temperature-sensitive emergency drugs (insulin, oxytocin, vaccines) during peak power loads.",
+                "Review daily emergency department admission logs and ambulance dispatch records for early clusters of severe dehydration.",
+                "Conduct rapid refresher briefing for triage nursing staff on NCDC NAP-HRI 2024 management protocols."
+            ]
 
         elif lvl == "YELLOW":
             citizen_advisories = [
@@ -93,6 +105,11 @@ class AdvisoryEngine:
                 "Ensure all municipal public water kiosks (Piyavs) are functional and stocked.",
                 "Alert hospital emergency departments to maintain adequate stocks of ORS and IV fluids."
             ]
+            health_advisories = [
+                "Verify that all Primary Health Centres (PHCs) and Urban Health Posts have fully functional Oral Rehydration Therapy (ORT) corners.",
+                "Ensure uninterrupted power backup and functional cooling (inverters, generators) in hospital emergency rooms.",
+                "Issue guidance to outpatient departments (OPDs) to counsel patients with cardiovascular and kidney diseases on heat precautions."
+            ]
 
         else: # GREEN
             citizen_advisories = [
@@ -105,6 +122,10 @@ class AdvisoryEngine:
             ]
             authority_advisories = [
                 "Routine surveillance. Maintain standard operational readiness and monitor 5-day forecast horizons."
+            ]
+            health_advisories = [
+                "Standard clinical readiness. Maintain routine surveillance for climate-sensitive illnesses and seasonal HRI reporting.",
+                "Ensure periodic inventory checks of emergency hydration supplies and heatwave response standard operating procedures."
             ]
 
         return {
@@ -126,6 +147,11 @@ class AdvisoryEngine:
                     "persona_title": "Municipal Authorities & Disaster Management",
                     "icon": "shield-alt",
                     "actions": authority_advisories
+                },
+                "health_emergency": {
+                    "persona_title": "Health Departments & Emergency Response (NCDC NAP-HRI)",
+                    "icon": "hospital",
+                    "actions": health_advisories
                 }
             },
             "provenance": {

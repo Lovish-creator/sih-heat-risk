@@ -739,84 +739,97 @@ function filterWardRankingTable(query) {
  * 4. Render Actionable Advisories View (3 Persona Tabs)
  */
 function renderAdvisoriesView(advisoryState, thermalState) {
-  const pGeneral = document.getElementById("advGeneralContent");
-  const pLabor = document.getElementById("advLaborContent");
-  const pAuth = document.getElementById("advAuthContent");
-  const wbgtSummary = document.getElementById("advWbgtWorkRest");
+  const pGeneral = document.getElementById("advCitizenList") || document.getElementById("advGeneralContent");
+  const pLabor = document.getElementById("advWorkerList") || document.getElementById("advLaborContent");
+  const pAuth = document.getElementById("advMuniList") || document.getElementById("advAuthContent");
+  const pHealth = document.getElementById("advHealthList");
+  const wbgtSummary = document.getElementById("advWorkRestNotice") || document.getElementById("advWbgtWorkRest");
 
   const personas = advisoryState?.personas || {};
   const wbgtMetric = thermalState?.metrics?.wbgt || {};
+  const alertLevel = (advisoryState?.alert_level || "ORANGE").toUpperCase();
 
   if (wbgtSummary) {
-    const regimen = wbgtMetric.work_rest_regimen || "75% Work / 25% Rest per hour (Light/Moderate Work)";
-    const riskLvl = wbgtMetric.risk_level || "HIGH HEAT STRESS";
+    const regimen = wbgtMetric.work_rest_regimen || personas.outdoor_workers?.niosh_work_rest_cycle || "45 min work / 15 min rest per hour";
+    const riskLvl = wbgtMetric.risk_level || (alertLevel === "RED" ? "EXTREME HEAT STRESS" : alertLevel === "ORANGE" ? "HIGH HEAT STRESS" : "MODERATE HEAT STRESS");
     wbgtSummary.innerHTML = `
-      <div style="font-weight: 700; color: #38bdf8; margin-bottom: 2px;">NIOSH / ISO 7243 Regimen: ${riskLvl}</div>
-      <div style="color: #e2e8f0; font-size: 0.85rem;">${regimen}</div>
+      <div style="font-weight: 700; color: #38bdf8; margin-bottom: 2px;">⚡ NIOSH / ISO 7243 Regimen: ${riskLvl}</div>
+      <div style="color: #fed7aa; font-size: 0.85rem; font-weight: 500;">⏱️ ${regimen}</div>
     `;
   }
 
   function renderBulletList(items = []) {
-    if (!items || items.length === 0) return "<p style='color: #94a3b8;'>No critical advisory actions triggered at current alert level.</p>";
-    return `
-      <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-        ${items.map(item => `
-          <li style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.86rem; line-height: 1.45; color: #f1f5f9;">
-            <span style="color: #38bdf8; font-size: 1.1rem; line-height: 1;">▸</span>
-            <span>${item}</span>
-          </li>
-        `).join("")}
-      </ul>
-    `;
+    if (!items || items.length === 0) {
+      return `<li class="advisory-bullet" style="color: #94a3b8;">No critical advisory actions triggered at current alert level.</li>`;
+    }
+    return items.map(item => `<li class="advisory-bullet">${item}</li>`).join("");
   }
 
-  if (pGeneral) pGeneral.innerHTML = renderBulletList(personas.general_public?.actions || [
-    "Drink at least 2.5 to 3 liters of water daily, even if not feeling thirsty.",
-    "Stay indoors between 12:00 PM and 4:00 PM during peak solar irradiance.",
-    "Wear lightweight, loose-fitting, light-colored cotton clothing.",
-    "Check on elderly neighbors and infants twice daily during active heatwave."
-  ]);
+  if (pGeneral) {
+    pGeneral.innerHTML = renderBulletList(personas.general_public?.actions || [
+      "Limit direct sun exposure between 12:00 and 15:00 IST; wear lightweight, light-colored, loose cotton clothing.",
+      "Keep living spaces cool using window curtains, fans, and wet evaporative curtains.",
+      "Carry a water bottle and umbrella/hat during all outdoor transit.",
+      "Never leave infants, elderly persons, or pets in parked vehicles even for brief periods."
+    ]);
+  }
 
-  if (pLabor) pLabor.innerHTML = renderBulletList(personas.outdoor_workers?.actions || [
-    "Mandatory 15-minute rest breaks in shaded/ventilated areas every 45 minutes.",
-    "Employers must provide cool drinking water with oral rehydration salts (ORS).",
-    "Reschedule heavy asphalt, roofing, and direct-sun agricultural labor to early morning (6-10 AM).",
-    "Implement buddy system to rapidly identify early signs of heat exhaustion or heat stroke."
-  ]);
+  if (pLabor) {
+    pLabor.innerHTML = renderBulletList(personas.outdoor_workers?.actions || [
+      "Mandatory 15-minute rest breaks in shaded/ventilated areas every 45 minutes of continuous labor.",
+      "Employers must provide cool drinking water with oral rehydration salts (ORS) at accessible points.",
+      "Reschedule heavy asphalt, roofing, and direct-sun agricultural labor to early morning (6:00-10:00 AM).",
+      "Implement buddy system to rapidly identify early signs of heat exhaustion or heat stroke."
+    ]);
+  }
 
-  if (pAuth) pAuth.innerHTML = renderBulletList(personas.authorities?.actions || [
-    "Activate municipal cooling centers in high-density urban wards and transit stations.",
-    "Ensure 24x7 power supply to primary health centers (PHCs) and dedicated heatstroke treatment rooms.",
-    "Deploy mobile water tankers and misting systems in congested market areas.",
-    "Broadcast localized heat health warnings via SMS, local radio, and municipal loudspeakers."
-  ]);
+  if (pAuth) {
+    pAuth.innerHTML = renderBulletList(personas.authorities?.actions || [
+      "Issue public broadcast alerts via SMS, radio, and digital traffic display boards.",
+      "Inspect construction sites and industrial yards for mandatory shaded resting areas and hydration points.",
+      "Keep public parks and air-conditioned libraries open for extended hours as public cooling respites.",
+      "Review daily emergency medical service (EMS) call volumes for heat exhaustion spikes."
+    ]);
+  }
+
+  if (pHealth) {
+    pHealth.innerHTML = renderBulletList(personas.health_emergency?.actions || [
+      "Activate Heat Stroke Treatment Protocol and reserve dedicated beds with ice packs and cooling fans.",
+      "Maintain adequate buffer stocks of IV Fluids (Normal Saline/Ringer's Lactate) and Oral Rehydration Salts (ORS).",
+      "Mandate daily surveillance reporting of Heat-Related Illnesses (HRI) on the Integrated Health Information Platform (IHIP).",
+      "Deploy 108/102 Emergency Medical Service (EMS) ambulances to high-risk outdoor worker clusters and transit corridors."
+    ]);
+  }
 }
 
 /**
  * 5. Render Methodology & Provenance Audit View
  */
 async function renderMethodologyView() {
-  const calcContainer = document.getElementById("mathDocContent");
-  const downContainer = document.getElementById("downscalingDocContent");
-
-  try {
-    if (calcContainer && !calcContainer.dataset.loaded) {
-      const mathData = await ApiClient.getCalculationsDoc();
-      if (mathData && mathData.markdown_content) {
-        calcContainer.textContent = mathData.markdown_content;
-        calcContainer.dataset.loaded = "true";
+  const provContainer = document.getElementById("provenanceGridContainer");
+  if (provContainer && !provContainer.dataset.loaded) {
+    try {
+      const data = await ApiClient.getProvenanceSources();
+      const sources = data?.sources || [];
+      if (sources.length > 0) {
+        provContainer.innerHTML = sources.map(s => `
+          <div class="provenance-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <h4 style="font-size: 0.9rem; font-weight: 700; color: #f8fafc; margin: 0;">${s.name}</h4>
+              <span class="provenance-status-pill">${s.status || 'ONLINE'}</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.5rem;">${s.organization}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+              <span style="color: #38bdf8;">${s.tier}</span>
+              ${s.official_url ? `<a href="${s.official_url}" target="_blank" rel="noopener noreferrer" style="color: #93c5fd; text-decoration: none; font-size: 0.75rem;">Website ↗</a>` : ''}
+            </div>
+          </div>
+        `).join("");
+        provContainer.dataset.loaded = "true";
       }
+    } catch (err) {
+      console.warn("Could not load provenance data:", err);
     }
-
-    if (downContainer && !downContainer.dataset.loaded) {
-      const downData = await ApiClient.getDownscalingDoc();
-      if (downData && downData.markdown_content) {
-        downContainer.textContent = downData.markdown_content;
-        downContainer.dataset.loaded = "true";
-      }
-    }
-  } catch (err) {
-    console.error("Methodology load error:", err);
   }
 }
 
