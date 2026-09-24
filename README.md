@@ -1,4 +1,6 @@
-# Taapamigo — Extreme Heatwave Early Warning & Human Thermal Stress Index
+# TAAPAMIGO
+### Beyond Temperature. Towards Human Safety
+**An Integrated Multi-Parameter Thermal Stress Forecasting and Geospatial Heat-Health Risk Platform**
 
 [![SIH 2026](https://img.shields.io/badge/SIH%202026-PS26083-orange.svg)](https://www.sih.gov.in/)
 [![Ministry](https://img.shields.io/badge/Ministry-MoES%20%2F%20NCMRWF-blue.svg)](https://www.ncmrwf.gov.in/)
@@ -6,9 +8,17 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20ASGI-green.svg)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-51%20Passed%20%28100%25%29-brightgreen.svg)](tests/)
-[![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel%20Serverless-black.svg)](https://vercel.com/)
+[![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel%20Serverless-black.svg)](https://sih-heat-risk-six.vercel.app)
 
-**Taapamigo** is an open, scientifically rigorous, and reproducible early warning and human thermal stress decision-support system engineered for Indian municipal corporations and disaster management authorities. It translates numerical weather prediction feeds into localized public health actions by quantifying **"what the weather will do to human physiology"** at the municipal ward level.
+## Live Prototype
+
+**Try Taapamigo:** https://sih-heat-risk-six.vercel.app
+
+> **Interactive Deployment:** Access the live interactive GIS choropleth map, biometeorological thermal index calculators, ward-level demographic vulnerability overlays, and NDMA/NCDC-aligned public health advisories running on Vercel Serverless.
+
+---
+
+**TAAPAMIGO** is an open, scientifically rigorous, and reproducible early warning and human thermal stress decision-support system engineered for Indian municipal corporations and disaster management authorities. It translates numerical weather prediction feeds into localized public health actions by spatially attributing atmospheric telemetry across municipal ward boundaries and combining it with Census demographic vulnerability to quantify **"what the weather will do to human physiology"** for spatial risk prioritization.
 
 ---
 
@@ -19,7 +29,7 @@ CURRENT STATUS:
 TIER 1 — WORKING PROTOTYPE (DELIVERED & FULLY VERIFIED SCOPE)
 ```
 
-> **Tier 1 Delivered Scope:** A functional, zero-configuration software system demonstrating the complete biometeorological decision-support workflow: ingesting live public meteorological telemetry, calculating peer-reviewed human physiological indices (UTCI COST 730, ISO 7243 WBGT, NOAA Heat Index), weighting multi-criteria demographic vulnerabilities (Census of India 2011 PCA), prioritizing 27 Indian urban centers on interactive GIS choropleth maps, and generating actionable, persona-specific NDMA/NCDC-grounded health advisories.
+> **Tier 1 Delivered Scope:** A functional, zero-configuration software system demonstrating the complete biometeorological decision-support workflow: ingesting live public meteorological telemetry, calculating peer-reviewed human physiological indices (UTCI COST 730, ISO 7243 WBGT, NOAA Heat Index), spatially attributing atmospheric parameters across ward boundaries differentiated by multi-criteria demographic vulnerabilities (Census of India 2011 PCA), prioritizing municipal wards across 27 Indian urban centers on interactive GIS choropleth maps, and generating actionable, persona-specific NDMA/NCDC-grounded health advisories.
 
 ---
 
@@ -30,7 +40,7 @@ Extreme heatwaves pose an escalating public health crisis across India, claiming
 1. **Reliance on Dry-Bulb Air Temperature ($T_a$) Alone:**  
    Standard weather forecasts report shade air temperature, ignoring humidity, wind speed, and solar irradiance. A humid $37^\circ\text{C}$ with $75\%$ relative humidity in coastal Mumbai or Chennai imposes greater cardiovascular and thermoregulatory strain than a dry $43^\circ\text{C}$ in Rajasthan because evaporative sweat cooling is suppressed.
 2. **Homogeneous City-Wide Warnings:**  
-   Conventional warnings treat entire metropolitan districts as uniform blocks (e.g., *"Heatwave Alert for Delhi"*). In reality, thermal stress and mortality vulnerability vary drastically between dense informal settlements, tree-lined residential zones, and industrial corridors.
+   Conventional warnings treat entire metropolitan districts as uniform blocks (e.g., *"Heatwave Alert for Delhi"*). In reality, thermal stress and population vulnerability vary drastically between dense informal settlements, residential zones, and industrial corridors due to demographic composition (elderly, outdoor workers, population density).
 3. **Lack of Actionable, Persona-Specific Guidance:**  
    Generic advisories (*"stay indoors"*) are unfeasible for daily-wage outdoor laborers, street vendors, and municipal sanitation workers. Municipal authorities require ward-level prioritization to dispatch emergency water tankers, adjust outdoor labor regimens, and alert primary health centers.
 
@@ -41,8 +51,8 @@ Extreme heatwaves pose an escalating public health crisis across India, claiming
 Taapamigo bridges the gap between atmospheric numerical models and localized municipal public health interventions through an interpretable, physically grounded 6-stage pipeline:
 
 * **Biometeorological Physics Core:** Computes physiological equivalent temperature via Universal Thermal Climate Index (UTCI), occupational Wet Bulb Globe Temperature (WBGT), and the NOAA Heat Index.
-* **Demographic Vulnerability Weighting:** Incorporates Census of India 2011 Primary Census Abstract (PCA) indicators (elderly population, outdoor/marginal workers, and population density).
-* **High-Resolution GIS Ward Delimitation:** 26 official DataMeet municipal corporation vector boundaries plus official Abohar gazette delimitation (over 1,100 surveyed municipal wards).
+* **Demographic Vulnerability Weighting:** Incorporates Census of India 2011 Primary Census Abstract (PCA) indicators (elderly population, outdoor/marginal workers, and population density) to differentiate ward-level vulnerability.
+* **High-Resolution GIS Ward Delimitation:** 26 official DataMeet municipal corporation vector boundaries plus official Abohar gazette delimitation (over 1,100 surveyed municipal wards). City-scale meteorological observations and NWP forecasts are spatially attributed across ward boundaries and modulated by demographic vulnerability to prioritize high-risk wards without requiring per-ward physical weather sensors.
 * **Multi-Horizon Decision Support:** 5-day risk trajectories, diurnal 24-hour heat timelines, and sector-specific advisories aligned with the National Action Plan on Heat Related Illnesses (NCDC NAP-HRI 2024) and NDMA Heat Wave Guidelines.
 
 ---
@@ -72,13 +82,13 @@ flowchart TD
         end
         subgraph RiskCalc ["Heat-Health Risk Synthesis"]
             HAZ["Normalized Thermal Hazard Score\nMax(UTCI, WBGT, HI Hazard)"]
-            RR["Relative Risk Score (0 - 100)\nRisk = Hazard × Vulnerability × Duration"]
+            RR["Relative Heat-Health Risk Score (0 - 100)\nSpatial Prioritization Metric\nRisk = Hazard × Vulnerability × Duration"]
             CLASS["Tier-1 Risk Tier Classification\nLow (0-25) | Moderate (25-50) |\nHigh (50-75) | Extreme (75-100)"]
         end
     end
 
     subgraph API ["3. FastAPI Backend Layer"]
-        ENDPOINTS["Endpoints:\n• /api/v1/health\n• /api/v1/locations\n• /api/v1/weather/current\n• /api/v1/weather/forecast\n• /api/v1/risk/calculate\n• /api/v1/wards/{city}/risk\n• /api/v1/advisories/generate"]
+        ENDPOINTS["Endpoints:\n• /api/v1/health\n• /api/v1/locations\n• /api/v1/weather/current\n• /api/v1/weather/forecast\n• /api/v1/thermal/current\n• /api/v1/risk/current\n• /api/v1/map/risk\n• /api/v1/advisory\n• /api/v1/alerts/test"]
     end
 
     subgraph Presentation ["4. Decision-Support Frontend"]
@@ -237,7 +247,7 @@ sih-heat-risk/
 
 ## 9. REST API Overview
 
-Taapamigo provides 18 operational REST API endpoints:
+Taapamigo provides operational REST API endpoints:
 
 | Endpoint | Method | Description |
 |---|---|---|
@@ -245,10 +255,14 @@ Taapamigo provides 18 operational REST API endpoints:
 | `/api/v1/locations` | `GET` | List of all 27 supported municipal corporations and ward counts. |
 | `/api/v1/weather/current` | `GET` | Current surface weather telemetry by coordinates or city. |
 | `/api/v1/weather/forecast` | `GET` | 5-day hourly and daily meteorological forecast. |
-| `/api/v1/risk/calculate` | `POST` | Calculates UTCI, WBGT, Heat Index, and Relative Risk for custom inputs. |
-| `/api/v1/wards/{city}/risk` | `GET` | Ward-level risk scores, demographic vulnerability, and GeoJSON choropleth. |
-| `/api/v1/advisories/generate` | `POST` | Sector-specific NDMA/NCDC advisories for 4 target personas. |
-| `/api/v1/alerts/cap` | `POST` | Formats ITU/WMO CAP v1.2 XML/JSON emergency alert payloads. |
+| `/api/v1/thermal/current` | `GET` | Computes UTCI, WBGT, and NOAA Heat Index physiological metrics. |
+| `/api/v1/thermal/calculate` | `POST` | Calculates instant thermal indices for custom weather inputs. |
+| `/api/v1/risk/current` | `GET` | Real-time composite relative heat-health risk score. |
+| `/api/v1/risk/forecast` | `GET` | 5-day horizon composite heat-health risk forecast. |
+| `/api/v1/map/risk` | `GET` | Ward-level risk GeoJSON choropleth collection for mapping. |
+| `/api/v1/wards` | `GET` | Comprehensive municipal ward risk ranking & statistics. |
+| `/api/v1/advisory` | `GET` | Persona-specific NDMA/NCDC action advisories. |
+| `/api/v1/alerts/test` | `POST` | Formats ITU/WMO CAP v1.2 XML/JSON emergency alert payloads. |
 
 ### Example API Request
 ```bash
@@ -288,9 +302,9 @@ curl -X GET "http://127.0.0.1:8000/api/v1/health"
 
 To maintain complete scientific integrity, Taapamigo strictly adheres to the following principles:
 
-* **No Synthetic Clinical Claims:** The Relative Risk Score ($0–100$) represents relative environmental exposure and demographic sensitivity to guide municipal emergency resource allocation. It is **not** a clinical prediction of mortality counts or hospital admissions.
+* **No Synthetic Clinical Claims:** The Relative Heat-Health Risk Score ($0–100$) represents relative environmental exposure and demographic sensitivity to guide municipal emergency resource allocation and spatial risk prioritization. It is **not** an epidemiological or clinical prediction of mortality counts or hospital admissions.
 * **No Black-Box ML Disguised as Science:** The core Tier 1 engine uses validated deterministic biometeorological physics equations, not synthetic machine-learning models trained without verified health labels.
-* **Transparent Data Sources:** Every data variable is explicitly mapped to its origin (Open-Meteo, NASA POWER, Census 2011 PCA, DataMeet GIS) with documented latency, accuracy, and resolution.
+* **Transparent Data Sources:** Every data variable is explicitly mapped to its origin (Open-Meteo, NASA POWER, Census 2011 PCA, DataMeet GIS) with documented latency, parameters, and spatial resolution.
 
 ---
 
