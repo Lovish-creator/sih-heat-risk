@@ -99,7 +99,7 @@ function renderThermalIndexComparisonChart(horizonList, weatherList) {
   const utciData = horizonList.map(d => (d.utci_c !== undefined && d.utci_c !== null) ? d.utci_c : null);
   const wbgtData = horizonList.map(d => (d.wbgt_c !== undefined && d.wbgt_c !== null) ? d.wbgt_c : null);
   const taData = horizonList.map(d => (d.temp_c !== undefined && d.temp_c !== null) ? d.temp_c : null);
-  const hiData = horizonList.map(d => (d.heat_index_c !== undefined && d.heat_index_c !== null) ? d.heat_index_c : null);
+  const hiData = horizonList.map(d => (d.heat_index_c !== undefined && d.heat_index_c !== null) ? d.heat_index_c : (d.heat_index_val ?? d.metrics?.heat_index?.value_c ?? null));
 
   if (chartThermalIndices) {
     chartThermalIndices.destroy();

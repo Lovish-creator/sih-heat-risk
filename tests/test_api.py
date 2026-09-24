@@ -237,3 +237,20 @@ def test_freshness_and_alert_api():
     assert data_alt["status"] == "success"
     assert "ALERT_ABO_" in data_alt["alert_payload"]["alert_id"]
     assert data_alt["dispatch_result"]["status"] == "DELIVERED_MOCK"
+
+
+def test_cap_alert_endpoints():
+    res = client.get("/api/v1/alerts/cap?city=ahmedabad")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert "sms_broadcast_text" in data
+    assert "cap_alert" in data
+    assert "alert_id" in data["cap_alert"]
+
+    res_json = client.get("/api/v1/alerts/cap/json?city=ahmedabad")
+    assert res_json.status_code == 200
+    data_json = res_json.json()
+    assert data_json["status"] == "success"
+    assert "cap_alert" in data_json
+

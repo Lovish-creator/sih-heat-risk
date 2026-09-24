@@ -173,7 +173,7 @@ async function loadWardRiskLayer(cityId = "abohar", horizonDay = 1, customLat = 
         layer.bindTooltip(`
           <div style="font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.35;">
             <strong style="color: #38bdf8;">${wName}</strong><br/>
-            <span style="display: inline-block; background-color: ${alertCol}; color: ${alertLvl === 'CAUTION' ? '#000' : '#fff'}; font-weight: 800; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-top: 2px;">
+            <span style="display: inline-block; background-color: ${alertCol}; color: ${(alertLvl === 'CAUTION' || alertLvl === 'YELLOW') ? '#000' : '#fff'}; font-weight: 800; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-top: 2px;">
               ${risk} / 100 (${alertLvl})
             </span>
           </div>
@@ -191,7 +191,10 @@ async function loadWardRiskLayer(cityId = "abohar", horizonDay = 1, customLat = 
             }
           },
           click: function (e) {
-            L.DomEvent.stopPropagation(e);
+            if (e.originalEvent) {
+              L.DomEvent.stopPropagation(e.originalEvent);
+              e.originalEvent._stopped = true;
+            }
             if (activeSelectedLayer) {
               geojsonLayer.resetStyle(activeSelectedLayer);
             }
@@ -243,9 +246,12 @@ function openDecisionDrawer(props) {
             ${props.city_name || 'Municipal Area'} &bull; ${props.zone_name || 'Urban Zone'}
           </div>
         </div>
-        <span style="background-color: ${alertColor}; color: ${alertLvl === 'CAUTION' || alertLvl === 'YELLOW' ? '#000' : '#fff'}; font-weight: 800; font-size: 0.75rem; padding: 3px 8px; border-radius: var(--radius-sm); text-transform: uppercase;">
-          ${alertLvl}
-        </span>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="background-color: ${alertColor}; color: ${alertLvl === 'CAUTION' || alertLvl === 'YELLOW' ? '#000' : '#fff'}; font-weight: 800; font-size: 0.75rem; padding: 3px 8px; border-radius: var(--radius-sm); text-transform: uppercase;">
+            ${alertLvl}
+          </span>
+          <button type="button" class="drawer-close-btn" onclick="closeDecisionDrawer()" title="Close details" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0 0.25rem;">&times;</button>
+        </div>
       </div>
 
       <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-subtle); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center;">

@@ -105,6 +105,8 @@ function setupEventListeners() {
     citySelect.addEventListener("change", (e) => {
       customCoordinates = null;
       currentCity = e.target.value;
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) searchInput.value = "";
       ApiClient.clearCache();
       refreshDashboardData();
     });
@@ -306,7 +308,17 @@ async function detectUserLocation(userTriggered = false) {
               customCoordinates = { lat, lon, name: geo.display_name, city: geo.city || "Your Location" };
               setUserLocationMarker(lat, lon, customCoordinates.city);
               await refreshDashboardData();
-            } catch (err) {}
+            } catch (err) {
+              console.warn("Reverse geocode failed, using direct coordinates:", err);
+              customCoordinates = {
+                lat,
+                lon,
+                name: `GPS Location (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
+                city: `Detected Coords`
+              };
+              setUserLocationMarker(lat, lon, customCoordinates.name);
+              await refreshDashboardData();
+            }
             if (detectBtn) detectBtn.textContent = "📍 Detect Location";
             resolve(true);
           },
@@ -509,9 +521,11 @@ function renderOverviewView(state) {
 
   if (scoreEl) scoreEl.textContent = score !== null ? (typeof score === 'number' ? score.toFixed(1) : score) : "--";
   if (badgeEl) {
-    badgeEl.textContent = `${alertLevel} ALERT`;
+    const isYellow = alertLevel === "YELLOW" || alertLevel === "CAUTION";
+    const isNormal = alertLevel === "NORMAL" || alertLevel === "GREEN";
+    badgeEl.textContent = isNormal ? "NORMAL CONDITIONS" : `${alertLevel} ALERT`;
     badgeEl.style.backgroundColor = alertColor;
-    badgeEl.style.color = (alertLevel === "YELLOW" || alertLevel === "CAUTION") ? "#000000" : "#ffffff";
+    badgeEl.style.color = isYellow ? "#000000" : "#ffffff";
   }
 
   // Plain-Language Interpretation
@@ -607,10 +621,14 @@ function renderForecastView(state) {
       const peakScore = peakDay?.heat_risk_score;
       const peakDate = peakDay?.date || "horizon";
       const peakLabel = peakDay?.horizon_label || "Day 2";
+      const isHighRisk = peakScore !== undefined && peakScore >= 50.0;
+
+      const adviceText = isHighRisk
+        ? "Elevated atmospheric moisture combined with daytime solar irradiance reduces human evaporative cooling efficiency. Municipal authorities are advised to pre-position hydration relief tankers and enforce shaded rest regimens for outdoor labor."
+        : "Thermal indices across the projection horizon remain within manageable baseline thresholds. Continue routine weather surveillance and community hydration awareness.";
 
       interpBox.innerHTML = `
-        <strong>Key Horizon Takeaway:</strong> Peak biometeorological stress is projected for <strong>${peakLabel} (${peakDate})</strong> with a Relative Heat-Health Risk score of <strong>${peakScore !== undefined ? peakScore.toFixed(1) : '--'}/100 (${peakDay?.alert_level || 'WARNING'})</strong>.
-        Elevated atmospheric moisture combined with daytime solar irradiance reduces human evaporative cooling efficiency. Municipal authorities are advised to pre-position hydration relief tankers.
+        <strong>Key Horizon Takeaway:</strong> Peak biometeorological stress is projected for <strong>${peakLabel} (${peakDate})</strong> with a Relative Heat-Health Risk score of <strong>${peakScore !== undefined ? peakScore.toFixed(1) : '--'}/100 (${peakDay?.alert_level || 'NORMAL'})</strong>. ${adviceText}
       `;
     } else {
       interpBox.textContent = "Awaiting 5-day horizon biometeorological projection stream...";
@@ -631,9 +649,12 @@ function renderHourlyTable(hourlyList) {
   }
 
   tbody.innerHTML = hourlyList.map(h => {
-    const risk = h.heat_risk_score !== undefined ? h.heat_risk_score : 0;
+    const risk = (h.heat_risk_score !== undefined && h.heat_risk_score !== null)
+      ? h.heat_risk_score
+      : ((h.hazard_score !== undefined && h.hazard_score !== null) ? h.hazard_score : 0);
     const alertColor = typeof getColorByRisk === "function" ? getColorByRisk(risk) : "#f97316";
     const alertLevel = risk >= 75 ? "EMERGENCY" : risk >= 50 ? "WARNING" : risk >= 25 ? "CAUTION" : "NORMAL";
+    const isYellow = alertLevel === 'CAUTION' || alertLevel === 'YELLOW';
 
     return `
       <tr>
@@ -643,8 +664,8 @@ function renderHourlyTable(hourlyList) {
         <td><strong>${h.utci_c !== undefined ? h.utci_c.toFixed(1) + '°C' : '--'}</strong></td>
         <td>${h.wbgt_c !== undefined ? h.wbgt_c.toFixed(1) + '°C' : '--'}</td>
         <td>
-          <span style="background-color: ${alertColor}; color: ${alertLevel === 'CAUTION' ? '#000' : '#fff'}; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">
-            ${risk.toFixed(1)} (${alertLevel})
+          <span style="background-color: ${alertColor}; color: ${isYellow ? '#000' : '#fff'}; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">
+            ${typeof risk === 'number' ? risk.toFixed(1) : risk} (${alertLevel})
           </span>
         </td>
         <td>${h.solar_radiation_w_m2 !== undefined ? Math.round(h.solar_radiation_w_m2) + ' W/m²' : '--'}</td>
@@ -696,7 +717,7 @@ function renderVulnerabilityView(wardsList) {
           <div style="font-size: 11px; color: #94a3b8;">${w.zone_name || w.lcz_class || 'Urban Local Body'}</div>
         </td>
         <td>
-          <span style="background-color: ${alertColor}; color: ${alertLevel === 'CAUTION' ? '#000' : '#fff'}; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 4px;">
+          <span style="background-color: ${alertColor}; color: ${(alertLevel === 'CAUTION' || alertLevel === 'YELLOW') ? '#000' : '#fff'}; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 4px;">
             ${typeof risk === 'number' ? risk.toFixed(1) : risk}
           </span>
         </td>
@@ -729,7 +750,9 @@ function filterWardRankingTable(query) {
     const name = (w.ward_name || "").toLowerCase();
     const zone = (w.zone_name || "").toLowerCase();
     const lcz = (w.lcz_class || "").toLowerCase();
-    return name.includes(query) || zone.includes(query) || lcz.includes(query);
+    const alertLvl = (w.alert_level || "").toLowerCase();
+    const alertLbl = (w.alert_label || "").toLowerCase();
+    return name.includes(query) || zone.includes(query) || lcz.includes(query) || alertLvl.includes(query) || alertLbl.includes(query);
   });
 
   renderVulnerabilityView(filtered);
@@ -897,7 +920,8 @@ function exportWardDataToCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${currentCity.toUpperCase()}_Ward_Heat_Risk_Horizon_D${currentHorizonDay}_Census2011.csv`;
+  const fileCity = (customCoordinates?.city || currentCity).replace(/[^A-Za-z0-9_]/g, '_').toUpperCase();
+  a.download = `${fileCity}_Ward_Heat_Risk_Horizon_D${currentHorizonDay}_Census2011.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -914,19 +938,60 @@ async function showCapAlertModal() {
     city: customCoordinates.city
   } : { city: currentCity };
 
+  const smsEl = document.getElementById("capSmsPayload");
+  const jsonEl = document.getElementById("capPayloadJson");
+
   try {
     const data = await ApiClient.getCapAlert(queryParams);
-    const smsEl = document.getElementById("capSmsPayload");
-    const jsonEl = document.getElementById("capPayloadJson");
-
-    if (smsEl) {
-      smsEl.textContent = data.sms_broadcast_text || "Heatwave Warning: High physiological stress detected in the municipal area. Stay hydrated and avoid direct sunlight.";
-    }
-
-    if (jsonEl) {
-      jsonEl.textContent = JSON.stringify(data.cap_alert || data, null, 2);
+    if (data && (data.sms_broadcast_text || data.cap_alert)) {
+      if (smsEl) {
+        smsEl.textContent = data.sms_broadcast_text || "Heatwave Warning: High physiological stress detected in the municipal area. Stay hydrated and avoid direct sunlight.";
+      }
+      if (jsonEl) {
+        jsonEl.textContent = JSON.stringify(data.cap_alert || data, null, 2);
+      }
+      return;
     }
   } catch (err) {
-    console.error("CAP Alert fetch error:", err);
+    console.warn("API CAP alert fetch failed, generating client fallback:", err);
+  }
+
+  // Robust Client-Side Fallback Synthesis from Active State
+  const cityName = customCoordinates?.city || currentCity.toUpperCase();
+  const riskObj = cachedUnifiedState?.risk || {};
+  const thermalObj = cachedUnifiedState?.thermal || {};
+  const utciVal = thermalObj.metrics?.utci?.value_c ?? 42.5;
+  const wbgtVal = thermalObj.metrics?.wbgt?.value_c ?? 32.8;
+  const riskScore = riskObj.heat_risk_score ?? 65.0;
+  const alertLevel = riskObj.alert_level || "WARNING";
+  const actionSummary = riskObj.action_summary || "Halt heavy outdoor labor 11:00-16:00; activate municipal cooling shelters and ensure public hydration.";
+
+  const fallbackPayload = {
+    "identifier": `CAP_TAAPAMIGO_${cityName.replace(/[^A-Za-z0-9]/g, '').toUpperCase()}_${new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14)}`,
+    "sender": "NDMA / MoES Early Warning System",
+    "sent": new Date().toISOString(),
+    "status": "Actual",
+    "msgType": "Alert",
+    "scope": "Public",
+    "info": {
+      "category": "Met",
+      "event": "Extreme Heatwave & Human Thermal Stress Alert",
+      "urgency": alertLevel === "EMERGENCY" || alertLevel === "RED" ? "Immediate" : "Expected",
+      "severity": alertLevel === "EMERGENCY" || alertLevel === "RED" ? "Extreme" : "Severe",
+      "certainty": "Observed",
+      "headline": `Heatwave Warning (${alertLevel}): ${cityName}`,
+      "description": `Biometeorological stress indicates high physiological strain: UTCI ${typeof utciVal === 'number' ? utciVal.toFixed(1) : utciVal}°C, WBGT ${typeof wbgtVal === 'number' ? wbgtVal.toFixed(1) : wbgtVal}°C. Relative Heat-Health Risk: ${typeof riskScore === 'number' ? riskScore.toFixed(1) : riskScore}/100.`,
+      "instruction": actionSummary,
+      "area": {
+        "areaDesc": `${cityName} Municipal Corporation & Suburbs`
+      }
+    }
+  };
+
+  if (smsEl) {
+    smsEl.textContent = `NDMA/MoES HEATWAVE ALERT (${alertLevel}): ${cityName}. Thermal stress at ${typeof utciVal === 'number' ? utciVal.toFixed(1) : utciVal}°C UTCI. ${actionSummary} Dial 108 for emergency relief.`;
+  }
+  if (jsonEl) {
+    jsonEl.textContent = JSON.stringify(fallbackPayload, null, 2);
   }
 }

@@ -670,6 +670,23 @@ main.app-main {
   border-radius: var(--radius-sm);
 }
 
+.drawer-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.drawer-close-btn:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 .drawer-section-heading {
   font-size: 0.78rem;
   font-weight: 700;
@@ -883,4 +900,44 @@ main.app-main {
   text-align: center;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+/* ==============================================================================
+   Mobile & Small Screen Responsiveness
+   ============================================================================== */
+@media (max-width: 768px) {
+  header.app-header {
+    height: auto;
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .operational-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .toolbar-controls {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 }

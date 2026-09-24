@@ -626,6 +626,7 @@ def get_risk_forecast(
             "temp_c": day["temp_c"],
             "utci_c": hz["metrics"]["utci"]["value_c"],
             "wbgt_c": hz["metrics"]["wbgt"]["value_c"],
+            "heat_index_c": hz["metrics"]["heat_index"]["value_c"],
             "hazard_score": hz["composite_hazard_score"],
             "vulnerability_score": vuln["vulnerability_score"],
             "heat_risk_score": r["risk_score"],
@@ -640,7 +641,7 @@ def get_risk_forecast(
         "city_name": c_name,
         "forecast_days": len(horizon_items),
         "horizon": horizon_items,
-        "disclaimer": "Relative heat-health prioritisation score ? not a clinical diagnosis."
+        "disclaimer": "Relative heat-health prioritisation score — not a clinical diagnosis."
     }
 
 
@@ -721,6 +722,48 @@ def test_alert_dispatch(payload: AlertTestRequest):
         "status": "success",
         "alert_payload": alert_body,
         "dispatch_result": result
+    }
+
+
+@router.get("/api/v1/alerts/cap", tags=["Alerts"])
+@router.get("/api/v1/alerts/cap/json", tags=["Alerts"])
+def get_cap_alert(
+    city: str = Query("ahmedabad"),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None)
+):
+    """Generate ITU/WMO CAP v1.2 JSON emergency alert payload and citizen SMS broadcast text."""
+    loc = _resolve_target_location(city, lat=lat, lon=lon)
+    city_name = loc["city_name"]
+    w = open_meteo.get_current_weather(lat=loc["lat"], lon=loc["lon"], city_id=city_name)
+    hz = calculate_thermal_hazard(
+        temp_c=w["temp_c"],
+        relative_humidity_pct=w["relative_humidity_pct"],
+        wind_speed_10m_m_s=w["wind_speed_10m_m_s"],
+        solar_radiation_w_m2=w["solar_radiation_w_m2"]
+    )
+    vuln = vuln_engine.get_district_vulnerability(loc["district_name"])
+    risk_res = risk_engine.calculate_risk(
+        hazard_score=hz["composite_hazard_score"],
+        vulnerability_score=vuln["vulnerability_score"],
+        consecutive_heat_days=1
+    )
+    cap_payload = alert_dispatcher.generate_alert_payload(
+        city_name=city_name,
+        ward_name=f"{city_name} Metropolitan Jurisdiction",
+        risk_score=risk_res["risk_score"],
+        alert_level=risk_res["alert_level"],
+        temp_c=w["temp_c"],
+        utci_c=hz["metrics"]["utci"]["value_c"],
+        wbgt_c=hz["metrics"]["wbgt"]["value_c"],
+        action_summary=risk_res["action_summary"]
+    )
+    sms_text = f"NDMA/MoES HEATWAVE ALERT ({risk_res['alert_level']}): {city_name}. Thermal stress at {hz['metrics']['utci']['value_c']:.1f}°C UTCI. {risk_res['action_summary']} Dial 108 for emergency."
+    return {
+        "status": "success",
+        "city": city_name,
+        "sms_broadcast_text": sms_text,
+        "cap_alert": cap_payload
     }
 
 
