@@ -41,7 +41,7 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 | **P1-02: PCA age data & worker proxy limitations** | Authored `data/README_DATA_ACQUISITION.md` documenting PCA vs C-13/C-14 tables; defined outdoor worker proxy in `docs/METHODOLOGY.md`. | `data/README_DATA_ACQUISITION.md`, `docs/METHODOLOGY.md` | Manual inspection against Census definitions | Fixed |
 | **P1-03: Ahmedabad illustrative ward delimitation** | Compared with DataMeet point offices; labeled Ahmedabad wards as illustrative prototype delimitation (`is_illustrative: true`). | `data/sample/ahmedabad_census_wards.json`, `data/sample/ahmedabad_wards.geojson` | Pytest & UI verification | Fixed |
 | **P1-04: City coverage transparency** | Created `scripts/generate_coverage_report.py` and `docs/COVERAGE.md` detailing exact ward counts, polygon sources, and quality levels for all cities. | `scripts/generate_coverage_report.py`, `docs/COVERAGE.md`, `README.md` | Python execution & table generation | Fixed |
-| **P2-01: City-scale hazard transparency** | Added `hazard_resolution` field (`city_scale_uniform`); externalized LCZ prototype multipliers to YAML with citations. | `backend/app/gis/engine.py`, `backend/app/gis/ward_directory.py`, `config/lcz_prototype_multipliers.yaml`, `docs/METHODOLOGY.md` | API inspection & Pytest | Planned (Phase 2) |
+| **P2-01: City-scale hazard transparency** | Added `hazard_resolution` field (`city_scale_uniform` / `modelled_lcz_prototype`); externalized LCZ prototype multipliers to YAML with citations. | `backend/app/gis/engine.py`, `backend/app/gis/ward_directory.py`, `config/lcz_prototype_multipliers.yaml`, `docs/METHODOLOGY.md` | API inspection & Pytest (`test_gis.py`) | Fixed |
 | **P3-01: Model specification divergence** | Created `docs/MODEL_SPEC.md` as single source of truth; unified constants and version string; harmonized README and docs. | `docs/MODEL_SPEC.md`, `backend/app/core/constants.py`, `tests/test_docs_consistency.py`, `README.md` | `pytest tests/test_docs_consistency.py` | Planned (Phase 3) |
 | **P4-01: Mock alert transparency & IMD alignment** | Renamed mock status to `SIMULATED_NOT_SENT`; added `imd_criteria` & `alert_basis`; implemented pluggable `Notifier` interface; verified CAP v1.2. | `backend/app/alerts/engine.py`, `backend/app/alerts/notifiers.py`, `backend/app/api/endpoints.py`, `tests/test_alerts.py` | `pytest tests/test_alerts.py` | Planned (Phase 4) |
 | **P5-01: Empirical back-testing validation** | Created `validation/backtest.py` on historical heatwaves (Ahmedabad 2010, Delhi 2024); added `docs/VALIDATION.md` with explicit event-detection disclaimer. | `validation/backtest.py`, `docs/VALIDATION.md`, `tests/test_backtest.py` | Offline pytest & CSV report | Planned (Phase 5) |
@@ -59,3 +59,14 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 - **Automated Coverage Report:** Created `scripts/generate_coverage_report.py` and generated `docs/COVERAGE.md` auditing all 44 supported urban centers.
 - **UI & API Exposure:** Updated `backend/app/vulnerability/demographic.py` to propagate `data_quality` in responses, and updated `public/js/app.js` to render an `"Estimated demographic input"` badge in the ward ranking table and hero snapshot.
 - **Test Suite Status:** 55 passed in 4.11s.
+
+---
+
+## 4. Phase 2 Execution Summary (Spatial Resolution of Hazard)
+
+- **Documented Hazard Code Paths:** Authored Section 4 of `docs/METHODOLOGY.md` ("Spatial Resolution of Hazard & Microclimate Modeling") explaining that macro-meteorological hazard is ingested at city scale (`"hazard_resolution": "city_scale_uniform"` in `gis/engine.py`), and spatial risk divergence across wards reflects demographic sensitivity and Local Climate Zone (LCZ) morphology.
+- **LCZ Configuration Externalized:** Extracted hardcoded multipliers (1.08, 1.30, etc.) from `ward_directory.py` into `config/lcz_prototype_multipliers.yaml`, explicitly tagging them as `"illustrative_prototype_constants"` with literature citation (Stewart & Oke 2012, BAMS).
+- **API Tagging:** Added `"hazard_resolution"` (`"city_scale_uniform"` or `"modelled_lcz_prototype"`) and `"hazard_note"` to all ward feature properties, rankings, and metadata blocks in `backend/app/gis/engine.py` and `backend/app/gis/ward_directory.py`.
+- **UI Transparency:** Updated the Decision-Support Drawer in `public/js/map.js` to display: *"Spatial Resolution: Hazard is city-scale; ward differences reflect demographic vulnerability & modeled LCZ microclimate exposure."*
+- **Test Suite Status:** 56 passed in 6.13s (added `test_lcz_prototype_multipliers_config` and `hazard_resolution` assertions).
+

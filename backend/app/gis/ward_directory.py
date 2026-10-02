@@ -330,6 +330,8 @@ class MunicipalWardManager:
                     "district_name": prof["district_name"],
                     "state_name": prof["state_name"],
                     "uhi_delta_c": uhi_delta,
+                    "hazard_resolution": "modelled_lcz_prototype",
+                    "hazard_note": "Ward microclimate derived from illustrative Stewart & Oke (2012) prototype multipliers; not ground sensor telemetry",
                     "local_weather": {
                         "temp_c": ward_temp,
                         "relative_humidity_pct": ward_rh,
@@ -382,6 +384,8 @@ class MunicipalWardManager:
                     "ward_name": full_ward_name,
                     "zone_name": loc_type,
                     "lcz_class": lcz_class,
+                    "hazard_resolution": "modelled_lcz_prototype",
+                    "hazard_note": "Ward microclimate derived from illustrative Stewart & Oke (2012) prototype multipliers; not ground sensor telemetry",
                     "heat_risk_score": risk_calc["risk_score"],
                     "alert_level": risk_calc["alert_level"],
                     "alert_color": risk_calc["alert_color"],
@@ -409,6 +413,8 @@ class MunicipalWardManager:
                 "total_wards": len(features),
                 "ward_rankings": ward_rankings,
                 "census_source": "DataMeet Municipal Spatial Data & Census 2011 PCA",
+                "hazard_resolution": "modelled_lcz_prototype",
+                "hazard_note": "Ward microclimate adjustments use illustrative prototype constants based on Stewart & Oke (2012) LCZ classes.",
                 "features": features,
                 "metadata": {
                     "city_name": prof["city_name"],
@@ -417,6 +423,8 @@ class MunicipalWardManager:
                     "total_wards": len(features),
                     "census_source": "DataMeet Municipal Spatial Data & Census 2011 PCA",
                     "attribution": f"DataMeet Municipal Spatial Data & Census of India 2011 PCA ({prof['state_name']})",
+                    "hazard_resolution": "modelled_lcz_prototype",
+                    "hazard_note": "Ward microclimate adjustments use illustrative prototype constants based on Stewart & Oke (2012) LCZ classes.",
                     "consecutive_days": consecutive_heat_days,
                     "highest_risk_ward": ward_rankings[0] if ward_rankings else {},
                     "ward_rankings": ward_rankings
@@ -536,6 +544,8 @@ class MunicipalWardManager:
                     "district_name": prof["district_name"],
                     "state_name": prof["state_name"],
                     "uhi_delta_c": uhi_delta,
+                    "hazard_resolution": "modelled_lcz_prototype",
+                    "hazard_note": "Ward microclimate derived from illustrative Stewart & Oke (2012) prototype multipliers; not ground sensor telemetry",
                     "local_weather": {
                         "temp_c": ward_temp,
                         "relative_humidity_pct": ward_rh,
@@ -591,6 +601,8 @@ class MunicipalWardManager:
                     "ward_name": full_ward_name,
                     "zone_name": loc_type,
                     "lcz_class": lcz_class,
+                    "hazard_resolution": "modelled_lcz_prototype",
+                    "hazard_note": "Ward microclimate derived from illustrative Stewart & Oke (2012) prototype multipliers; not ground sensor telemetry",
                     "heat_risk_score": risk_calc["risk_score"],
                     "alert_level": risk_calc["alert_level"],
                     "alert_color": risk_calc["alert_color"],
@@ -620,6 +632,8 @@ class MunicipalWardManager:
             "total_wards": len(features),
             "ward_rankings": ward_rankings,
             "census_source": prof["census_source"],
+            "hazard_resolution": "modelled_lcz_prototype",
+            "hazard_note": "Ward microclimate adjustments use illustrative prototype constants based on Stewart & Oke (2012) LCZ classes.",
             "features": features,
             "metadata": {
                 "city_name": prof["city_name"],
@@ -628,6 +642,8 @@ class MunicipalWardManager:
                 "total_wards": len(features),
                 "census_source": prof["census_source"],
                 "attribution": f"OpenStreetMap & Census of India 2011 PCA ({prof['state_name']})",
+                "hazard_resolution": "modelled_lcz_prototype",
+                "hazard_note": "Ward microclimate adjustments use illustrative prototype constants based on Stewart & Oke (2012) LCZ classes.",
                 "consecutive_days": consecutive_heat_days,
                 "highest_risk_ward": ward_rankings[0] if ward_rankings else {},
                 "ward_rankings": ward_rankings

@@ -85,6 +85,8 @@ class GISEngine:
                 enriched_props = {
                     **props,
                     "hazard_score": hazard_score,
+                    "hazard_resolution": "city_scale_uniform",
+                    "hazard_note": "Hazard is city-scale; ward differences reflect demographic vulnerability",
                     "vulnerability_score": vuln_score,
                     "heat_risk_score": risk_calc["risk_score"],
                     "alert_level": risk_calc["alert_level"],
@@ -113,6 +115,8 @@ class GISEngine:
                 "metadata": {
                     "attribution": "SIH26083 Ward-Level Risk Attribution Layer",
                     "disclaimer": "Ward-level risk attribution joins regional biometeorological hazard with localized demographic vulnerability.",
+                    "hazard_resolution": "city_scale_uniform",
+                    "hazard_note": "Hazard is city-scale; ward differences reflect demographic vulnerability.",
                     "total_wards": len(enriched_features),
                     "consecutive_days": consecutive_heat_days
                 }
@@ -165,6 +169,8 @@ class GISEngine:
                     "ward_name": f"{district_vuln.get('district_name', city_id.title())} — {z_name}",
                     "zone_name": z_name,
                     "hazard_score": hazard_score,
+                    "hazard_resolution": "city_scale_uniform",
+                    "hazard_note": "Hazard is city-scale; ward differences reflect demographic vulnerability",
                     "vulnerability_score": z_vuln,
                     "heat_risk_score": risk_calc["risk_score"],
                     "alert_level": risk_calc["alert_level"],

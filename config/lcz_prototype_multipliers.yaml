@@ -1,0 +1,77 @@
+# LCZ Prototype Multipliers Configuration — Taapamigo (SIH26083)
+# Status: illustrative_prototype_constants
+#
+# Reference Framework: Stewart & Oke (2012) "Local Climate Zones for Urban Temperature Studies"
+# Bulletin of the American Meteorological Society, 93(12), 1879-1900. DOI: 10.1175/BAMS-D-11-00019.1
+#
+# IMPORTANT SCIENTIFIC DISCLAIMER:
+# These multipliers are illustrative prototype parameters for demonstrating microclimatic downscaling
+# across urban morphologies in the absence of dense hyperlocal automated weather station (AWS) networks.
+# They are NOT empirically fitted micrometeorological observations.
+
+status: "illustrative_prototype_constants"
+validation_status: "unvalidated_simulation_only"
+
+lcz_classes:
+  LCZ_1_compact_high_rise:
+    name: "Compact High-Rise"
+    temp_multiplier: 1.10
+    worker_multiplier: 1.10
+    density_multiplier: 2.2
+    description: "Dense mix of tall buildings (>25m); high thermal mass and reduced nocturnal radiative cooling."
+
+  LCZ_2_compact_mid_rise:
+    name: "Compact Mid-Rise"
+    temp_multiplier: 1.06
+    worker_multiplier: 1.15
+    density_multiplier: 1.8
+    description: "Dense mix of mid-rise buildings (10-25m); typical of Indian commercial hubs and transit stations."
+
+  LCZ_3_compact_low_rise:
+    name: "Compact Low-Rise"
+    temp_multiplier: 1.08
+    worker_multiplier: 1.25
+    density_multiplier: 2.0
+    description: "Dense historic core / narrow streets (<10m); high pedestrian thermal trapping."
+
+  LCZ_5_open_mid_rise:
+    name: "Open Mid-Rise"
+    temp_multiplier: 0.98
+    worker_multiplier: 0.75
+    density_multiplier: 0.8
+    description: "Institutional, civil lines, university campuses; higher tree canopy cover and wind permeability."
+
+  LCZ_6_open_low_rise:
+    name: "Open Low-Rise"
+    temp_multiplier: 1.00
+    worker_multiplier: 0.85
+    density_multiplier: 1.0
+    description: "Planned suburban residential neighborhoods with moderate vegetation."
+
+  LCZ_7_lightweight_low_rise:
+    name: "Lightweight Low-Rise"
+    temp_multiplier: 1.08
+    worker_multiplier: 1.45
+    density_multiplier: 1.9
+    description: "Informal settlements and labor colonies; tin/asbestos roofing with severe indoor/outdoor heat trapping."
+
+  LCZ_8_large_low_rise:
+    name: "Large Low-Rise"
+    temp_multiplier: 1.04
+    worker_multiplier: 1.35
+    density_multiplier: 1.0
+    description: "Logistics belts, wholesale grain mandis, and extensive unshaded pavement."
+
+  LCZ_10_heavy_industry:
+    name: "Heavy Industry"
+    temp_multiplier: 1.12
+    worker_multiplier: 1.60
+    density_multiplier: 1.3
+    description: "Industrial estates with high anthropogenic heat emission and intense outdoor physical labor."
+
+  LCZ_D_low_plants_agri:
+    name: "Low Plants / Agricultural Fringe"
+    temp_multiplier: 0.96
+    worker_multiplier: 1.35
+    density_multiplier: 0.6
+    description: "Peri-urban agricultural boundaries; higher evaporative cooling but unshaded farm labor exposure."

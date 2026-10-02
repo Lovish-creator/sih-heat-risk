@@ -148,3 +148,22 @@ $$\text{Relative Heat-Health Risk} = \text{clamp}\Big(0.55 \cdot (\text{Hazard} 
 | **YELLOW (Watch)** | $25.0 \le \text{Risk} < 50.0$ | `#f59e0b` | Heat watch. Advise elderly and outdoor workers to take shaded breaks. |
 | **ORANGE (Alert)** | $50.0 \le \text{Risk} < 75.0$ | `#f97316` | Severe heat alert. Mandatory 25% rest cycle for outdoor labor; prepare water distribution. |
 | **RED (Warning)** | $75.0 \le \text{Risk} \le 100.0$ | `#ef4444` | Extreme heat emergency. Halt heavy outdoor labor during 12:00–16:00; activate cooling shelters and hospital emergency protocols. |
+
+---
+
+## 4. Spatial Resolution of Hazard & Microclimate Modeling
+
+A core principle of scientific integrity is clarity regarding what is observed versus what is modeled.
+
+### 4.1 Macro-Hazard vs. Hyperlocal Vulnerability
+In municipal disaster management platforms, meteorological observations are typically gathered from airport or regional automated weather stations (AWS). In Taapamigo:
+1. **City-Scale Uniform Hazard (`gis/engine.py`):**
+   - Atmospheric temperature, humidity, wind, and solar irradiance are ingested at the urban center scale.
+   - In this code path, every ward within the municipal corporation receives the **same hazard score** (`"hazard_resolution": "city_scale_uniform"`).
+   - Spatial risk variation is driven by demographic vulnerability (elderly density, outdoor worker share, population density).
+
+2. **Modelled Microclimate & LCZ Downscaling (`gis/ward_directory.py`):**
+   - For municipal ward directories, the system integrates Stewart & Oke (2012) Local Climate Zone (LCZ) classes (e.g., LCZ 2 Compact Mid-Rise, LCZ 3 Compact Low-Rise, LCZ 10 Heavy Industry).
+   - In this code path, prototype urban heat island adjustments are applied via configuration constants (`config/lcz_prototype_multipliers.yaml`, `"hazard_resolution": "modelled_lcz_prototype"`).
+   - **Status:** These multipliers are **illustrative prototype constants** designed to evaluate downscaling logic and decision workflows. They are **not** real-time micro-sensor measurements.
+

@@ -295,7 +295,11 @@ function openDecisionDrawer(props) {
         </div>
       </div>
 
-      <div class="drawer-section-heading" style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.4rem;">👥 Demographics (Census 2011 PCA)</div>
+      <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.75rem; padding: 0.45rem 0.65rem; background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 3px; line-height: 1.35;">
+        💡 <strong>Spatial Resolution:</strong> Hazard is city-scale; ward differences reflect demographic vulnerability &amp; modeled LCZ microclimate exposure.
+      </div>
+
+      <div class="drawer-section-heading" style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.4rem;">👥 Demographics (Census 2011 Baseline)</div>
       <div style="display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.8rem; margin-bottom: 0.85rem; background: rgba(0,0,0,0.2); padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.05);">
         <div style="display: flex; justify-content: space-between; padding: 2px 0;">
           <span style="color: var(--text-secondary);">Elderly (Age 60+):</span>

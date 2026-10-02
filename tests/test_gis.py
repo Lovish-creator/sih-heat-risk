@@ -44,6 +44,8 @@ def test_gis_ward_risk_geojson_generation():
     assert "ward_id" in props
     assert "ward_name" in props
     assert "hazard_score" in props
+    assert "hazard_resolution" in props
+    assert props["hazard_resolution"] == "city_scale_uniform"
     assert "vulnerability_score" in props
     assert "heat_risk_score" in props
     assert "alert_level" in props
@@ -51,3 +53,17 @@ def test_gis_ward_risk_geojson_generation():
     assert "demographics" in props
     assert "metadata" in enriched
     assert "disclaimer" in enriched["metadata"]
+    assert enriched["metadata"]["hazard_resolution"] == "city_scale_uniform"
+
+
+def test_lcz_prototype_multipliers_config():
+    """Verify that LCZ prototype multipliers are externalized and labeled as illustrative."""
+    import yaml
+    config_path = os.path.join(os.path.dirname(__file__), "..", "config", "lcz_prototype_multipliers.yaml")
+    assert os.path.exists(config_path)
+    with open(config_path, "r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+    assert cfg["status"] == "illustrative_prototype_constants"
+    assert cfg["validation_status"] == "unvalidated_simulation_only"
+    assert "lcz_classes" in cfg
+    assert len(cfg["lcz_classes"]) >= 8
