@@ -27,7 +27,7 @@ The following features are genuinely implemented, tested, and verifiable in the 
 | **UTCI Calculation** | `backend/app/thermal/utci.py` | `tests/test_utci.py` | Implements 6th-order polynomial approximation (Bröde et al., 2012; COST Action 730). |
 | **WBGT Calculation** | `backend/app/thermal/wbgt.py` | `tests/test_wbgt.py` | Implements Stull (2011) psychrometric wet-bulb + Liljegren solar radiation balance for outdoor/shade WBGT per ISO 7243 / NIOSH 2016. |
 | **NOAA Heat Index** | `backend/app/thermal/heat_index.py` | `tests/test_heat_index.py` | Implements NOAA/NWS Rothfusz 9-parameter polynomial with Steadman low-range boundary. |
-| **Composite Thermal Hazard** | `backend/app/thermal/hazard.py` | `tests/test_hazard.py` | Synthesizes normalized Thermal Hazard Score (0–100) combining UTCI ($0.45$), WBGT ($0.35$), and Heat Index ($0.20$). |
+| **Composite Thermal Hazard** | `backend/app/thermal/hazard.py` | `tests/test_hazard.py` | Synthesizes normalized Thermal Hazard Score (0–100) combining UTCI ($0.60$), WBGT ($0.25$), and Heat Index ($0.15$) per `docs/MODEL_SPEC.md`. |
 | **Demographic Vulnerability** | `backend/app/vulnerability/demographic.py` | `tests/test_vulnerability.py` | Normalized vulnerability score ($0–100$) combining Elderly 60+ ($0.40$), Outdoor Laborers ($0.35$), and Density ($0.25$) from Census 2011 PCA. |
 | **Relative Heat-Health Risk** | `backend/app/risk/engine.py` | `tests/test_risk_engine.py` | Relative risk score ($0–100$) = Thermal Hazard ($0.55$) + Demographic Vulnerability ($0.30$) + Heat Duration ($0.15$), mapped to IMD 4-tier alert levels (Green, Yellow, Orange, Red). |
 | **Consecutive Heat Persistence** | `backend/app/risk/engine.py` | `tests/test_risk_engine.py` | Multi-day duration multiplier based on consecutive days where $T_{\max} \ge 40^\circ\text{C}$ or departure $\ge +4.5^\circ\text{C}$. |
@@ -37,7 +37,7 @@ The following features are genuinely implemented, tested, and verifiable in the 
 | **Emergency Alert Payloads** | `backend/app/alerts/engine.py` | `tests/test_alerts.py` | Formats ITU/WMO Common Alerting Protocol (CAP v1.2) XML/JSON and localized SMS broadcast payloads. |
 | **FastAPI REST API** | `backend/app/api/endpoints.py` | `tests/test_api.py` | 18 operational REST endpoints for weather, thermal stress, risk, GIS maps, geocoding, and advisories. |
 | **Interactive Frontend** | `frontend/` | Manual & Browser Verified | Leaflet choropleth map, decision-support side drawer, 5-day Chart.js forecast, demographic table, and data audit view. |
-| **Automated Test Suite** | `tests/` | 51 passing unit & integration tests | 100% pass rate with deterministic offline mocks. |
+| **Automated Test Suite** | `tests/` | Passing automated unit & integration tests | 100% pass rate with deterministic offline mocks and CI validation. |
 
 ---
 

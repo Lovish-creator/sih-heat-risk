@@ -19,7 +19,7 @@ The Taapamigo platform executes an interpretable, physically grounded biometeoro
                        │
                        ▼
       [Composite Thermal Hazard Score (0–100)]
-   Hazard = 0.45(UTCI_norm) + 0.35(WBGT_norm) + 0.20(HI_norm)
+   Hazard = 0.60(UTCI_norm) + 0.25(WBGT_norm) + 0.15(HI_norm)
                        │
                        ▼
    [Census 2011 Demographic Vulnerability (0–100)]
@@ -108,8 +108,8 @@ Where $T_F = T_a \times \frac{9}{5} + 32$. Converted back to $^\circ\text{C}$ fo
 
 ### 2.4 Composite Thermal Hazard Score (0–100)
 
-$$\text{Hazard Score} = 0.45 \cdot H_{\text{UTCI}} + 0.35 \cdot H_{\text{WBGT}} + 0.20 \cdot H_{\text{HI}}$$
-Where $H_{\text{UTCI}}, H_{\text{WBGT}}, H_{\text{HI}}$ are normalized piecewise hazard scores bounded in $[0, 100]$.
+$$\text{Hazard Score} = 0.60 \cdot H_{\text{UTCI}} + 0.25 \cdot H_{\text{WBGT}} + 0.15 \cdot H_{\text{HI}}$$
+Where $H_{\text{UTCI}}, H_{\text{WBGT}}, H_{\text{HI}}$ are normalized piecewise hazard scores bounded in $[0, 100]$. (Documented authoritatively in `docs/MODEL_SPEC.md`).
 
 ---
 
@@ -135,8 +135,9 @@ Consequently, the outdoor worker exposure metric in Taapamigo is an **operationa
 
 ### 2.6 Heatwave Duration & Relative Risk Index
 
-$$\text{Duration Multiplier} = 1.0 + \min(0.40, (\text{consecutive\_days} - 1) \times 0.10)$$
-$$\text{Relative Heat-Health Risk} = \text{clamp}\Big(0.55 \cdot (\text{Hazard} \times \text{Duration}) + 0.30 \cdot \text{Vulnerability} + 0.15 \cdot (\text{Duration Factor} \times 100), 0, 100\Big)$$
+The duration factor $f_D$ scales with consecutive heatwave days: Day 1 = 0.0, Day 2 = 0.33, Day 3 = 0.66, Day 4+ = 1.0, yielding a duration score $D_{\text{score}} = f_D \times 100.0$.
+
+$$\text{Relative Heat-Health Risk} = \text{clamp}\Big(0.55 \cdot \text{Hazard} + 0.30 \cdot \text{Vulnerability} + 0.15 \cdot D_{\text{score}}, \; 0.0, \; 100.0\Big)$$
 
 ---
 

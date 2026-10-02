@@ -13,10 +13,10 @@ $$\text{Risk} = f(\text{Hazard}, \text{Vulnerability}, \text{Exposure / Persiste
 ```mermaid
 graph TD
     subgraph Hazard_Component [1. Thermal Hazard Engine]
-        UTCI[UTCI Physiological Strain: 0-100]
-        WBGT[WBGT Occupational Strain: 0-100]
-        HI[NOAA Heat Index: 0-100]
-        THS[Composite Thermal Hazard Score: H]
+        UTCI[UTCI Physiological Strain: 60%]
+        WBGT[WBGT Occupational Strain: 25%]
+        HI[NOAA Heat Index: 15%]
+        THS[Composite Thermal Hazard Score: H in 0-100]
     end
 
     subgraph Vulnerability_Component [2. Demographic Vulnerability Engine]
@@ -24,19 +24,19 @@ graph TD
         LAB[Informal Outdoor Laborers: 35%]
         DEN[Population Density: 25%]
         UHI[LCZ Microclimate Heat Offset]
-        DVI[Demographic Vulnerability Score: V]
+        DVI[Demographic Vulnerability Score: V in 0-100]
     end
 
-    subgraph Persistence_Component [3. Heat Persistence Engine]
+    subgraph Persistence_Component [3. Heat Duration Engine]
         DUR[Consecutive Heatwave Days: N_days]
-        PERS[Persistence Multiplier: P >= 1.0]
+        PERS[Duration Score: D_score in 0-100 (Step Function)]
     end
 
     UTCI & WBGT & HI --> THS
     ELD & LAB & DEN & UHI --> DVI
     DUR --> PERS
 
-    THS & DVI & PERS --> FINAL_RISK[Composite Relative Risk Index: R in 0-100]
+    THS & DVI & PERS --> FINAL_RISK["Composite Relative Risk: R = 0.55*H + 0.30*V + 0.15*D (0-100)"]
 ```
 
 ---
@@ -104,8 +104,8 @@ The individual indices are normalized to $[0, 100]$ scales and combined via a ca
 
 $$H = w_{\text{utci}} \cdot S(\text{UTCI}) + w_{\text{wbgt}} \cdot S(\text{WBGT}) + w_{\text{hi}} \cdot S(\text{HI})$$
 
-Default scientific weights:
-$$w_{\text{utci}} = 0.45, \quad w_{\text{wbgt}} = 0.35, \quad w_{\text{hi}} = 0.20 \quad (\Sigma w = 1.0)$$
+Canonical scientific weights (authoritative in `docs/MODEL_SPEC.md`):
+$$w_{\text{utci}} = 0.60, \quad w_{\text{wbgt}} = 0.25, \quad w_{\text{hi}} = 0.15 \quad (\Sigma w = 1.0)$$
 
 ---
 
@@ -123,37 +123,44 @@ Where:
 
 ---
 
-## 4. Heatwave Persistence Multiplier ($P$)
+## 4. Heatwave Duration Score ($D_{\text{score}}$)
 
-Consecutive days of extreme heat compound human physiological strain and nocturnal heat retention:
+Consecutive days of extreme heat compound human physiological strain and nocturnal heat retention. The engine evaluates consecutive days where $T_{\max} \ge 40.0^\circ\text{C}$ or departure from normal $\ge +4.5^\circ\text{C}$ using a discrete duration scaling function $f_D$:
 
-$$P = 1.0 + \min(0.20, (N_{\text{days}} - 1) \cdot 0.05)$$
+$$D_{\text{score}} = f_D(\text{consecutive\_days}) \times 100.0$$
 
-Where $N_{\text{days}}$ is the count of consecutive days where $T_{\max} \ge 40^\circ\text{C}$ or $\text{UTCI}_{\max} \ge 38^\circ\text{C}$.
-* Day 1: $P = 1.00$
-* Day 2: $P = 1.05$
-* Day 3: $P = 1.10$
-* Day 4: $P = 1.15$
-* Day 5+: $P = 1.20$ (capped at $+20\%$ amplification)
+* **Day 1:** $f_D = 0.00 \implies D_{\text{score}} = 0.0$
+* **Day 2:** $f_D = 0.33 \implies D_{\text{score}} = 33.0$
+* **Day 3:** $f_D = 0.66 \implies D_{\text{score}} = 66.0$
+* **Day 4+:** $f_D = 1.00 \implies D_{\text{score}} = 100.0$
 
 ---
 
 ## 5. Composite Relative Heat-Health Risk Score ($R$)
 
-The unified ward relative risk score is calculated as:
+The unified ward relative risk score is calculated as an additive multi-criteria linear combination:
 
-$$R = \min\left(100.0, \left( w_H \cdot H + w_V \cdot V \right) \cdot P \right)$$
+$$R = \text{clamp}\Big( w_H \cdot H + w_V \cdot V + w_D \cdot D_{\text{score}}, \; 0.0, \; 100.0 \Big)$$
 
-Default baseline weights:
-$$w_H = 0.60, \quad w_V = 0.40 \quad (\Sigma w = 1.0)$$
+Canonical baseline weights (authoritative in `docs/MODEL_SPEC.md`):
+$$w_H = 0.55, \quad w_V = 0.30, \quad w_D = 0.15 \quad (\Sigma w = 1.0)$$
 
-### 5.1 Risk Tier Classification
+### 5.1 Day-1 Theoretical Maximum Quirk
+Because $D_{\text{score}} = 0.0$ on Day 1, the maximum achievable risk score on Day 1 is:
+$$\text{Max Risk}_{\text{Day 1}} = 0.55(100.0) + 0.30(100.0) + 0.15(0.0) = 85.0$$
+This mathematical guardrail prevents declaring maximum emergency alert status on a single isolated hot afternoon without cumulative persistence.
+
+### 5.2 Risk Tier Classification
 | Risk Score ($R$) | Risk Category | Color Code | Action Required |
 |:---|:---|:---|:---|
-| $0.0 \le R < 26.0$ | **Low Risk** | 🟢 Green | Normal routine, standard hydration awareness |
-| $26.0 \le R < 51.0$ | **Moderate Risk** | 🟡 Yellow | Advisory issued for elderly, shaded rest for outdoor workers |
-| $51.0 \le R < 76.0$ | **High Risk** | 🟠 Orange | Municipal cooling shelters opened, strict work-rest schedules |
-| $76.0 \le R \le 100.0$ | **Extreme Risk** | 🔴 Red | High-priority emergency alerts, suspension of outdoor manual labor |
+| $0.0 \le R < 25.0$ | **GREEN (Normal)** | 🟢 Green (`#10b981`) | Normal routine, standard hydration awareness |
+| $25.0 \le R < 50.0$ | **YELLOW (Watch)** | 🟡 Yellow (`#f59e0b`) | Advisory issued for elderly, shaded rest for outdoor workers |
+| $50.0 \le R < 75.0$ | **ORANGE (Alert)** | 🟠 Orange (`#f97316`) | Municipal cooling shelters opened, strict work-rest schedules |
+| $75.0 \le R \le 100.0$ | **RED (Warning)** | 🔴 Red (`#ef4444`) | High-priority emergency alerts, suspension of outdoor manual labor |
+
+### 5.3 Presentation Reconciliation
+- **Presentation Slide 3:** Accurately displays the additive formulation ($0.55\text{ Hazard} + 0.30\text{ Vulnerability} + 0.15\text{ Duration}$).
+- **Presentation Slide 4:** Contains the conceptual shorthand $\text{Risk} = \text{Hazard} \times \text{Vulnerability} \times \text{Duration}$, representing the UNDRR paradigm that risk arises from the interaction of all three elements. In software calculation, the additive model above is implemented to prevent mathematical collapse when duration is 0 on Day 1.
 
 ---
 

@@ -12,7 +12,14 @@ for municipal disaster mitigation. It is NOT a clinical diagnosis or mortality p
 import os
 import yaml
 from typing import Dict, Any, Optional
-from ..core.constants import DURATION_SCALING, AlertLevel
+from ..core.constants import (
+    DURATION_SCALING,
+    AlertLevel,
+    MODEL_VERSION,
+    HAZARD_WEIGHT,
+    VULNERABILITY_WEIGHT,
+    DURATION_WEIGHT
+)
 
 
 class HeatRiskEngine:
@@ -22,11 +29,11 @@ class HeatRiskEngine:
     """
 
     def __init__(self, config_path: Optional[str] = "config/risk_weights.yaml"):
-        self.model_version = "baseline-0.2"
+        self.model_version = MODEL_VERSION
         self.weights = {
-            "thermal_hazard": 0.55,
-            "demographic_vulnerability": 0.30,
-            "heatwave_duration": 0.15
+            "thermal_hazard": HAZARD_WEIGHT,
+            "demographic_vulnerability": VULNERABILITY_WEIGHT,
+            "heatwave_duration": DURATION_WEIGHT
         }
         self.duration_scaling = DURATION_SCALING
         self._load_config(config_path)

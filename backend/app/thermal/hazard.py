@@ -6,6 +6,12 @@ Thermal Hazard Score on a continuous 0 to 100 scale with strict boundary validat
 """
 
 from typing import Dict, Any
+from ..core.constants import (
+    MODEL_VERSION,
+    HAZARD_SUBWEIGHT_UTCI,
+    HAZARD_SUBWEIGHT_WBGT,
+    HAZARD_SUBWEIGHT_HEAT_INDEX,
+)
 from .utci import calculate_utci, classify_utci, calculate_vapor_pressure, calculate_mrt
 from .wbgt import calculate_wbgt, classify_wbgt
 from .heat_index import calculate_heat_index, classify_heat_index
@@ -19,13 +25,13 @@ def validate_thermal_inputs(
 ):
     """Validate physical plausibility ranges for meteorological inputs."""
     if not (-20.0 <= temp_c <= 65.0):
-        raise ValueError(f"Temperature {temp_c}?C is outside plausible meteorological range (-20?C to 65?C).")
+        raise ValueError(f"Temperature {temp_c}°C is outside plausible meteorological range (-20°C to 65°C).")
     if not (0.0 <= relative_humidity_pct <= 100.0):
         raise ValueError(f"Relative humidity {relative_humidity_pct}% is outside valid range (0% to 100%).")
     if wind_speed_10m_m_s < 0.0 or wind_speed_10m_m_s > 75.0:
         raise ValueError(f"Wind speed {wind_speed_10m_m_s} m/s is outside valid range (0 to 75 m/s).")
     if solar_radiation_w_m2 < 0.0 or solar_radiation_w_m2 > 1500.0:
-        raise ValueError(f"Solar radiation {solar_radiation_w_m2} W/m? is outside valid range (0 to 1500 W/m?).")
+        raise ValueError(f"Solar radiation {solar_radiation_w_m2} W/m² is outside valid range (0 to 1500 W/m²).")
 
 
 def calculate_thermal_hazard(
@@ -85,9 +91,9 @@ def calculate_thermal_hazard(
     # 5. Composite Normalized Thermal Hazard Score (0 - 100)
     # Weights: UTCI (0.60) + WBGT (0.25) + Heat Index (0.15)
     composite_hazard_score = (
-        0.60 * utci_info["hazard_score"]
-        + 0.25 * wbgt_info["hazard_score"]
-        + 0.15 * hi_info["hazard_score"]
+        HAZARD_SUBWEIGHT_UTCI * utci_info["hazard_score"]
+        + HAZARD_SUBWEIGHT_WBGT * wbgt_info["hazard_score"]
+        + HAZARD_SUBWEIGHT_HEAT_INDEX * hi_info["hazard_score"]
     )
     composite_hazard_score = max(0.0, min(100.0, round(composite_hazard_score, 1)))
     
@@ -132,7 +138,7 @@ def calculate_thermal_hazard(
         "composite_hazard_score": composite_hazard_score,
         "metadata": {
             "engine": "Universal Thermal Climate & Occupational WBGT Engine",
-            "engine_version": "1.2.0-scientific",
+            "engine_version": MODEL_VERSION,
             "standards": ["COST Action 730 (UTCI)", "ISO 7243 / ACGIH (WBGT)", "NOAA NWS SR 90-23 (Heat Index)"]
         }
     }

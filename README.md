@@ -77,13 +77,13 @@ flowchart TD
             HI["NOAA Heat Index\nRothfusz Regression &\nSteadman Low-Range Equations"]
         end
         subgraph Vulnerability ["Multi-Criteria Vulnerability Engine"]
-            VULN["Demographic Vulnerability Index (0-1)\n• Elderly (>65) Weight: 0.30\n• Under-6 Children Weight: 0.20\n• Outdoor/Marginal Workers: 0.30\n• Population Density: 0.20"]
-            DUR["Heatwave Persistence Factor\nDuration Multiplier (3-5+ Consecutive Days)"]
+            VULN["Demographic Vulnerability Index (0-100)\n• Elderly (≥60) Weight: 0.40\n• Outdoor Workers Weight: 0.35\n• Population Density: 0.25"]
+            DUR["Heatwave Duration Score (0-100)\nDiscrete Step Scaling (0.0 to 1.0)"]
         end
         subgraph RiskCalc ["Heat-Health Risk Synthesis"]
-            HAZ["Normalized Thermal Hazard Score\nMax(UTCI, WBGT, HI Hazard)"]
-            RR["Relative Heat-Health Risk Score (0 - 100)\nSpatial Prioritization Metric\nRisk = Hazard × Vulnerability × Duration"]
-            CLASS["Tier-1 Risk Tier Classification\nLow (0-25) | Moderate (25-50) |\nHigh (50-75) | Extreme (75-100)"]
+            HAZ["Normalized Thermal Hazard (0-100)\n0.60·UTCI + 0.25·WBGT + 0.15·HI"]
+            RR["Relative Heat-Health Risk Score (0 - 100)\nSpatial Prioritization Metric\nRisk = 0.55·Hazard + 0.30·Vuln + 0.15·Duration"]
+            CLASS["Tier-1 Risk Tier Classification\nGreen (0-25) | Yellow (25-50) |\nOrange (50-75) | Red (75-100)"]
         end
     end
 

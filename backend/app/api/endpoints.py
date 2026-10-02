@@ -816,7 +816,7 @@ def get_methodology():
             "composite_risk": {
                 "name": "Relative Heat-Health Risk Index",
                 "formula": "Risk = (0.55 * Hazard) + (0.30 * Vulnerability) + (0.15 * Duration_Score)",
-                "disclaimer": "Relative prioritization score ? not a clinical mortality prediction."
+                "disclaimer": "Relative prioritization score — not a clinical mortality prediction."
             }
         }
     }

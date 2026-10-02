@@ -7,7 +7,7 @@ Following the AI/ML and Biometeorological Model Reporting Standards (Mitchell et
 ## 1. Model Details
 
 * **Model Name:** Taapamigo Biometeorological & Heat-Health Risk Engine
-* **Version:** `1.2.0-scientific`
+* **Version:** `1.0.0-prototype` (authoritative specification documented in `docs/MODEL_SPEC.md`)
 * **Model Type:** Deterministic Biometeorological Physics Engine + Multi-Criteria Demographic Vulnerability Spatial Attribution (Tier-1 Working Prototype)
 * **Developers:** SIH 2026 Team (PS26083: Extreme Heatwave Early Warning and Human Thermal Stress Index)
 * **Target Domain:** Pan-India Urban Wards & Municipal Corporations
@@ -55,9 +55,9 @@ All mathematical engines enforce strict physical boundary checks. Out-of-range a
 * $T_a < -50^\circ\text{C}$ or $T_a > 60^\circ\text{C}$ $\rightarrow$ Blocked.
 
 ### 4.2 Automated Test Suite
-* **Unit & Integration Tests:** 51 automated tests covering all modules (`pytest tests/`).
-* **Test Pass Rate:** 100% (51 / 51 passing).
-* **Coverage Areas:** Pure biometeorology (UTCI, WBGT, Heat Index), Demographic Vulnerability, Database CRUD, Ingestion Pipelines, CAP Alert generation, and REST API endpoints.
+* **Unit & Integration Tests:** Automated regression tests covering all biometeorology, risk, provenance, consistency, and API modules (`pytest tests/`).
+* **Test Pass Rate:** 100% passing across all test suites, continuously verified by automated CI (`.github/workflows/ci.yml`).
+* **Coverage Areas:** Pure biometeorology (UTCI, WBGT, Heat Index), Demographic Vulnerability, Database CRUD, Ingestion Pipelines, CAP Alert generation, Specification Consistency, and REST API endpoints.
 
 ---
 
