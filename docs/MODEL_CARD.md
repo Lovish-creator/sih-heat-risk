@@ -32,9 +32,9 @@ Following the AI/ML and Biometeorological Model Reporting Standards (Mitchell et
 ## 3. Factors and Inputs
 
 ### 3.1 Atmospheric Telemetry Inputs
-* Ambient Air Temperature ($T_a \in [-50^\circ\text{C}, +60^\circ\text{C}]$)
+* Ambient Air Temperature ($T_a \in [-50.0^\circ\text{C}, +50.0^\circ\text{C}]$ per UTCI operational polynomial)
 * Relative Humidity ($\text{RH} \in [0\%, 100\%]$)
-* Wind Speed at 10m ($v_{10m} \in [0.1\text{ m/s}, 50.0\text{ m/s}]$)
+* Wind Speed at 10m ($v_{10m} \in [0.5\text{ m/s}, 17.0\text{ m/s}]$ per Bröde et al. 2012 bounds)
 * Mean Radiant Temperature / Solar Irradiance ($T_{mrt} \in [-50^\circ\text{C}, +100^\circ\text{C}]$, $G \ge 0\text{ W/m}^2$)
 
 ### 3.2 Demographic & Spatial Inputs

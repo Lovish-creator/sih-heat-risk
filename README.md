@@ -7,7 +7,8 @@
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20ASGI-green.svg)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-51%20Passed%20%28100%25%29-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-72%20Passed%20%28100%25%29-brightgreen.svg)](tests/)
+[![CI](https://github.com/Lovish-creator/sih-heat-risk/actions/workflows/ci.yml/badge.svg)](https://github.com/Lovish-creator/sih-heat-risk/actions)
 [![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel%20Serverless-black.svg)](https://sih-heat-risk-six.vercel.app)
 
 ## Live Prototype
@@ -19,6 +20,23 @@
 ---
 
 **TAAPAMIGO** is an open, scientifically rigorous, and reproducible early warning and human thermal stress decision-support system engineered for Indian municipal corporations and disaster management authorities. It translates numerical weather prediction feeds into localized public health actions by spatially attributing atmospheric telemetry across municipal ward boundaries and combining it with Census demographic vulnerability to quantify **"what the weather will do to human physiology"** for spatial risk prioritization.
+
+---
+
+## ⚠️ Limitations at a Glance (Tier-1 Scope)
+
+To uphold scientific honesty and transparency for evaluators and municipal partners, the following boundaries govern the current prototype:
+
+1. **Macro-Hazard vs. Micro-Vulnerability Resolution:**
+   Numerical weather observations and forecasts (Open-Meteo GFS/ECMWF) and biometeorological hazard indices (UTCI, WBGT, Heat Index) are ingested at **city-scale resolution** (`"hazard_resolution": "city_scale_uniform"`). Ward-level risk divergence is driven by demographic vulnerability (Census 2011 PCA indicators) and Local Climate Zone (LCZ) microclimate prototypes, **not per-ward physical weather sensors**.
+2. **Uncalibrated Empirical Risk Weights:**
+   The composite risk formula ($\text{Risk} = 0.55 \cdot \text{Hazard} + 0.30 \cdot \text{Vulnerability} + 0.15 \cdot \text{Duration}$) and its component subweights are expert-informed prototype defaults based on literature and disaster management practice. They have **not yet been calibrated against epidemiological health outcome data** (e.g., hospital admissions via Distributed Lag Non-linear Models).
+3. **No Individual or Clinical Health Data:**
+   Taapamigo does not ingest patient records, mortality counts, or real-time hospital surveillance in Tier 1. The composite risk score ($0–100$) represents **relative environmental-demographic exposure** for municipal resource prioritization, **not a clinical prediction of morbidity or mortality**.
+4. **Simulated Early Warning Dispatches:**
+   CAP v1.2 XML/JSON alert payloads and SMS notifications are **simulated in-system** (`"status": "SIMULATED_NOT_SENT"`) for demonstration and operational preview. They are not connected to production telecom or NDMA SACHET live broadcast gateways.
+5. **Census 2011 PCA Data Realities:**
+   Baseline demographic indicators rely on the Census of India 2011 Primary Census Abstract (PCA). As documented, the PCA does not contain an age 60+ population breakdown (which resides in C-Series tables C-13/C-14), and urban informal/construction laborers cannot be isolated from "Other Workers". Where direct ward records were not available, values are explicitly marked `"data_quality": "estimated"`.
 
 ---
 
@@ -160,34 +178,45 @@ Taapamigo includes surveyed vector ward geometries for **27 Indian urban centers
 
 ```
 sih-heat-risk/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                   # Automated CI test workflow (Python 3.10 & 3.12)
 ├── api/
 │   └── index.py                     # Vercel serverless ASGI entrypoint
 ├── backend/
 │   └── app/
-│       ├── api/                     # REST API endpoints (health, cities, weather, risk, wards)
-│       ├── core/                    # App configuration, logging, and environment settings
+│       ├── alerts/                  # Alert engine, pluggable notifiers (Console, File, Webhook, SMS), CAP v1.2
+│       ├── api/                     # REST API endpoints (health, cities, weather, risk, wards, alerts)
+│       ├── core/                    # App configuration, constants, and logging
 │       ├── data_sources/            # Weather ingestion (Open-Meteo, NASA POWER, Nominatim)
 │       ├── gis/                     # Spatial ward directory, bounding boxes, and GeoJSON loader
 │       ├── models/                  # SQLAlchemy ORM and Pydantic schemas
 │       ├── risk/                    # Biometeorology (UTCI, WBGT, HI), vulnerability, persistence
 │       └── main.py                  # FastAPI application factory
-├── config/                          # Declarative YAML configs (thresholds, city profiles, weights)
+├── config/                          # Declarative YAML configs (thresholds, city profiles, weights, LCZ)
 ├── data/
 │   ├── datameet_wards/              # 26 official municipal corporation GeoJSON vector boundary files
 │   ├── sample/                      # Census 2011 PCA demographic baseline datasets
+│   ├── templates/                   # Multilingual CAP alert templates (English, Hindi)
 │   ├── data_dictionary.md           # Database entities and data schema reference
 │   └── SOURCE_REGISTRY.md           # Authoritative data sources and provenance registry
 ├── docs/                            # In-depth technical architecture, methodology, and API docs
 │   ├── science/                     # Mathematical derivations for UTCI, WBGT, and Heat Index
+│   ├── MODEL_SPEC.md                # Authoritative single source of truth for all weights & formulas
+│   ├── VALIDATION.md                # Empirical back-testing validation report (Ahmedabad 2010, Delhi 2024)
+│   ├── AUDIT_REMEDIATION.md         # Master remediation log and slide deck reconciliation
+│   ├── COVERAGE.md                  # Comprehensive ward and city coverage report
 │   ├── API_REFERENCE.md             # Complete REST API specification
 │   ├── ARCHITECTURE.md              # Detailed system architecture document
 │   ├── LIMITATIONS.md               # Honest scientific boundaries and assumptions
 │   ├── ROADMAP.md                   # Multi-tier development roadmap
 │   └── VERCEL_DEPLOYMENT.md         # Vercel serverless deployment guide
-├── frontend/                        # Production UI (HTML, CSS, JavaScript, vendor assets)
-├── public/                          # Static assets mirror served directly by Vercel Edge CDN
-├── scripts/                         # Local development runners and dataset build utilities
-├── tests/                           # 51 passing automated pytest test cases
+├── public/                          # Production Web UI and static assets (served by FastAPI and Vercel CDN)
+├── scripts/                         # Local development runners, audit tools, and dataset utilities
+├── tests/                           # 72 passing automated pytest test cases (100% offline)
+├── validation/                      # Empirical back-testing against historical heatwaves (ERA5 reanalysis)
+│   ├── backtest.py                  # Automated validation runner across Ahmedabad 2010, Delhi 2024
+│   └── results/                     # Back-test summary CSV and multi-panel timeline visualization
 ├── .env.example                     # Environment configuration template
 ├── requirements.txt                 # Python dependencies
 ├── run_local.py                     # Zero-configuration local development server
@@ -349,6 +378,10 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) and [`docs/TIER_STATUS.md`](docs/TIER_S
 
 | Document | Description |
 |---|---|
+| [`docs/MODEL_SPEC.md`](docs/MODEL_SPEC.md) | Single authoritative specification for all model equations, weights, and thresholds |
+| [`docs/VALIDATION.md`](docs/VALIDATION.md) | Empirical back-testing validation report (Ahmedabad 2010, Delhi 2024, winter control) |
+| [`docs/AUDIT_REMEDIATION.md`](docs/AUDIT_REMEDIATION.md) | Audit remediation traceability log and presentation slide deck reconciliation |
+| [`docs/COVERAGE.md`](docs/COVERAGE.md) | Comprehensive ward and district spatial coverage and data provenance report |
 | [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) | Complete OpenAPI / REST endpoint specifications and request schemas |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Architectural specifications for Tier 1 prototype and future Tier 2/3 systems |
 | [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) | Complete biometeorological equations and calculation pipeline reference |
@@ -371,7 +404,7 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) and [`docs/TIER_STATUS.md`](docs/TIER_S
 
 ## 14. Verification & Automated Tests
 
-Taapamigo includes a comprehensive automated test suite covering meteorological calculations, biometeorological indices, demographic vulnerability algorithms, GIS boundaries, and REST API contracts:
+Taapamigo includes a comprehensive automated test suite covering meteorological calculations, biometeorological indices, demographic vulnerability algorithms, GIS boundaries, alert dispatching, backtesting, and REST API contracts:
 
 ```bash
 # Run pytest test suite
@@ -379,10 +412,10 @@ python -m pytest -v
 ```
 
 ```
-============================== 51 passed in 4.64s ==============================
+============================== 72 passed in 10.19s ==============================
 ```
 
-All 51 tests execute deterministically offline using bundled mock data fixtures with zero network dependency.
+All 72 tests execute deterministically offline using bundled mock data fixtures with zero network dependency.
 
 ---
 

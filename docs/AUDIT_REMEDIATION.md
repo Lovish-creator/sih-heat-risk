@@ -45,7 +45,7 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 | **P3-01: Model specification divergence** | Created `docs/MODEL_SPEC.md` as single source of truth; unified constants and version string; harmonized README and docs. | `docs/MODEL_SPEC.md`, `backend/app/core/constants.py`, `tests/test_docs_consistency.py`, `README.md` | `pytest tests/test_docs_consistency.py` (Passed) | Fixed |
 | **P4-01: Mock alert transparency & IMD alignment** | Renamed mock status to `SIMULATED_NOT_SENT`; added `imd_criteria` & `alert_basis`; implemented pluggable `Notifier` interface; verified CAP v1.2. | `backend/app/alerts/engine.py`, `backend/app/alerts/notifiers.py`, `backend/app/api/endpoints.py`, `tests/test_alerts.py`, `tests/test_notifiers.py` | `pytest tests/test_alerts.py tests/test_notifiers.py` (Passed) | Fixed |
 | **P5-01: Empirical back-testing validation** | Created `validation/backtest.py` on historical heatwaves (Ahmedabad 2010, Delhi 2024); added `docs/VALIDATION.md` with explicit event-detection disclaimer. | `validation/backtest.py`, `docs/VALIDATION.md`, `validation/README.md`, `tests/test_backtest.py` | `pytest tests/test_backtest.py` (Passed) | Fixed |
-| **P6-01: Frontend triplication & repo hygiene** | Consolidated static assets to `public/`; added Vercel rewrite; fixed mojibake; unified UTCI operational bounds; added CI workflow. | `vercel.json`, `backend/app/main.py`, `.github/workflows/ci.yml`, `tests/test_mojibake.py`, `README.md` | `pytest -q`, local runner, Vercel build | Planned (Phase 6) |
+| **P6-01: Frontend triplication & repo hygiene** | Consolidated static assets to `public/`; added Vercel rewrite; fixed mojibake; unified UTCI operational bounds; added CI workflow. | `vercel.json`, `backend/app/main.py`, `.github/workflows/ci.yml`, `tests/test_mojibake.py`, `README.md` | `pytest tests/test_mojibake.py` (Passed), local runner, Vercel build | Fixed |
 
 ---
 
@@ -114,4 +114,29 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 - **Validation Artifacts & Prominent Disclaimer:** Generated `validation/results/heatwave_backtest_summary.csv` and multi-panel plot `validation/results/backtest_detection_timeline.png`. Documented full methodology in `docs/VALIDATION.md` and `validation/README.md` with explicit disclaimer:
   > *"This validates meteorological event detection only. It does not validate mortality or morbidity prediction, and the weights remain uncalibrated."*
 - **Test Suite Status:** 70 passed in 4.88s (added 4 backtest unit tests).
+
+---
+
+## 8. Phase 6 Execution Summary (Repo Hygiene, Mojibake & Cleanup)
+
+- **Frontend Redundancy Elimination:**
+  - Removed duplicate frontend directories (`frontend/` and `public/static/`). All web client assets (HTML, CSS, JS, vendor libraries) are consolidated strictly into `public/`.
+  - Added Vercel URL rewrite rule in `vercel.json` (`{"source": "/static/(.*)", "destination": "/$1"}`) and updated `backend/app/main.py` static asset resolution so that both `/` and legacy `/static/*` requests resolve cleanly from `public/`.
+- **Mojibake Elimination & Regression Testing:**
+  - Audited and corrected corrupted UTF-8 byte sequences across `docs/HEALTH_DATA_READINESS.md`, `backend/app/api/endpoints.py`, `backend/app/thermal/hazard.py`, and `backend/app/risk/engine.py`.
+  - Created automated regression test `tests/test_mojibake.py` verifying the complete absence of mangled characters (corrupted degree Celsius symbols, damaged irradiance units, broken punctuation, and Unicode replacement characters) across all backend Python sources and documentation files.
+- **Documentation Consolidation:**
+  - Consolidated fragmented data source files into `docs/DATA_SOURCES.md`.
+  - Replaced `docs/TIER_STATUS.md` with a clean pointer redirecting readers to `docs/ROADMAP.md` and `docs/DATA_SOURCES.md`.
+- **UTCI Operational Range Reconciliation:**
+  - Unified UTCI polynomial operational limits across `docs/DATA_SOURCES.md`, `docs/RISK_METHODOLOGY.md`, and `docs/MODEL_CARD.md` to reflect true published scientific bounds from Bröde et al. (2012):
+    - Ambient air temperature: $-50^\circ\text{C} \le T_a \le +50^\circ\text{C}$
+    - 10-meter wind speed: $0.5\text{ m/s} \le v_{10m} \le 17.0\text{ m/s}$ (corresponding to $0.3\text{ m/s} \le v_{\text{walk}} \le 10.0\text{ m/s}$)
+- **Continuous Integration (CI):**
+  - Added `.github/workflows/ci.yml` matrix pipeline running automated test verification across Python 3.10 and 3.12 for all pull requests and pushes to `main` and fix branches.
+  - Added `matplotlib>=3.8.0` to `requirements.txt` for headless validation charting.
+- **Prominent Limitations in README:**
+  - Added a dedicated "Limitations at a Glance" callout section to `README.md` clearly outlining macro-hazard resolution, uncalibrated risk weights, lack of clinical health records, simulated alerting, and Census 2011 PCA estimations.
+- **Test Suite Status:** 72 passed in 10.19s (added 2 mojibake regression tests).
+
 

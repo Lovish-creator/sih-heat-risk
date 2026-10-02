@@ -50,8 +50,8 @@ $$\text{UTCI} = T_a + \Delta \text{UTCI}(T_a, v_{10m}, e_a, T_{mrt} - T_a)$$
 
 Where:
 * $T_a$ = Dry-bulb air temperature ($^\circ\text{C}$, valid range: $-50^\circ\text{C} \le T_a \le +50^\circ\text{C}$)
-* $v_{10m}$ = Wind speed at 10m height ($m/s$, valid range: $0.5 \le v_{10m} \le 30.3\text{ m/s}$)
-* $e_a$ = Water vapor pressure ($\text{hPa}$, derived from relative humidity $\text{RH}$ via Magnus-Tetens equation)
+* $v_{10m}$ = Wind speed at 10m height ($m/s$, operational polynomial validity range: $0.5 \le v_{10m} \le 17.0\text{ m/s}$)
+* $e_a$ = Water vapor pressure ($\text{hPa}$, derived from relative humidity $\text{RH}$ via Magnus-Tetens equation, clamped to $50.0\text{ hPa}$)
 * $T_{mrt}$ = Mean radiant temperature ($^\circ\text{C}$)
 
 #### Water Vapor Pressure ($e_a$):

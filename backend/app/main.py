@@ -44,16 +44,12 @@ app.add_middleware(
 # Include API Router
 app.include_router(api_router)
 
-# Mount Static Files (Frontend / Public)
+# Mount Static Files (Consolidated under public/)
 frontend_candidates = [
     os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "public")),
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend")),
     os.path.abspath(os.path.join(os.getcwd(), "public")),
-    os.path.abspath(os.path.join(os.getcwd(), "frontend")),
     os.path.join("/var/task", "public"),
-    os.path.join("/var/task", "frontend"),
     os.path.join("/vercel/path0", "public"),
-    os.path.join("/vercel/path0", "frontend"),
 ]
 frontend_dir = None
 for c in frontend_candidates:
@@ -61,17 +57,13 @@ for c in frontend_candidates:
         frontend_dir = c
         break
 
-def _find_frontend_file(subpath: str) -> os.PathLike:
+def _find_frontend_file(subpath: str):
     candidates = [
         os.path.join(frontend_dir, subpath) if frontend_dir else None,
         os.path.abspath(os.path.join(os.getcwd(), "public", subpath)),
-        os.path.abspath(os.path.join(os.getcwd(), "frontend", subpath)),
         os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "public", subpath)),
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", subpath)),
         os.path.join("/var/task", "public", subpath),
-        os.path.join("/var/task", "frontend", subpath),
         os.path.join("/vercel/path0", "public", subpath),
-        os.path.join("/vercel/path0", "frontend", subpath),
     ]
     for c in candidates:
         if c and os.path.exists(c):

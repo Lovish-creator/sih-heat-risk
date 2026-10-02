@@ -1,4 +1,4 @@
-# SIH 2026 PS26083 ? Health Data Readiness and Epidemiological Integration Specification
+# SIH 2026 PS26083 — Health Data Readiness and Epidemiological Integration Specification
 
 **Document Version:** 1.0.0  
 **Target Domain:** Biometeorological Exposure vs. Human Health Outcomes  
