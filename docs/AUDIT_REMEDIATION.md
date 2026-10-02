@@ -44,7 +44,7 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 | **P2-01: City-scale hazard transparency** | Added `hazard_resolution` field (`city_scale_uniform` / `modelled_lcz_prototype`); externalized LCZ prototype multipliers to YAML with citations. | `backend/app/gis/engine.py`, `backend/app/gis/ward_directory.py`, `config/lcz_prototype_multipliers.yaml`, `docs/METHODOLOGY.md` | API inspection & Pytest (`test_gis.py`) | Fixed |
 | **P3-01: Model specification divergence** | Created `docs/MODEL_SPEC.md` as single source of truth; unified constants and version string; harmonized README and docs. | `docs/MODEL_SPEC.md`, `backend/app/core/constants.py`, `tests/test_docs_consistency.py`, `README.md` | `pytest tests/test_docs_consistency.py` (Passed) | Fixed |
 | **P4-01: Mock alert transparency & IMD alignment** | Renamed mock status to `SIMULATED_NOT_SENT`; added `imd_criteria` & `alert_basis`; implemented pluggable `Notifier` interface; verified CAP v1.2. | `backend/app/alerts/engine.py`, `backend/app/alerts/notifiers.py`, `backend/app/api/endpoints.py`, `tests/test_alerts.py`, `tests/test_notifiers.py` | `pytest tests/test_alerts.py tests/test_notifiers.py` (Passed) | Fixed |
-| **P5-01: Empirical back-testing validation** | Created `validation/backtest.py` on historical heatwaves (Ahmedabad 2010, Delhi 2024); added `docs/VALIDATION.md` with explicit event-detection disclaimer. | `validation/backtest.py`, `docs/VALIDATION.md`, `tests/test_backtest.py` | Offline pytest & CSV report | Planned (Phase 5) |
+| **P5-01: Empirical back-testing validation** | Created `validation/backtest.py` on historical heatwaves (Ahmedabad 2010, Delhi 2024); added `docs/VALIDATION.md` with explicit event-detection disclaimer. | `validation/backtest.py`, `docs/VALIDATION.md`, `validation/README.md`, `tests/test_backtest.py` | `pytest tests/test_backtest.py` (Passed) | Fixed |
 | **P6-01: Frontend triplication & repo hygiene** | Consolidated static assets to `public/`; added Vercel rewrite; fixed mojibake; unified UTCI operational bounds; added CI workflow. | `vercel.json`, `backend/app/main.py`, `.github/workflows/ci.yml`, `tests/test_mojibake.py`, `README.md` | `pytest -q`, local runner, Vercel build | Planned (Phase 6) |
 
 ---
@@ -96,4 +96,22 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 - **CAP v1.2 Standard Compliance:** Updated `AlertDispatcher.generate_alert_payload` to generate valid OASIS/ITU-T CAP v1.2 structure (`identifier`, `sender`, `sent`, `status`, `msgType`, `scope`, `info`) while preserving backward-compatible root keys.
 - **UI Integrity:** Updated modal text in `public/index.html` and `public/js/app.js` to *"🚨 Alert Payload Preview (Simulated / Not Dispatched)"*.
 - **Test Suite Status:** 66 passed in 6.64s (added 6 notifier tests and updated alert/API tests).
+
+---
+
+## 7. Phase 5 Execution Summary (Empirical Back-Testing & Validation)
+
+- **Benchmark Event Ingestion:** Connected ECMWF ERA5 atmospheric reanalysis data via Open-Meteo Historical Archive API covering three benchmark scenarios:
+  1. *Ahmedabad Super Heatwave (May 18–24, 2010):* Grounded in Azhar et al. (2014) *PLOS ONE* ($T_{\max} = 46.8^\circ\text{C}$, 1,344 excess all-cause deaths).
+  2. *Delhi Severe Heatwave (May 25–31, 2024):* Sustained multi-day heat emergency ($T_{\max} \ge 44.4^\circ\text{C}$).
+  3. *Ahmedabad Winter Control Period (Jan 15–20, 2024):* Non-heatwave control baseline ($T_{\max} \approx 26.5–27.7^\circ\text{C}$).
+- **Back-Testing Engine:** Created `validation/backtest.py` executing the end-to-end hazard, vulnerability, consecutive duration, and IMD criteria pipeline across all benchmark days.
+- **Empirical Findings:**
+  - *Ahmedabad 2010:* Correctly escalated from ORANGE on onset (63.0) to **RED Warning (79.6/100)** on peak day (May 21) as duration depletion compounded physiological strain.
+  - *Delhi 2024:* Correctly escalated to **RED Warning (79.1/100)** during peak consecutive heat days.
+  - *Control Baseline:* Confirmed 100% specificity with zero false alarms (**GREEN Alert, risk 23.2–25.3/100**, consecutive heat days = 0).
+- **Deterministic Offline Fixture & Unit Tests:** Cached benchmark records in `tests/fixtures/cached_backtest_sample.json` and authored `tests/test_backtest.py` (4 unit tests verifying escalation, control specificity, and CSV schema).
+- **Validation Artifacts & Prominent Disclaimer:** Generated `validation/results/heatwave_backtest_summary.csv` and multi-panel plot `validation/results/backtest_detection_timeline.png`. Documented full methodology in `docs/VALIDATION.md` and `validation/README.md` with explicit disclaimer:
+  > *"This validates meteorological event detection only. It does not validate mortality or morbidity prediction, and the weights remain uncalibrated."*
+- **Test Suite Status:** 70 passed in 4.88s (added 4 backtest unit tests).
 

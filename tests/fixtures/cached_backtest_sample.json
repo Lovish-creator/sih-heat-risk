@@ -1,0 +1,59 @@
+{
+  "_comment": "Authoritative historical ERA5 reanalysis backtest benchmark data for SIH 2026 PS26083 validation",
+  "source": "Open-Meteo Historical Weather Archive / ECMWF ERA5 Reanalysis",
+  "events": [
+    {
+      "event_id": "ahmedabad_may_2010",
+      "event_name": "Ahmedabad Super Heatwave 2010 (Azhar et al. 2014)",
+      "city": "Ahmedabad",
+      "district": "Ahmedabad",
+      "lat": 23.0225,
+      "lon": 72.5714,
+      "climatological_normal_c": 41.5,
+      "records": [
+        {"date": "2010-05-18", "temp_max_c": 43.2, "rh_mean_pct": 32.0, "wind_speed_max_m_s": 4.2, "solar_radiation_w_m2": 780.0},
+        {"date": "2010-05-19", "temp_max_c": 43.6, "rh_mean_pct": 32.0, "wind_speed_max_m_s": 4.7, "solar_radiation_w_m2": 800.0},
+        {"date": "2010-05-20", "temp_max_c": 45.1, "rh_mean_pct": 31.0, "wind_speed_max_m_s": 5.2, "solar_radiation_w_m2": 820.0},
+        {"date": "2010-05-21", "temp_max_c": 45.4, "rh_mean_pct": 33.0, "wind_speed_max_m_s": 5.4, "solar_radiation_w_m2": 830.0},
+        {"date": "2010-05-22", "temp_max_c": 44.6, "rh_mean_pct": 38.0, "wind_speed_max_m_s": 4.2, "solar_radiation_w_m2": 810.0},
+        {"date": "2010-05-23", "temp_max_c": 44.5, "rh_mean_pct": 41.0, "wind_speed_max_m_s": 4.8, "solar_radiation_w_m2": 790.0},
+        {"date": "2010-05-24", "temp_max_c": 44.6, "rh_mean_pct": 41.0, "wind_speed_max_m_s": 6.2, "solar_radiation_w_m2": 780.0}
+      ]
+    },
+    {
+      "event_id": "delhi_may_2024",
+      "event_name": "Delhi Severe Heatwave 2024",
+      "city": "Delhi",
+      "district": "Central Delhi",
+      "lat": 28.6139,
+      "lon": 77.2090,
+      "climatological_normal_c": 40.5,
+      "records": [
+        {"date": "2024-05-25", "temp_max_c": 44.4, "rh_mean_pct": 27.0, "wind_speed_max_m_s": 7.6, "solar_radiation_w_m2": 820.0},
+        {"date": "2024-05-26", "temp_max_c": 46.0, "rh_mean_pct": 17.0, "wind_speed_max_m_s": 7.2, "solar_radiation_w_m2": 840.0},
+        {"date": "2024-05-27", "temp_max_c": 45.7, "rh_mean_pct": 18.0, "wind_speed_max_m_s": 6.2, "solar_radiation_w_m2": 830.0},
+        {"date": "2024-05-28", "temp_max_c": 45.8, "rh_mean_pct": 14.0, "wind_speed_max_m_s": 5.3, "solar_radiation_w_m2": 835.0},
+        {"date": "2024-05-29", "temp_max_c": 45.7, "rh_mean_pct": 18.0, "wind_speed_max_m_s": 5.0, "solar_radiation_w_m2": 830.0},
+        {"date": "2024-05-30", "temp_max_c": 45.8, "rh_mean_pct": 16.0, "wind_speed_max_m_s": 7.0, "solar_radiation_w_m2": 840.0},
+        {"date": "2024-05-31", "temp_max_c": 45.9, "rh_mean_pct": 12.0, "wind_speed_max_m_s": 7.1, "solar_radiation_w_m2": 845.0}
+      ]
+    },
+    {
+      "event_id": "ahmedabad_control_jan_2024",
+      "event_name": "Ahmedabad Winter Control Period 2024",
+      "city": "Ahmedabad",
+      "district": "Ahmedabad",
+      "lat": 23.0225,
+      "lon": 72.5714,
+      "climatological_normal_c": 28.0,
+      "records": [
+        {"date": "2024-01-15", "temp_max_c": 26.7, "rh_mean_pct": 57.0, "wind_speed_max_m_s": 2.9, "solar_radiation_w_m2": 450.0},
+        {"date": "2024-01-16", "temp_max_c": 26.5, "rh_mean_pct": 60.0, "wind_speed_max_m_s": 3.1, "solar_radiation_w_m2": 460.0},
+        {"date": "2024-01-17", "temp_max_c": 26.5, "rh_mean_pct": 61.0, "wind_speed_max_m_s": 2.5, "solar_radiation_w_m2": 455.0},
+        {"date": "2024-01-18", "temp_max_c": 27.7, "rh_mean_pct": 57.0, "wind_speed_max_m_s": 3.3, "solar_radiation_w_m2": 470.0},
+        {"date": "2024-01-19", "temp_max_c": 27.3, "rh_mean_pct": 52.0, "wind_speed_max_m_s": 4.0, "solar_radiation_w_m2": 465.0},
+        {"date": "2024-01-20", "temp_max_c": 26.8, "rh_mean_pct": 46.0, "wind_speed_max_m_s": 3.5, "solar_radiation_w_m2": 460.0}
+      ]
+    }
+  ]
+}

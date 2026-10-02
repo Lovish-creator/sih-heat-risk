@@ -154,5 +154,5 @@ class HeatRiskEngine:
             "weights": self.weights,
             "consecutive_heat_days": days,
             "risk_model": self.model_version,
-            "disclaimer": "Relative heat-health prioritisation score ? not a clinical diagnosis or mortality forecast."
+            "disclaimer": "Relative heat-health prioritisation score — not a clinical diagnosis or mortality forecast."
         }
