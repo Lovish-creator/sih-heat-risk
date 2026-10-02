@@ -30,6 +30,7 @@ from ..gis.ward_directory import MunicipalWardManager
 from ..gis.city_data import MUNICIPAL_WARD_PROFILES
 from ..advisory.engine import AdvisoryEngine
 from ..alerts.engine import AlertDispatcher
+from ..data_sources.imd_adapter import IMDGuidanceAdapter
 from ..data_sources.nasa_power import NASAPowerProvider
 from ..data_sources.open_meteo import OpenMeteoProvider
 from ..data_sources.geocoding import NominatimGeocoder
@@ -718,10 +719,34 @@ def test_alert_dispatch(payload: AlertTestRequest):
         webhook_url=payload.webhook_url or "https://mock.ndma.gov.in/eoc/webhook",
         payload=alert_body
     )
+
+    # Evaluate official IMD meteorological heatwave criteria
+    imd_eval = IMDGuidanceAdapter.evaluate_imd_heatwave(
+        max_temp_c=42.5,
+        normal_temp_c=40.0,
+        region_type="plains"
+    )
+
+    # Determine alert basis: composite risk, IMD criteria, or both
+    risk_elevated = (payload.alert_level.upper() in ("ORANGE", "RED")) or (payload.risk_score >= 50.0)
+    imd_elevated = imd_eval.get("is_heatwave", False)
+    if risk_elevated and imd_elevated:
+        basis = "both"
+    elif risk_elevated:
+        basis = "composite_risk"
+    elif imd_elevated:
+        basis = "imd_criteria"
+    else:
+        basis = "composite_risk"
+
     return {
         "status": "success",
         "alert_payload": alert_body,
-        "dispatch_result": result
+        "dispatch_result": result,
+        "imd_criteria": imd_eval,
+        "alert_basis": basis,
+        "first_alert_day": "Day 1 (Today)",
+        "lead_time_days": 0
     }
 
 
@@ -759,11 +784,49 @@ def get_cap_alert(
         action_summary=risk_res["action_summary"]
     )
     sms_text = f"NDMA/MoES HEATWAVE ALERT ({risk_res['alert_level']}): {city_name}. Thermal stress at {hz['metrics']['utci']['value_c']:.1f}°C UTCI. {risk_res['action_summary']} Dial 108 for emergency."
+
+    # Evaluate official IMD meteorological heatwave criteria
+    imd_eval = IMDGuidanceAdapter.evaluate_imd_heatwave(
+        max_temp_c=w["temp_c"],
+        normal_temp_c=40.0,
+        region_type="plains"
+    )
+
+    risk_elevated = (risk_res["alert_level"] in ("ORANGE", "RED"))
+    imd_elevated = imd_eval.get("is_heatwave", False)
+    if risk_elevated and imd_elevated:
+        basis = "both"
+    elif risk_elevated:
+        basis = "composite_risk"
+    elif imd_elevated:
+        basis = "imd_criteria"
+    else:
+        basis = "composite_risk"
+
+    # Compute lead time from multi-horizon forecast
+    lead_time_days = 0
+    first_alert_day = "Day 1 (Today)"
+    try:
+        daily_fc = open_meteo.get_forecast_daily(lat=loc["lat"], lon=loc["lon"], city_id=city_name)
+        days = daily_fc.get("daily", []) if isinstance(daily_fc, dict) else []
+        for idx, d in enumerate(days):
+            t_max = d.get("temp_max_c") or d.get("temp_c") or 0.0
+            if t_max >= 40.0:
+                lead_time_days = idx
+                first_alert_day = d.get("date") or f"Day {idx + 1}"
+                break
+    except Exception:
+        pass
+
     return {
         "status": "success",
         "city": city_name,
         "sms_broadcast_text": sms_text,
-        "cap_alert": cap_payload
+        "cap_alert": cap_payload,
+        "imd_criteria": imd_eval,
+        "alert_basis": basis,
+        "first_alert_day": first_alert_day,
+        "lead_time_days": lead_time_days
     }
 
 

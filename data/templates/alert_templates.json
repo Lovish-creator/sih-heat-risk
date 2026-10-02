@@ -1,0 +1,63 @@
+{
+  "_comment": "Authoritative multilingual alert templates for Taapamigo (SIH 2026 PS26083)",
+  "review_status": "machine_drafted_needs_native_review",
+  "version": "1.0.0",
+  "templates": {
+    "GREEN": {
+      "en": {
+        "headline": "Normal Thermal Conditions in {city}",
+        "description": "Composite heat-health risk is low ({risk_score}/100) across {ward}. Maximum ambient temperature is {temp_c}°C with UTCI at {utci_c}°C.",
+        "instruction": "Maintain standard hydration and normal daily outdoor activities.",
+        "sms_text": "TAAPAMIGO INFO (GREEN): {city} - Thermal stress is normal ({temp_c}°C). Maintain standard hydration."
+      },
+      "hi": {
+        "headline": "{city} में सामान्य तापीय स्थिति",
+        "description": "{ward} में समग्र ताप-स्वास्थ्य जोखिम कम ({risk_score}/100) है। अधिकतम तापमान {temp_c}°C और यूटीसीआई {utci_c}°C है।",
+        "instruction": "सामान्य दिनचर्या बनाए रखें और पर्याप्त पानी पिएं।",
+        "sms_text": "तापाअमीगो सूचना (हरा): {city} - तापमान सामान्य ({temp_c}°C) है। पर्याप्त पानी पिएं।"
+      }
+    },
+    "YELLOW": {
+      "en": {
+        "headline": "Heat Watch Advisory for {city}",
+        "description": "Moderate heat-health risk ({risk_score}/100) detected in {ward}. Air temperature is {temp_c}°C, UTCI physiological strain is {utci_c}°C, and WBGT is {wbgt_c}°C.",
+        "instruction": "Vulnerable individuals (elderly and pregnant women) should avoid direct midday sunlight. Outdoor workers must take shaded rest breaks and drink water every 20 minutes.",
+        "sms_text": "TAAPAMIGO ADVISORY (YELLOW): {city} - Moderate heat stress ({temp_c}°C). Elderly and outdoor workers take shaded breaks and stay hydrated."
+      },
+      "hi": {
+        "headline": "{city} के लिए ग्रीष्म निगरानी परामर्श (येलो अलर्ट)",
+        "description": "{ward} में मध्यम ताप-स्वास्थ्य जोखिम ({risk_score}/100) दर्ज किया गया है। तापमान {temp_c}°C, यूटीसीआई तनाव {utci_c}°C और डब्ल्यूबीजीटी {wbgt_c}°C है।",
+        "instruction": "बुजुर्ग और संवेदनशील लोग दोपहर की धूप से बचें। बाहरी श्रमिक छायादार स्थानों में विश्राम लें और हर 20 मिनट पर पानी पिएं।",
+        "sms_text": "तापाअमीगो परामर्श (पीला): {city} - मध्यम गर्मी का तनाव ({temp_c}°C)। बुजुर्ग और बाहरी कामगार छाया में रहें और पानी पिएं।"
+      }
+    },
+    "ORANGE": {
+      "en": {
+        "headline": "Severe Heat Alert for {city}",
+        "description": "High heat-health risk ({risk_score}/100) in {ward}. Ambient temperature reached {temp_c}°C, UTCI very strong heat stress at {utci_c}°C, and WBGT occupational limit at {wbgt_c}°C.",
+        "instruction": "Municipal cooling shelters open. Outdoor manual labor should observe mandatory 25% rest cycles per hour. Avoid outdoor exposure between 12:00 and 15:00. Call 108 for medical distress.",
+        "sms_text": "TAAPAMIGO ALERT (ORANGE): {city} - Severe heat stress ({temp_c}°C, UTCI {utci_c}°C). Mandatory rest cycles for labor. Cooling centers active. Dial 108 for emergency."
+      },
+      "hi": {
+        "headline": "{city} के लिए तीव्र लू चेतावनी (ऑरेंज अलर्ट)",
+        "description": "{ward} में उच्च ताप-स्वास्थ्य जोखिम ({risk_score}/100) है। परिवेशी तापमान {temp_c}°C, यूटीसीआई गंभीर तनाव {utci_c}°C और डब्ल्यूबीजीटी सीमा {wbgt_c}°C है।",
+        "instruction": "नगरपालिका कूलिंग आश्रय सक्रिय। बाहरी श्रमिकों के लिए प्रति घंटे 25% अनिवार्य विश्राम। दोपहर 12 से 3 बजे तक धूप से बचें। आपातकाल में 108 डायल करें।",
+        "sms_text": "तापाअमीगो चेतावनी (नारंगी): {city} - गंभीर गर्मी ({temp_c}°C)। श्रमिक अनिवार्य विश्राम लें। कूलिंग सेंटर खुले हैं। आपातकाल में 108 डायल करें।"
+      }
+    },
+    "RED": {
+      "en": {
+        "headline": "Extreme Heat Emergency Warning for {city}",
+        "description": "CRITICAL heat-health emergency ({risk_score}/100) in {ward}. Severe heatwave conditions: Air temperature {temp_c}°C, extreme physiological stress UTCI {utci_c}°C, and WBGT danger threshold {wbgt_c}°C.",
+        "instruction": "Halt all strenuous outdoor manual labor between 11:00 and 16:00. Emergency hospital protocols and oral rehydration points activated. Check on senior citizens. Dial 108 immediately for symptoms of heat stroke.",
+        "sms_text": "TAAPAMIGO EMERGENCY (RED): {city} - Extreme heat emergency ({temp_c}°C, UTCI {utci_c}°C). Heavy outdoor labor suspended 11-16h. Drink ORS. Dial 108 for heat stroke."
+      },
+      "hi": {
+        "headline": "{city} के लिए अत्यधिक लू आपातकालीन चेतावनी (रेड अलर्ट)",
+        "description": "{ward} में अत्यंत गंभीर ताप-स्वास्थ्य आपातकाल ({risk_score}/100)। भीषण लू: तापमान {temp_c}°C, अत्यधिक यूटीसीआई तनाव {utci_c}°C, और डब्ल्यूबीजीटी खतरा सीमा {wbgt_c}°C।",
+        "instruction": "सुबह 11 से शाम 4 बजे तक भारी शारीरिक बाहरी कार्य तुरंत बंद करें। अस्पतालों में आपातकालीन वार्ड और ओआरएस केंद्र सक्रिय। बुजुर्गों का ध्यान रखें। लू के लक्षण दिखने पर 108 डायल करें।",
+        "sms_text": "तापाअमीगो आपातकाल (लाल): {city} - भीषण लू ({temp_c}°C, यूटीसीआई {utci_c}°C)। बाहरी भारी कार्य 11-16 बजे स्थगित। ओआरएस पिएं। आपातकाल में 108 डायल करें।"
+      }
+    }
+  }
+}

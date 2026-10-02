@@ -156,3 +156,7 @@ class AlertTestResponse(BaseModel):
     status: str
     alert_payload: Dict[str, Any]
     dispatch_result: Dict[str, Any]
+    imd_criteria: Optional[Dict[str, Any]] = None
+    alert_basis: Optional[str] = None
+    first_alert_day: Optional[str] = None
+    lead_time_days: Optional[int] = None

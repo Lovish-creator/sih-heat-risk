@@ -43,7 +43,7 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 | **P1-04: City coverage transparency** | Created `scripts/generate_coverage_report.py` and `docs/COVERAGE.md` detailing exact ward counts, polygon sources, and quality levels for all cities. | `scripts/generate_coverage_report.py`, `docs/COVERAGE.md`, `README.md` | Python execution & table generation | Fixed |
 | **P2-01: City-scale hazard transparency** | Added `hazard_resolution` field (`city_scale_uniform` / `modelled_lcz_prototype`); externalized LCZ prototype multipliers to YAML with citations. | `backend/app/gis/engine.py`, `backend/app/gis/ward_directory.py`, `config/lcz_prototype_multipliers.yaml`, `docs/METHODOLOGY.md` | API inspection & Pytest (`test_gis.py`) | Fixed |
 | **P3-01: Model specification divergence** | Created `docs/MODEL_SPEC.md` as single source of truth; unified constants and version string; harmonized README and docs. | `docs/MODEL_SPEC.md`, `backend/app/core/constants.py`, `tests/test_docs_consistency.py`, `README.md` | `pytest tests/test_docs_consistency.py` (Passed) | Fixed |
-| **P4-01: Mock alert transparency & IMD alignment** | Renamed mock status to `SIMULATED_NOT_SENT`; added `imd_criteria` & `alert_basis`; implemented pluggable `Notifier` interface; verified CAP v1.2. | `backend/app/alerts/engine.py`, `backend/app/alerts/notifiers.py`, `backend/app/api/endpoints.py`, `tests/test_alerts.py` | `pytest tests/test_alerts.py` | Planned (Phase 4) |
+| **P4-01: Mock alert transparency & IMD alignment** | Renamed mock status to `SIMULATED_NOT_SENT`; added `imd_criteria` & `alert_basis`; implemented pluggable `Notifier` interface; verified CAP v1.2. | `backend/app/alerts/engine.py`, `backend/app/alerts/notifiers.py`, `backend/app/api/endpoints.py`, `tests/test_alerts.py`, `tests/test_notifiers.py` | `pytest tests/test_alerts.py tests/test_notifiers.py` (Passed) | Fixed |
 | **P5-01: Empirical back-testing validation** | Created `validation/backtest.py` on historical heatwaves (Ahmedabad 2010, Delhi 2024); added `docs/VALIDATION.md` with explicit event-detection disclaimer. | `validation/backtest.py`, `docs/VALIDATION.md`, `tests/test_backtest.py` | Offline pytest & CSV report | Planned (Phase 5) |
 | **P6-01: Frontend triplication & repo hygiene** | Consolidated static assets to `public/`; added Vercel rewrite; fixed mojibake; unified UTCI operational bounds; added CI workflow. | `vercel.json`, `backend/app/main.py`, `.github/workflows/ci.yml`, `tests/test_mojibake.py`, `README.md` | `pytest -q`, local runner, Vercel build | Planned (Phase 6) |
 
@@ -80,4 +80,20 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 - **Documentation Harmonization:** Reconciled conflicting formulas, outdated age brackets ($>65$), and hardcoded test numbers across `README.md`, `docs/RISK_METHODOLOGY.md`, `docs/METHODOLOGY.md`, `docs/IMPLEMENTATION_STATUS.md`, `docs/MODEL_CARD.md`, and `backend/app/api/endpoints.py`.
 - **Presentation Reconciliation:** Documented the relationship between Presentation Slide 4 conceptual shorthand ($\text{Risk} = \text{Hazard} \times \text{Vulnerability} \times \text{Duration}$) and the additive multi-criteria formula implemented in the software.
 - **Test Suite Status:** 59 passed in 4.30s (added 3 consistency tests).
+
+---
+
+## 6. Phase 4 Execution Summary (Pluggable Early Warning & Honest Alerting)
+
+- **Simulation Transparency:** Replaced `"DELIVERED_MOCK"` with `"SIMULATED_NOT_SENT"` across `backend/app/alerts/engine.py`, API endpoints, and test suites to prevent misrepresenting simulated payloads as live external dispatches.
+- **Pluggable Notifier Interface:** Created `backend/app/alerts/notifiers.py` implementing `BaseNotifier`, `ConsoleNotifier`, `FileNotifier` (appends structured records to `data/alerts/dispatched_alerts.jsonl`), `WebhookNotifier` (with dry-run simulation guardrails), and `SMSNotifier` (transparently reporting unconfigured institutional credentials).
+- **Environment Configuration:** Documented alert notifier environment variables in `.env.example` (`ALERT_NOTIFIERS`, `ALERT_FILE_PATH`, `ALERT_WEBHOOK_URL`, `ENABLE_LIVE_DISPATCH`, etc.).
+- **IMD Criteria & Forecast Lead Time:** Integrated `IMDGuidanceAdapter` into alert generation routes (`POST /api/v1/alerts/test` and `GET /api/v1/alerts/cap`), adding explicit fields:
+  - `imd_criteria`: Official IMD criteria evaluation (climatological departure, heatwave/severe status).
+  - `alert_basis`: Categorization (`both`, `composite_risk`, or `imd_criteria`).
+  - `first_alert_day` and `lead_time_days`: Multi-horizon forecast lookahead.
+- **Multilingual Alert Templates:** Created `data/templates/alert_templates.json` containing English and Hindi (`hi`) alert headlines, descriptions, instructions, and SMS text for all 4 alert tiers, stamped with `"review_status": "machine_drafted_needs_native_review"`.
+- **CAP v1.2 Standard Compliance:** Updated `AlertDispatcher.generate_alert_payload` to generate valid OASIS/ITU-T CAP v1.2 structure (`identifier`, `sender`, `sent`, `status`, `msgType`, `scope`, `info`) while preserving backward-compatible root keys.
+- **UI Integrity:** Updated modal text in `public/index.html` and `public/js/app.js` to *"🚨 Alert Payload Preview (Simulated / Not Dispatched)"*.
+- **Test Suite Status:** 66 passed in 6.64s (added 6 notifier tests and updated alert/API tests).
 

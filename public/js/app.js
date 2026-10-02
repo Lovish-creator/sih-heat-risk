@@ -964,6 +964,10 @@ async function showCapAlertModal() {
 
   const smsEl = document.getElementById("capSmsPayload");
   const jsonEl = document.getElementById("capPayloadJson");
+  const modalTitle = document.getElementById("capModalTitle");
+  if (modalTitle) {
+    modalTitle.textContent = "🚨 Alert Payload Preview (Simulated / Not Dispatched)";
+  }
 
   try {
     const data = await ApiClient.getCapAlert(queryParams);
