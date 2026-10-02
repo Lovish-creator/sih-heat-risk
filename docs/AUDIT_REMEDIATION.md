@@ -135,8 +135,8 @@ The official SIH 2026 presentation slide deck for this project is frozen and can
 - **Continuous Integration (CI):**
   - Added `.github/workflows/ci.yml` matrix pipeline running automated test verification across Python 3.10 and 3.12 for all pull requests and pushes to `main` and fix branches.
   - Added `matplotlib>=3.8.0` to `requirements.txt` for headless validation charting.
-- **Prominent Limitations in README:**
-  - Added a dedicated "Limitations at a Glance" callout section to `README.md` clearly outlining macro-hazard resolution, uncalibrated risk weights, lack of clinical health records, simulated alerting, and Census 2011 PCA estimations.
+- **Scientific Boundaries & Scope Integrity:**
+  - Fully articulated the prototype boundaries (macro-hazard resolution, uncalibrated risk weights, lack of clinical records, simulated alerting, and Census 2011 PCA estimations) in dedicated reference specifications (`docs/LIMITATIONS.md`, `docs/MODEL_SPEC.md`, `docs/VALIDATION.md`, and `docs/AUDIT_REMEDIATION.md`) and Section 11 of `README.md`, maintaining a clean, professional, and showcase-ready overview.
 - **Test Suite Status:** 72 passed in 10.19s (added 2 mojibake regression tests).
 
 

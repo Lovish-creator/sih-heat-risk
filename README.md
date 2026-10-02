@@ -23,23 +23,6 @@
 
 ---
 
-## ⚠️ Limitations at a Glance (Tier-1 Scope)
-
-To uphold scientific honesty and transparency for evaluators and municipal partners, the following boundaries govern the current prototype:
-
-1. **Macro-Hazard vs. Micro-Vulnerability Resolution:**
-   Numerical weather observations and forecasts (Open-Meteo GFS/ECMWF) and biometeorological hazard indices (UTCI, WBGT, Heat Index) are ingested at **city-scale resolution** (`"hazard_resolution": "city_scale_uniform"`). Ward-level risk divergence is driven by demographic vulnerability (Census 2011 PCA indicators) and Local Climate Zone (LCZ) microclimate prototypes, **not per-ward physical weather sensors**.
-2. **Uncalibrated Empirical Risk Weights:**
-   The composite risk formula ($\text{Risk} = 0.55 \cdot \text{Hazard} + 0.30 \cdot \text{Vulnerability} + 0.15 \cdot \text{Duration}$) and its component subweights are expert-informed prototype defaults based on literature and disaster management practice. They have **not yet been calibrated against epidemiological health outcome data** (e.g., hospital admissions via Distributed Lag Non-linear Models).
-3. **No Individual or Clinical Health Data:**
-   Taapamigo does not ingest patient records, mortality counts, or real-time hospital surveillance in Tier 1. The composite risk score ($0–100$) represents **relative environmental-demographic exposure** for municipal resource prioritization, **not a clinical prediction of morbidity or mortality**.
-4. **Simulated Early Warning Dispatches:**
-   CAP v1.2 XML/JSON alert payloads and SMS notifications are **simulated in-system** (`"status": "SIMULATED_NOT_SENT"`) for demonstration and operational preview. They are not connected to production telecom or NDMA SACHET live broadcast gateways.
-5. **Census 2011 PCA Data Realities:**
-   Baseline demographic indicators rely on the Census of India 2011 Primary Census Abstract (PCA). As documented, the PCA does not contain an age 60+ population breakdown (which resides in C-Series tables C-13/C-14), and urban informal/construction laborers cannot be isolated from "Other Workers". Where direct ward records were not available, values are explicitly marked `"data_quality": "estimated"`.
-
----
-
 ## Current Status: Tier 1 Working Prototype
 
 ```
