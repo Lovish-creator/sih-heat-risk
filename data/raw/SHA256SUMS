@@ -1,0 +1,2 @@
+# SHA256 checksums of raw government datasets (Census 2011 PCA & C-Series tables)
+# Add genuine extracted raw files here and verify with `sha256sum -c SHA256SUMS`

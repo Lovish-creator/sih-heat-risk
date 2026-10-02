@@ -116,9 +116,20 @@ Where $H_{\text{UTCI}}, H_{\text{WBGT}}, H_{\text{HI}}$ are normalized piecewise
 ### 2.5 Demographic Vulnerability Score (0–100)
 
 $$\text{Vulnerability Score} = 0.40 \cdot V_{\text{elderly}} + 0.35 \cdot V_{\text{labor}} + 0.25 \cdot V_{\text{density}}$$
-- $V_{\text{elderly}} = \min(100, \frac{\text{Elderly } 60+\%}{15.0} \times 100)$
-- $V_{\text{labor}} = \min(100, \frac{\text{Outdoor Worker } \%}{45.0} \times 100)$
-- $V_{\text{density}} = \min(100, \frac{\text{Population Density per km}^2}{25000} \times 100)$
+- $V_{\text{elderly}} = \min(100, \max(0, \frac{\text{Elderly } 60+\% - 4.0}{16.0 - 4.0} \times 100))$
+- $V_{\text{labor}} = \min(100, \max(0, \frac{\text{Outdoor Worker } \% - 10.0}{45.0 - 10.0} \times 100))$
+- $V_{\text{density}} = \min(100, \max(0, \frac{\text{Population Density per km}^2 - 200.0}{25000.0 - 200.0} \times 100))$
+
+#### Definition & Limitations of the "Outdoor Worker" Proxy
+In the Census of India 2011 Primary Census Abstract (PCA), workers are categorized strictly into four economic sectors:
+1. Cultivators (CL)
+2. Agricultural Labourers (AL)
+3. Household Industry Workers (HHI)
+4. Other Workers (OW)
+
+**Crucial Statistical Limitation:** While agricultural laborers (CL + AL) can be isolated from PCA tables, urban informal outdoor laborers—including construction workers, gig delivery riders, street vendors, and logistics porters—are pooled into the "Other Workers" (OW) category alongside indoor clerical workers, civil servants, and shopkeepers. **The PCA cannot isolate construction or informal urban outdoor laborers.**
+
+Consequently, the outdoor worker exposure metric in Taapamigo is an **operational proxy**: in agrarian districts it tracks CL+AL, while in metropolitan urban wards it represents an estimated baseline ratio. In both cases, derived demographic counts are explicitly tagged with `"data_quality": "estimated"`. For full data acquisition procedures and table codes, see `data/README_DATA_ACQUISITION.md`.
 
 ---
 

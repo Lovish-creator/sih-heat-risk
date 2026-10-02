@@ -10,7 +10,9 @@
     "outdoor_worker_percentage": 35.0,
     "area_sqkm": 3113.0,
     "pop_density_per_sqkm": 379.2,
-    "census_source": "Census of India 2011 PCA - Punjab"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_AMRITSAR",
@@ -23,7 +25,9 @@
     "outdoor_worker_percentage": 31.0,
     "area_sqkm": 2683.0,
     "pop_density_per_sqkm": 928.3,
-    "census_source": "Census of India 2011 PCA - MCA"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_LUDHIANA",
@@ -36,7 +40,9 @@
     "outdoor_worker_percentage": 34.0,
     "area_sqkm": 3767.0,
     "pop_density_per_sqkm": 928.8,
-    "census_source": "Census of India 2011 PCA - MCL"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_JALANDHAR",
@@ -49,7 +55,9 @@
     "outdoor_worker_percentage": 30.0,
     "area_sqkm": 2632.0,
     "pop_density_per_sqkm": 833.4,
-    "census_source": "Census of India 2011 PCA - MCJ"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_PATIALA",
@@ -62,7 +70,9 @@
     "outdoor_worker_percentage": 30.0,
     "area_sqkm": 3218.0,
     "pop_density_per_sqkm": 589.1,
-    "census_source": "Census of India 2011 PCA - Punjab (Patiala & Rajpura)"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_BATHINDA",
@@ -75,7 +85,9 @@
     "outdoor_worker_percentage": 35.0,
     "area_sqkm": 3385.0,
     "pop_density_per_sqkm": 410.2,
-    "census_source": "Census of India 2011 PCA - MCB"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_PB_MOHALI",
@@ -88,7 +100,9 @@
     "outdoor_worker_percentage": 28.0,
     "area_sqkm": 1093.0,
     "pop_density_per_sqkm": 910.0,
-    "census_source": "Census of India 2011 PCA - MC Mohali"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_HR_GURUGRAM",
@@ -101,7 +115,9 @@
     "outdoor_worker_percentage": 28.0,
     "area_sqkm": 1258.0,
     "pop_density_per_sqkm": 1203.8,
-    "census_source": "Census of India 2011 PCA - MCG"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_HR_FARIDABAD",
@@ -114,7 +130,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 741.0,
     "pop_density_per_sqkm": 2442.3,
-    "census_source": "Census of India 2011 PCA - MCF"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_HR_ROHTAK",
@@ -127,7 +145,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 1745.0,
     "pop_density_per_sqkm": 608.1,
-    "census_source": "Census of India 2011 PCA - MCR"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_HR_PANIPAT",
@@ -140,7 +160,9 @@
     "outdoor_worker_percentage": 35.0,
     "area_sqkm": 1268.0,
     "pop_density_per_sqkm": 950.7,
-    "census_source": "Census of India 2011 PCA - MCP"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_DL_DELHI",
@@ -153,7 +175,9 @@
     "outdoor_worker_percentage": 25.0,
     "area_sqkm": 1483.0,
     "pop_density_per_sqkm": 11320.3,
-    "census_source": "Census of India 2011 PCA - MCD"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_CH_CHANDIGARH",
@@ -166,7 +190,9 @@
     "outdoor_worker_percentage": 27.0,
     "area_sqkm": 114.0,
     "pop_density_per_sqkm": 9258.3,
-    "census_source": "Census of India 2011 PCA - MCC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_GJ_AHMEDABAD",
@@ -179,7 +205,9 @@
     "outdoor_worker_percentage": 27.0,
     "area_sqkm": 8087.0,
     "pop_density_per_sqkm": 892.1,
-    "census_source": "Census of India 2011 PCA - AMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_GJ_SURAT",
@@ -192,7 +220,9 @@
     "outdoor_worker_percentage": 34.0,
     "area_sqkm": 4418.0,
     "pop_density_per_sqkm": 1376.5,
-    "census_source": "Census of India 2011 PCA - SMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_GJ_VADODARA",
@@ -205,7 +235,9 @@
     "outdoor_worker_percentage": 30.0,
     "area_sqkm": 7512.0,
     "pop_density_per_sqkm": 554.5,
-    "census_source": "Census of India 2011 PCA - VMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_GJ_RAJKOT",
@@ -218,7 +250,9 @@
     "outdoor_worker_percentage": 31.0,
     "area_sqkm": 11203.0,
     "pop_density_per_sqkm": 339.6,
-    "census_source": "Census of India 2011 PCA - RMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_MUMBAI",
@@ -231,7 +265,9 @@
     "outdoor_worker_percentage": 23.0,
     "area_sqkm": 603.4,
     "pop_density_per_sqkm": 20620.4,
-    "census_source": "Census of India 2011 PCA - BMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_PUNE",
@@ -244,7 +280,9 @@
     "outdoor_worker_percentage": 31.0,
     "area_sqkm": 15643.0,
     "pop_density_per_sqkm": 602.8,
-    "census_source": "Census of India 2011 PCA - PMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_THANE",
@@ -257,7 +295,9 @@
     "outdoor_worker_percentage": 28.0,
     "area_sqkm": 9558.0,
     "pop_density_per_sqkm": 1157.2,
-    "census_source": "Census of India 2011 PCA - TMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_NAGPUR",
@@ -270,7 +310,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 9892.0,
     "pop_density_per_sqkm": 470.4,
-    "census_source": "Census of India 2011 PCA - NMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_NASHIK",
@@ -283,7 +325,9 @@
     "outdoor_worker_percentage": 33.0,
     "area_sqkm": 15530.0,
     "pop_density_per_sqkm": 393.3,
-    "census_source": "Census of India 2011 PCA - NMMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MH_AURANGABAD",
@@ -296,7 +340,9 @@
     "outdoor_worker_percentage": 35.0,
     "area_sqkm": 10107.0,
     "pop_density_per_sqkm": 366.2,
-    "census_source": "Census of India 2011 PCA - ASMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_RJ_JAIPUR",
@@ -309,7 +355,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 11143.0,
     "pop_density_per_sqkm": 594.7,
-    "census_source": "Census of India 2011 PCA - JMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_RJ_JODHPUR",
@@ -322,7 +370,9 @@
     "outdoor_worker_percentage": 34.0,
     "area_sqkm": 22850.0,
     "pop_density_per_sqkm": 161.4,
-    "census_source": "Census of India 2011 PCA - Jodhpur MC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_RJ_KOTA",
@@ -335,7 +385,9 @@
     "outdoor_worker_percentage": 34.0,
     "area_sqkm": 5217.0,
     "pop_density_per_sqkm": 373.9,
-    "census_source": "Census of India 2011 PCA - Kota MC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_UP_LUCKNOW",
@@ -348,7 +400,9 @@
     "outdoor_worker_percentage": 29.0,
     "area_sqkm": 2528.0,
     "pop_density_per_sqkm": 1815.6,
-    "census_source": "Census of India 2011 PCA - LMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_UP_KANPUR",
@@ -361,7 +415,9 @@
     "outdoor_worker_percentage": 31.0,
     "area_sqkm": 3155.0,
     "pop_density_per_sqkm": 1452.1,
-    "census_source": "Census of India 2011 PCA - KNN"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_UP_VARANASI",
@@ -374,7 +430,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 1535.0,
     "pop_density_per_sqkm": 2395.3,
-    "census_source": "Census of India 2011 PCA - VNN"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_UP_PRAYAGRAJ",
@@ -387,7 +445,9 @@
     "outdoor_worker_percentage": 33.0,
     "area_sqkm": 5482.0,
     "pop_density_per_sqkm": 1086.2,
-    "census_source": "Census of India 2011 PCA - PMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_UP_AGRA",
@@ -400,7 +460,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 4041.0,
     "pop_density_per_sqkm": 1093.5,
-    "census_source": "Census of India 2011 PCA - Agra NN"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MP_BHOPAL",
@@ -413,7 +475,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 2772.0,
     "pop_density_per_sqkm": 855.4,
-    "census_source": "Census of India 2011 PCA - BMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MP_INDORE",
@@ -426,7 +490,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 3898.0,
     "pop_density_per_sqkm": 840.6,
-    "census_source": "Census of India 2011 PCA - IMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_MP_GWALIOR",
@@ -439,7 +505,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 4560.0,
     "pop_density_per_sqkm": 445.6,
-    "census_source": "Census of India 2011 PCA - GMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_BR_PATNA",
@@ -452,7 +520,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 3202.0,
     "pop_density_per_sqkm": 1823.4,
-    "census_source": "Census of India 2011 PCA - PMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_JH_RANCHI",
@@ -465,7 +535,9 @@
     "outdoor_worker_percentage": 35.0,
     "area_sqkm": 5097.0,
     "pop_density_per_sqkm": 571.8,
-    "census_source": "Census of India 2011 PCA - RMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_JH_JAMSHEDPUR",
@@ -478,7 +550,9 @@
     "outdoor_worker_percentage": 33.0,
     "area_sqkm": 3562.0,
     "pop_density_per_sqkm": 644.0,
-    "census_source": "Census of India 2011 PCA - JNAC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_WB_KOLKATA",
@@ -491,7 +565,9 @@
     "outdoor_worker_percentage": 24.0,
     "area_sqkm": 185.0,
     "pop_density_per_sqkm": 24306.5,
-    "census_source": "Census of India 2011 PCA - KMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_WB_HOWRAH",
@@ -504,7 +580,9 @@
     "outdoor_worker_percentage": 30.0,
     "area_sqkm": 1467.0,
     "pop_density_per_sqkm": 3306.1,
-    "census_source": "Census of India 2011 PCA - HMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_OD_BHUBANESWAR",
@@ -517,7 +595,9 @@
     "outdoor_worker_percentage": 31.0,
     "area_sqkm": 2813.0,
     "pop_density_per_sqkm": 800.5,
-    "census_source": "Census of India 2011 PCA - BMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_KA_BENGALURU",
@@ -530,7 +610,9 @@
     "outdoor_worker_percentage": 22.0,
     "area_sqkm": 2196.0,
     "pop_density_per_sqkm": 4381.4,
-    "census_source": "Census of India 2011 PCA - BBMP"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_TG_HYDERABAD",
@@ -543,7 +625,9 @@
     "outdoor_worker_percentage": 25.0,
     "area_sqkm": 217.0,
     "pop_density_per_sqkm": 18172.0,
-    "census_source": "Census of India 2011 PCA - GHMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_AP_VISAKHAPATNAM",
@@ -556,7 +640,9 @@
     "outdoor_worker_percentage": 32.0,
     "area_sqkm": 11161.0,
     "pop_density_per_sqkm": 384.4,
-    "census_source": "Census of India 2011 PCA - GVMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_TN_CHENNAI",
@@ -569,7 +655,9 @@
     "outdoor_worker_percentage": 25.0,
     "area_sqkm": 426.0,
     "pop_density_per_sqkm": 16638.5,
-    "census_source": "Census of India 2011 PCA - GCC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_KL_THIRUVANANTHAPURAM",
@@ -582,7 +670,9 @@
     "outdoor_worker_percentage": 27.0,
     "area_sqkm": 2189.0,
     "pop_density_per_sqkm": 1508.2,
-    "census_source": "Census of India 2011 PCA - TMC"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   },
   {
     "district_id": "DIST_KL_ERNAKULAM",
@@ -595,6 +685,8 @@
     "outdoor_worker_percentage": 28.0,
     "area_sqkm": 3068.0,
     "pop_density_per_sqkm": 1069.9,
-    "census_source": "Census of India 2011 PCA - Cochin Corp"
+    "census_source": "Estimated demographic input; NOT extracted from Census PCA tables.",
+    "data_quality": "estimated",
+    "method": "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
   }
 ]

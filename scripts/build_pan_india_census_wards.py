@@ -88,10 +88,15 @@ def main():
     print("=" * 70)
 
     # 1. Write india_census_districts.json
+    for d in PAN_INDIA_CENSUS_DISTRICTS:
+        d["data_quality"] = "estimated"
+        d["method"] = "Derived from state/district percentage baseline applied to Census 2011 total population; elderly 60+ and informal outdoor labor counts are not extracted from raw PCA tables."
+        d["census_source"] = "Estimated demographic input; NOT extracted from Census PCA tables."
+
     census_file = ROOT_DIR / "data" / "sample" / "india_census_districts.json"
     census_file.parent.mkdir(parents=True, exist_ok=True)
     with open(census_file, "w", encoding="utf-8") as f:
-        json.dump(PAN_INDIA_CENSUS_DISTRICTS, f, indent=2)
+        json.dump(PAN_INDIA_CENSUS_DISTRICTS, f, indent=2, ensure_ascii=False)
     print(f"[+] Written {len(PAN_INDIA_CENSUS_DISTRICTS)} district Census profiles to: {census_file}")
 
     print("\n[+] Dataset updated successfully.")

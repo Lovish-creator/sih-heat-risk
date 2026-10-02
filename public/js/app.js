@@ -570,9 +570,30 @@ function renderOverviewView(state) {
   const elElderly = document.getElementById("valHeroElderly");
   const elLabor = document.getElementById("valHeroLabor");
   const elDensity = document.getElementById("valHeroDensity");
+  const elVulnBadge = document.getElementById("badgeHeroVulnerability");
 
   const distDemo = state.vulnerability?.district_demographics || {};
   const demo = distDemo.demographics || distDemo || {};
+  const vulnQuality = distDemo.data_quality || state.vulnerability?.data_quality || "estimated";
+
+  if (elVulnBadge) {
+    if (distDemo.is_fallback) {
+      elVulnBadge.textContent = "National Baseline";
+      elVulnBadge.className = "status-badge status-badge-proto";
+      elVulnBadge.title = "Using national urban baseline demographic parameters";
+    } else if (vulnQuality === "estimated" || vulnQuality === "illustrative_prototype") {
+      elVulnBadge.textContent = "Estimated Input";
+      elVulnBadge.className = "status-badge";
+      elVulnBadge.style.background = "rgba(245, 158, 11, 0.15)";
+      elVulnBadge.style.color = "#fbbf24";
+      elVulnBadge.style.border = "1px solid rgba(245, 158, 11, 0.3)";
+      elVulnBadge.title = "Demographic baseline derived from percentage estimates; not direct raw Census PCA table counts";
+    } else {
+      elVulnBadge.textContent = "Census 2011 Baseline";
+      elVulnBadge.className = "status-badge status-badge-live";
+      elVulnBadge.title = "Census 2011 baseline data";
+    }
+  }
 
   const eld = demo.elderly_percentage !== undefined ? demo.elderly_percentage : (state.vulnerability?.elderly_percentage);
   const wrk = demo.outdoor_worker_percentage !== undefined ? demo.outdoor_worker_percentage : (state.vulnerability?.outdoor_worker_percentage);
@@ -714,7 +735,10 @@ function renderVulnerabilityView(wardsList) {
         <td><strong>#${idx + 1}</strong></td>
         <td>
           <strong style="color: #f8fafc;">${w.ward_name || ('Ward ' + (w.ward_number || idx + 1))}</strong>
-          <div style="font-size: 11px; color: #94a3b8;">${w.zone_name || w.lcz_class || 'Urban Local Body'}</div>
+          <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 2px; flex-wrap: wrap;">
+            <span style="font-size: 11px; color: #94a3b8;">${w.zone_name || w.lcz_class || 'Urban Local Body'}</span>
+            ${(w.data_quality === 'estimated' || w.data_quality === 'illustrative_prototype' || w.is_illustrative || d.data_quality === 'estimated') ? '<span title="Demographic baseline derived from percentage estimates; not direct raw Census PCA table counts" style="font-size: 9px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); padding: 1px 4px; border-radius: 3px;">Estimated demographic input</span>' : ''}
+          </div>
         </td>
         <td>
           <span style="background-color: ${alertColor}; color: ${(alertLevel === 'CAUTION' || alertLevel === 'YELLOW') ? '#000' : '#fff'}; font-weight: 800; font-size: 11px; padding: 2px 7px; border-radius: 4px;">

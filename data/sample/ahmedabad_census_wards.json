@@ -6,7 +6,11 @@
     "tot_pop": 68450,
     "pop_elderly_60plus": 9580,
     "workers_outdoor": 8200,
-    "area_sqkm": 4.8
+    "area_sqkm": 4.8,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_02",
@@ -15,7 +19,11 @@
     "tot_pop": 72100,
     "pop_elderly_60plus": 10800,
     "workers_outdoor": 9100,
-    "area_sqkm": 5.1
+    "area_sqkm": 5.1,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_03",
@@ -24,7 +32,11 @@
     "tot_pop": 85300,
     "pop_elderly_60plus": 9400,
     "workers_outdoor": 18500,
-    "area_sqkm": 6.8
+    "area_sqkm": 6.8,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_04",
@@ -33,7 +45,11 @@
     "tot_pop": 115200,
     "pop_elderly_60plus": 11500,
     "workers_outdoor": 34500,
-    "area_sqkm": 3.2
+    "area_sqkm": 3.2,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_05",
@@ -42,7 +58,11 @@
     "tot_pop": 88400,
     "pop_elderly_60plus": 12300,
     "workers_outdoor": 22100,
-    "area_sqkm": 2.4
+    "area_sqkm": 2.4,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_06",
@@ -51,7 +71,11 @@
     "tot_pop": 96500,
     "pop_elderly_60plus": 10200,
     "workers_outdoor": 28900,
-    "area_sqkm": 2.8
+    "area_sqkm": 2.8,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_07",
@@ -60,7 +84,11 @@
     "tot_pop": 84200,
     "pop_elderly_60plus": 10500,
     "workers_outdoor": 14300,
-    "area_sqkm": 4.5
+    "area_sqkm": 4.5,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_08",
@@ -69,7 +97,11 @@
     "tot_pop": 138600,
     "pop_elderly_60plus": 9700,
     "workers_outdoor": 58200,
-    "area_sqkm": 12.4
+    "area_sqkm": 12.4,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_09",
@@ -78,7 +110,11 @@
     "tot_pop": 124000,
     "pop_elderly_60plus": 8600,
     "workers_outdoor": 46500,
-    "area_sqkm": 5.8
+    "area_sqkm": 5.8,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_10",
@@ -87,7 +123,11 @@
     "tot_pop": 142000,
     "pop_elderly_60plus": 11300,
     "workers_outdoor": 59600,
-    "area_sqkm": 11.2
+    "area_sqkm": 11.2,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_11",
@@ -96,7 +136,11 @@
     "tot_pop": 118400,
     "pop_elderly_60plus": 9800,
     "workers_outdoor": 42600,
-    "area_sqkm": 4.1
+    "area_sqkm": 4.1,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_12",
@@ -105,7 +149,11 @@
     "tot_pop": 105600,
     "pop_elderly_60plus": 8900,
     "workers_outdoor": 39800,
-    "area_sqkm": 3.9
+    "area_sqkm": 3.9,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_13",
@@ -114,7 +162,11 @@
     "tot_pop": 131200,
     "pop_elderly_60plus": 9100,
     "workers_outdoor": 54800,
-    "area_sqkm": 9.6
+    "area_sqkm": 9.6,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_14",
@@ -123,7 +175,11 @@
     "tot_pop": 92000,
     "pop_elderly_60plus": 8200,
     "workers_outdoor": 16500,
-    "area_sqkm": 8.5
+    "area_sqkm": 8.5,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_15",
@@ -132,7 +188,11 @@
     "tot_pop": 104500,
     "pop_elderly_60plus": 11900,
     "workers_outdoor": 18200,
-    "area_sqkm": 6.2
+    "area_sqkm": 6.2,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_16",
@@ -141,7 +201,11 @@
     "tot_pop": 78900,
     "pop_elderly_60plus": 9800,
     "workers_outdoor": 9500,
-    "area_sqkm": 7.4
+    "area_sqkm": 7.4,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_17",
@@ -150,7 +214,11 @@
     "tot_pop": 86400,
     "pop_elderly_60plus": 9200,
     "workers_outdoor": 11200,
-    "area_sqkm": 8.9
+    "area_sqkm": 8.9,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_18",
@@ -159,7 +227,11 @@
     "tot_pop": 81500,
     "pop_elderly_60plus": 10400,
     "workers_outdoor": 10800,
-    "area_sqkm": 6.5
+    "area_sqkm": 6.5,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_19",
@@ -168,7 +240,11 @@
     "tot_pop": 98200,
     "pop_elderly_60plus": 7800,
     "workers_outdoor": 31400,
-    "area_sqkm": 9.2
+    "area_sqkm": 9.2,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   },
   {
     "ward_id": "AMD_20",
@@ -177,6 +253,10 @@
     "tot_pop": 94600,
     "pop_elderly_60plus": 9900,
     "workers_outdoor": 19800,
-    "area_sqkm": 5.4
+    "area_sqkm": 5.4,
+    "is_illustrative": true,
+    "data_quality": "illustrative_prototype",
+    "method": "Illustrative prototype ward population numbers; not direct ward-level Census PCA extraction.",
+    "census_source": "Illustrative Prototype Ward Model; NOT extracted from Census PCA."
   }
 ]

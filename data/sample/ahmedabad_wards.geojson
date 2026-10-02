@@ -1,6 +1,11 @@
 {
   "type": "FeatureCollection",
   "name": "Ahmedabad_Wards_Risk_Layer",
+  "metadata": {
+    "is_illustrative": true,
+    "geometry_source": "Illustrative prototype municipal delimitation polygons (20 zones/wards for demonstration). Note: DataMeet upstream Ward_office.geojson provides administrative office points, not boundary polygons.",
+    "data_quality": "illustrative_prototype"
+  },
   "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
   "features": [
     {
